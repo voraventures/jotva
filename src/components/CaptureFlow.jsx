@@ -9,6 +9,7 @@
 import React, { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStore, useLogo } from "../store.jsx";
+import { api } from "../api.js";
 import { BACK, COLORS, VIEWBOX as LOGO_VIEWBOX, sheetPath } from "../logoGeometry.js";
 import { MicIcon, PauseIcon, PlayIcon, RefreshIcon, StopIcon, CheckIcon, XIcon } from "./icons.jsx";
 
@@ -165,6 +166,35 @@ export default function CaptureFlow() {
     return () => clearInterval(id);
   }, [phase, summary, reducedMotion]);
 
+  // ---- jot pad: the user's own notes while recording, autosaved to steer the AI notes ----
+  const jotMeetingId = recording.active ? recording.meetingId : null;
+  const [jot, setJot] = useState("");
+  const [jotStatus, setJotStatus] = useState("saved"); // saving | saved | error
+  const jotTimer = useRef(null);
+  const jotLatest = useRef({ id: null, text: "" });
+  useEffect(() => { setJot(""); setJotStatus("saved"); }, [jotMeetingId]);
+  useEffect(() => () => clearTimeout(jotTimer.current), []);
+  const saveJot = (id, text) =>
+    api.patch(`/api/meetings/${id}/jot`, { text })
+      .then(() => setJotStatus("saved"))
+      .catch(() => setJotStatus("error")); // the next keystroke retries
+  const onJot = (text) => {
+    setJot(text);
+    setJotStatus("saving");
+    jotLatest.current = { id: jotMeetingId, text };
+    clearTimeout(jotTimer.current);
+    jotTimer.current = setTimeout(() => { jotTimer.current = null; saveJot(jotMeetingId, text); }, 600);
+  };
+  // Save any pending jot before stopping, so notes generation sees the latest text.
+  const stopWithJot = async () => {
+    if (jotTimer.current) {
+      clearTimeout(jotTimer.current);
+      jotTimer.current = null;
+      if (jotLatest.current.id) await saveJot(jotLatest.current.id, jotLatest.current.text);
+    }
+    stopRecording();
+  };
+
   // Every hook must run unconditionally (before the `if (!phase)` bailout
   // below), including this one — it only *acts* when a dismissible phase
   // is on screen, but it must always be called in the same order.
@@ -231,7 +261,7 @@ export default function CaptureFlow() {
       className="capture-backdrop"
       onMouseDown={(e) => e.target === e.currentTarget && close()}
     >
-      <div className="capture-card" role="dialog" aria-modal="true" aria-label={title}>
+      <div className={`capture-card${phase === "recording" ? " is-recording" : ""}`} role="dialog" aria-modal="true" aria-label={title}>
         <div className="capture-header">
           <img className="logo-img" src={logoUrl} alt="" aria-hidden="true" />
           <span className="capture-wordmark brand-wordmark">Jotva</span>
@@ -284,6 +314,17 @@ export default function CaptureFlow() {
           </div>
         )}
 
+        {phase === "recording" && (
+          <div className="capture-jot">
+            <label htmlFor="capture-jot-input" className="capture-jot-label">
+              <span>{t("capture.jot.label")}</span>
+              {jot && <span className={`capture-jot-status ${jotStatus}`}>{t(`capture.jot.${jotStatus}`)}</span>}
+            </label>
+            <textarea id="capture-jot-input" autoFocus value={jot} maxLength={20000} spellCheck
+              placeholder={t("capture.jot.placeholder")} onChange={(e) => onJot(e.target.value)} />
+          </div>
+        )}
+
         <div className="capture-controls">
           {phase === "idle" && (
             <button className="capture-start-btn" onClick={() => startRecording()}>
@@ -304,7 +345,7 @@ export default function CaptureFlow() {
               </button>
               <button
                 className="capture-round-btn stop"
-                onClick={stopRecording}
+                onClick={stopWithJot}
                 aria-label={t("recording.stop")}
                 title={t("recording.stop")}
               >

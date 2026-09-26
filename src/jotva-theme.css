@@ -444,3 +444,23 @@
   .mcp-actions { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
   .mcp-note { flex-basis: 100%; margin: 0; font-size: calc(12rem / 14); line-height: 1.5; color: var(--faint); }
 }
+
+/* ---- jot pad (recording card) + "Your jots" (meeting rail) ---- */
+@media screen {
+  .capture-card.is-recording { height: min(660px, calc(100dvh - 48px)); }
+  .capture-card.is-recording .capture-stage { min-height: 0; flex: 0 0 auto; padding-block: 8px; }
+  .capture-card.is-recording .capture-mark svg { width: 84px; height: 78px; }
+  .capture-jot { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; padding: 0 24px; }
+  .capture-jot-label { display: flex; justify-content: space-between; align-items: baseline; font-size: calc(13rem / 14); font-weight: 600; color: var(--text); }
+  .capture-jot-status { font-size: calc(12rem / 14); font-weight: 400; color: var(--faint); }
+  .capture-jot-status.error { color: var(--warning); }
+  .capture-jot textarea {
+    flex: 1; min-height: 110px; resize: none; padding: 12px 14px; border-radius: 12px;
+    font: inherit; font-size: 1rem; line-height: 1.55; color: var(--text);
+    background: var(--surface); border: 1px solid var(--border-strong);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .15);
+  }
+  .capture-jot textarea::placeholder { color: var(--faint); }
+  .capture-jot textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .ov-jots { margin: 0; white-space: pre-wrap; font-size: calc(13rem / 14); line-height: 1.55; color: var(--muted); }
+}

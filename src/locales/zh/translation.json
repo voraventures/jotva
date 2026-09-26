@@ -630,7 +630,8 @@
       "summaryBy": "由 Jotva 生成的摘要",
       "noSummary": "暂无摘要。",
       "highlight": "亮点",
-      "flaggedMoment": "已标记时刻"
+      "flaggedMoment": "已标记时刻",
+      "yourJots": "我的速记"
     },
     "toolbar": {
       "followup": "后续跟进",
@@ -935,7 +936,7 @@
   },
   "digest": {
     "title": "摘要",
-    "sub": "自动生成的所有会议汇总——无需手动操作",
+    "sub": "自动生成的所有会议汇总",
     "emptyHead": "本周期暂无内容",
     "emptySub": "你录制的会议会自动汇总到这里。",
     "meetingToday": "今天要见的人",
@@ -966,6 +967,13 @@
       "actions_other": "{{count}} 项行动",
       "decisions_other": "{{count}} 项决定",
       "topics_other": "{{count}} 个主题"
+    },
+    "jot": {
+      "label": "我的速记",
+      "placeholder": "随手记下要点，Jotva 会在笔记中展开。",
+      "saved": "已保存",
+      "saving": "正在保存…",
+      "error": "未能保存"
     }
   },
   "upcomingToast": {

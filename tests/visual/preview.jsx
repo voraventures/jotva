@@ -51,6 +51,7 @@ const meeting = {
   },
   transcript: { duration_sec: 1920, _segments: Array.from({ length: 24 }, (_, i) => ({ start: i * 40, end: i * 40 + 32, speaker: `Speaker ${i % 2 + 1}`, text: ["Let's keep the next release focused. I want people to feel confident that their meeting has been captured, without interrupting the conversation.", "Agreed. The pilot feedback should help us decide which changes matter most. I'll organize those sessions and share a short summary with the team."][i % 2] })) },
   markers: [80],
+  jot_notes: "capture confidence!!\nwho owns the pilot?",
 };
 const meetings = [meeting, { ...meeting, id: "synthetic-long", title: "Customer discovery — a deliberately long meeting title to verify wrapping, alignment, and reading comfort", started_at: new Date(+date - 86400000).toISOString(), ended_at: new Date(+date - 86400000 + 32 * 60000).toISOString() }, { ...meeting, id: "synthetic-3", title: "Design team / weekly check-in", started_at: new Date(+date - 2 * 86400000).toISOString(), ended_at: new Date(+date - 2 * 86400000 + 32 * 60000).toISOString() }];
 const cardFixtures = [

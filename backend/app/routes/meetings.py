@@ -38,6 +38,10 @@ class CreateMeetingBody(BaseModel):
     action_items: list | None = None
 
 
+class JotBody(BaseModel):
+    text: str = Field(max_length=20_000)
+
+
 class RegenerateBody(BaseModel):
     template_id: str | None = Field(default=None, max_length=64)
 
@@ -160,6 +164,16 @@ def get_meeting(meeting_id: str):
 
     meeting["conflicts"] = conflicts_for_meeting(meeting_id)
     return meeting
+
+
+@router.patch("/{meeting_id}/jot")
+def save_jot(meeting_id: str, body: JotBody):
+    """Autosaved jot pad: the user's own notes, used to steer the AI notes."""
+    db = get_db()
+    if db.execute("UPDATE meetings SET jot_notes=? WHERE id=?", (body.text, meeting_id)).rowcount == 0:
+        raise HTTPException(status_code=404, detail="Meeting not found")
+    db.commit()
+    return {"ok": True}
 
 
 @router.patch("/{meeting_id}")

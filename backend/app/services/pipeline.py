@@ -80,7 +80,7 @@ def _generate_and_index(meeting_id: str, transcript_text: str, segments: list[di
     flagged moments + conflict detection."""
     db = get_db()
     row = db.execute(
-        "SELECT title, attendees, template_id, markers FROM meetings WHERE id=?",
+        "SELECT title, attendees, template_id, markers, jot_notes FROM meetings WHERE id=?",
         (meeting_id,),
     ).fetchone()
     attendees = json.loads(row["attendees"]) if row else []
@@ -92,6 +92,7 @@ def _generate_and_index(meeting_id: str, transcript_text: str, segments: list[di
         transcript_text,
         attendees,
         template_id=row["template_id"] if row else None,
+        jots=row["jot_notes"] if row else "",
     )
     content = generated["content"]
 

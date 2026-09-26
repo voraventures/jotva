@@ -631,7 +631,8 @@
       "summaryBy": "Summary by Jotva",
       "noSummary": "No summary yet.",
       "highlight": "Highlight",
-      "flaggedMoment": "Flagged moment"
+      "flaggedMoment": "Flagged moment",
+      "yourJots": "Your jots"
     },
     "toolbar": {
       "followup": "Follow-up",
@@ -944,7 +945,7 @@
   },
   "digest": {
     "title": "Digest",
-    "sub": "Auto-generated rollup across all meetings — zero manual labor",
+    "sub": "Auto-generated rollup across all meetings",
     "emptyHead": "Nothing this period",
     "emptySub": "Meetings you record will roll up here automatically.",
     "meetingToday": "People you meet today",
@@ -978,6 +979,13 @@
       "decisions_other": "{{count}} decisions",
       "topics_one": "{{count}} topic",
       "topics_other": "{{count}} topics"
+    },
+    "jot": {
+      "label": "Your jots",
+      "placeholder": "Jot down anything that matters. Jotva builds on it in your notes.",
+      "saved": "Saved",
+      "saving": "Saving…",
+      "error": "Couldn't save"
     }
   },
   "upcomingToast": {

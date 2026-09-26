@@ -631,7 +631,8 @@
       "summaryBy": "Resumo pelo Jotva",
       "noSummary": "Ainda não há resumo.",
       "highlight": "Destaque",
-      "flaggedMoment": "Momento marcado"
+      "flaggedMoment": "Momento marcado",
+      "yourJots": "Suas anotações"
     },
     "toolbar": {
       "followup": "Acompanhamento",
@@ -944,7 +945,7 @@
   },
   "digest": {
     "title": "Digest",
-    "sub": "Resumo gerado automaticamente de todas as reuniões — sem esforço manual",
+    "sub": "Resumo gerado automaticamente de todas as reuniões",
     "emptyHead": "Nada neste período",
     "emptySub": "As reuniões que você gravar aparecerão aqui automaticamente.",
     "meetingToday": "Pessoas que você encontra hoje",
@@ -978,6 +979,13 @@
       "decisions_other": "{{count}} decisões",
       "topics_one": "{{count}} tópico",
       "topics_other": "{{count}} tópicos"
+    },
+    "jot": {
+      "label": "Suas anotações",
+      "placeholder": "Anote o que importa. O Jotva desenvolve isso nas suas notas.",
+      "saved": "Salvo",
+      "saving": "Salvando…",
+      "error": "Não foi possível salvar"
     }
   },
   "upcomingToast": {

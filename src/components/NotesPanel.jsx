@@ -716,7 +716,13 @@ export default function NotesPanel() {
                   </div>
 
                   <div className="ov-col-right">
-                    <div className="ov-eyebrow">{t("notes.section.topics")}</div>
+                    {m.jot_notes?.trim() && (
+                      <>
+                        <div className="ov-eyebrow">{t("notes.section.yourJots")}</div>
+                        <p className="ov-jots">{m.jot_notes.trim()}</p>
+                      </>
+                    )}
+                    <div className={`ov-eyebrow${m.jot_notes?.trim() ? " ov-eyebrow-spaced" : ""}`}>{t("notes.section.topics")}</div>
                     {topics.length === 0 ? (
                       <div className="section-empty-note">{t("notes.action.none")}</div>
                     ) : (

@@ -1,7 +1,7 @@
 # Calendar-linked auto-recording — plan
 
 ## Principle
-Extends "zero manual labor": for calendar meetings, the user does nothing at all —
+Extends "Jotva does the organizing": for calendar meetings, the user does nothing at all —
 no manual Record tap required. Manual Record remains for ad-hoc/unscheduled conversations.
 
 ## Flow

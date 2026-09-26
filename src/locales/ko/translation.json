@@ -630,7 +630,8 @@
       "summaryBy": "Jotva 요약",
       "noSummary": "아직 요약이 없어요.",
       "highlight": "하이라이트",
-      "flaggedMoment": "표시된 순간"
+      "flaggedMoment": "표시된 순간",
+      "yourJots": "내 메모"
     },
     "toolbar": {
       "followup": "후속 조치",
@@ -935,7 +936,7 @@
   },
   "digest": {
     "title": "다이제스트",
-    "sub": "모든 회의를 자동으로 요약 — 수작업 없이",
+    "sub": "모든 회의를 자동으로 요약",
     "emptyHead": "이 기간에는 내용이 없어요",
     "emptySub": "녹음한 회의가 여기에 자동으로 모여요.",
     "meetingToday": "오늘 만나는 사람들",
@@ -966,6 +967,13 @@
       "actions_other": "실행 항목 {{count}}개",
       "decisions_other": "결정 {{count}}개",
       "topics_other": "주제 {{count}}개"
+    },
+    "jot": {
+      "label": "내 메모",
+      "placeholder": "중요한 내용을 적어 두세요. Jotva가 노트에서 자세히 풀어 줘요.",
+      "saved": "저장됨",
+      "saving": "저장 중…",
+      "error": "저장하지 못했어요"
     }
   },
   "upcomingToast": {

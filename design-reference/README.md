@@ -8,10 +8,7 @@ highlights). This package covers the redesigned workspace: the **capture flow**
 the **meeting list + sidebar chrome** (now including calendar auto-record), **Digest**,
 **Settings**, and the **home/marketing** panel.
 
-**Core product principle — zero manual labor:** the user only talks/records. Everything
-(including the meeting **title**) is auto-generated *after* processing. Never add UI that
-asks the user to type a title, tag, or manually organize. Titles/knowledge surface only at
-the "Ready" stage.
+**Core product principle — Jotva does the organizing:** everything (including the meeting **title**) is auto-generated *after* processing; never ask the user to type a title, tag, or manually organize. The one optional input is the recording card's **jot pad**, whose notes steer the AI. Titles/knowledge surface only at the "Ready" stage.
 
 ## About the Design Files
 The files in this bundle are **design references authored in HTML** (a streaming

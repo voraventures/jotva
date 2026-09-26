@@ -144,6 +144,7 @@ _MIGRATIONS = {
         ("workspace_id", "TEXT"),             # NULL = personal, set = shared to workspace
         ("starred", "INTEGER NOT NULL DEFAULT 0"),
         ("is_demo", "INTEGER NOT NULL DEFAULT 0"),  # onboarding sample meeting, not real AI output
+        ("jot_notes", "TEXT NOT NULL DEFAULT ''"),  # what the user jotted during the meeting
     ],
     "speaker_events": [("connection", "TEXT NOT NULL DEFAULT 'connected'")],
     "transcripts": [("segments", "TEXT NOT NULL DEFAULT '[]'"),

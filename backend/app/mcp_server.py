@@ -137,6 +137,8 @@ def get_meeting(meeting_id: str, include_transcript: bool = False) -> dict:
         meeting = _meeting(row)
         note = conn.execute("SELECT content FROM notes WHERE meeting_id = ?", (meeting_id,)).fetchone()
         meeting["notes_markdown"] = note["content"] if note else None
+        if "jot_notes" in row.keys():
+            meeting["user_jots"] = row["jot_notes"] or None
         meeting["action_items"] = [
             {"action": a["action"], "owner": a["owner"], "due": a["due"] or None, "status": a["status"]}
             for a in conn.execute("SELECT * FROM action_items WHERE meeting_id = ?", (meeting_id,))
