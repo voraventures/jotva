@@ -22,6 +22,9 @@ export const THEMES = ["default", "dark"];
 // (green seed outline stays identical across every theme).
 export const DARK_THEMES = new Set(["dark"]);
 
+// Settings key holding each AI provider's bring-your-own-key model.
+const MODEL_SETTING_KEYS = { anthropic: "claude_model", openai: "openai_model", google: "gemini_model" };
+
 export function StoreProvider({ children }) {
   const [ready, setReady] = useState(false);
   const [connectionFailed, setConnectionFailed] = useState(false);
@@ -98,6 +101,16 @@ export function StoreProvider({ children }) {
     );
     return id;
   }, []);
+
+  // A saved bring-your-own-key model vanished from the provider's list and notes
+  // switched to the recommended one. Tell the user once, then clear the flag.
+  const showModelNotice = useCallback((notice) => {
+    if (!notice?.to) return;
+    showToast(i18n.t("store.toast.modelSwitched", { from: notice.from, to: notice.to }), "info", { duration: 8000 });
+    const key = MODEL_SETTING_KEYS[notice.provider];
+    setSettings((s) => ({ ...s, model_notice: null, ...(key ? { [key]: notice.to } : {}) }));
+    api.delete("/api/ai/model-notice").catch(() => {});
+  }, [showToast]);
 
   const dismissToast = useCallback((id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -230,6 +243,7 @@ export function StoreProvider({ children }) {
         api.get("/api/settings").then((s) => {
           setSettings(s);
           if (s.default_template) setSelectedTemplate(s.default_template);
+          if (s.model_notice) showModelNotice(s.model_notice);
         }).catch(() => {}),
         refreshTemplates(),
         api.get("/api/settings/avatar").then((r) => setAvatar(r.avatar || null)).catch(() => {}),
@@ -290,6 +304,9 @@ export function StoreProvider({ children }) {
               i18n.t("store.notify.pulseTitle"),
               i18n.t("store.notify.pulseBody", { count: data.stale_count })
             );
+            break;
+          case "model_notice":
+            showModelNotice(data);
             break;
           case "conflicts_found":
             notify(

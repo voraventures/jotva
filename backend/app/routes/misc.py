@@ -15,7 +15,7 @@ from ..config import (
     is_safe_managed_path,
 )
 from ..db import get_db, get_setting, set_setting
-from ..services import exporter, license as license_svc, notes as notes_svc
+from ..services import exporter, license as license_svc, model_catalog, notes as notes_svc
 from ..services.integrations import SENDERS
 from ..services.keychain import KNOWN_SECRETS, delete_secret, get_secret, secret_status, set_secret
 from ..services.recorder import AUDIO_AVAILABLE
@@ -44,6 +44,13 @@ def _is_device(v):
     return v is None or (isinstance(v, int) and 0 <= v < 2048)
 
 
+_MODEL_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$")
+
+
+def _is_model_id(v):
+    return isinstance(v, str) and bool(_MODEL_ID_RE.match(v))
+
+
 def _is_word_list(v):
     return (
         isinstance(v, list)
@@ -60,10 +67,13 @@ SETTING_VALIDATORS = {
     "mic_device": _is_device,
     "system_device": _is_device,
     "whisper_model": lambda v: v in ("tiny", "base", "small", "medium", "large-v3"),
-    "claude_model": lambda v: isinstance(v, str) and v.startswith("claude-") and len(v) < 60,
+    # Any id from the provider's live model list; ids change without app releases,
+    # so only the shape is checked.
+    "claude_model": lambda v: _is_model_id(v),
     "ai_provider": lambda v: v in ("anthropic", "openai", "google"),
-    "openai_model": lambda v: isinstance(v, str) and len(v) < 60,
-    "gemini_model": lambda v: isinstance(v, str) and len(v) < 60,
+    "ai_quality": lambda v: v in ("standard", "pro"),
+    "openai_model": lambda v: _is_model_id(v),
+    "gemini_model": lambda v: _is_model_id(v),
     "apple_calendar_enabled": lambda v: isinstance(v, bool),
     "auto_launch": lambda v: isinstance(v, bool),
     "list_panel_width": lambda v: isinstance(v, (int, float)) and 240 <= v <= 480,
@@ -200,6 +210,10 @@ def get_settings():
         "whisper_model": get_setting("whisper_model", "base"),
         "claude_model": get_setting("claude_model", CLAUDE_MODEL),
         "ai_provider": get_setting("ai_provider", DEFAULT_AI_PROVIDER),
+        "ai_quality": "pro" if notes_svc.bundled_tier() == notes_svc.TIER_PRO else "standard",
+        # Set when a saved model disappeared and generation switched to the
+        # recommended one; the UI shows it once, then clears it.
+        "model_notice": get_setting("model_notice"),
         "openai_model": get_setting("openai_model", DEFAULT_OPENAI_MODEL),
         "gemini_model": get_setting("gemini_model", DEFAULT_GEMINI_MODEL),
         "apple_calendar_enabled": get_setting("apple_calendar_enabled", False),
@@ -216,28 +230,20 @@ def get_settings():
     }
 
 
-@router.get("/models")
-def list_models():
-    return {
-        "anthropic": [
-            # Haiku is the default: cheapest current model, accurate for notes
-            # extraction, and what the bundled-inference proxy serves. Sonnet 5 is
-            # also proxied; Opus requires the user's own API key.
-            {"id": "claude-haiku-4-5", "name": "Claude Haiku 4.5", "default": True},
-            {"id": "claude-sonnet-5", "name": "Claude Sonnet 5", "default": False},
-            {"id": "claude-opus-5", "name": "Claude Opus 5 (own key required)", "default": False},
-        ],
-        "openai": [
-            {"id": "gpt-4o", "name": "GPT-4o", "default": True},
-            {"id": "gpt-4o-mini", "name": "GPT-4o mini", "default": False},
-            {"id": "o3-mini", "name": "o3 mini", "default": False},
-        ],
-        "google": [
-            {"id": "gemini-2.0-flash", "name": "Gemini 2.0 Flash", "default": True},
-            {"id": "gemini-2.5-pro", "name": "Gemini 2.5 Pro", "default": False},
-            {"id": "gemini-1.5-pro", "name": "Gemini 1.5 Pro", "default": False},
-        ],
-    }
+@router.get("/ai/models")
+def ai_models(provider: str):
+    """Models the user's own key can use for a provider (live, cached ~6h), or a
+    built-in fallback list when there is no key or the provider can't be reached."""
+    if provider not in model_catalog.PROVIDERS:
+        raise HTTPException(status_code=422, detail="Unknown provider")
+    models, _live = model_catalog.list_models(provider)
+    return models
+
+
+@router.delete("/ai/model-notice")
+def dismiss_model_notice():
+    set_setting("model_notice", None)
+    return {"ok": True}
 
 
 @router.post("/settings")

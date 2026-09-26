@@ -93,6 +93,9 @@ const templateIcon = (t) => TEMPLATE_ICONS[t.id] || StarIcon;
 
 // The shared tail sections every template is composed with (mirrors the
 // backend's SHARED_TAIL) so chips reflect what's actually generated.
+// Keychain secret holding each AI provider's own API key.
+const AI_KEY_NAMES = { anthropic: "anthropic_api_key", openai: "openai_api_key", google: "google_api_key" };
+
 const TAIL_SECTIONS = ["Decisions Made", "Action Items", "Next Steps"];
 
 // Derive the section chips from a template's markdown body (## headers),
@@ -546,7 +549,6 @@ export default function Settings() {
       loadSecrets();
       api.get("/api/recording/devices").then(setDevices).catch(() => {});
       api.get("/api/settings/user-name").then((r) => setUserName(r.user_name || "")).catch(() => {});
-      api.get("/api/models").then(setModels).catch(() => {});
       refreshCalendar();
       loadMobileSessions();
       window.jotva
@@ -559,6 +561,18 @@ export default function Settings() {
       }
     }
   }, [settingsOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Bring-your-own-key model lists come live from the provider (cached ~6h by the
+  // backend); refetch when the provider or its key changes.
+  const aiProvider = settings.ai_provider || "anthropic";
+  const aiKeySet = !!secrets[AI_KEY_NAMES[aiProvider]];
+  useEffect(() => {
+    if (!settingsOpen || tab !== "ai") return;
+    api
+      .get(`/api/ai/models?provider=${encodeURIComponent(aiProvider)}`)
+      .then((list) => setModels((m) => ({ ...m, [aiProvider]: list })))
+      .catch(() => {});
+  }, [settingsOpen, tab, aiProvider, aiKeySet]);
 
   const toggleAutoLaunch = () => {
     const next = !autoLaunch;
@@ -943,11 +957,31 @@ export default function Settings() {
               { id: "openai", name: "OpenAI", keyName: "openai_api_key", keyLabel: "OpenAI API key", modelKey: "openai_model", link: "https://platform.openai.com/api-keys" },
               { id: "google", name: "Google", keyName: "google_api_key", keyLabel: "Google API key", modelKey: "gemini_model", link: "https://aistudio.google.com/apikey" },
             ];
-            const provider = settings.ai_provider || "anthropic";
+            const provider = aiProvider;
             const active = PROVIDERS.find((p) => p.id === provider) || PROVIDERS[0];
-            const providerModels = models[provider] || [];
-            const defaultModelId = providerModels.find((m) => m.default)?.id || "";
-            const selectedModel = settings[active.modelKey] || defaultModelId;
+            // No Anthropic key = Jotva's bundled AI: offer quality tiers, not model ids.
+            const bundled = provider === "anthropic" && !aiKeySet;
+            const isPro = license?.tier === "pro";
+            const providerModels = Array.isArray(models[provider]) ? models[provider] : [];
+            const saved = settings[active.modelKey];
+            // A saved alias may be listed only as its dated snapshot (claude-haiku-4-5-20251001).
+            const listed =
+              providerModels.find((m) => m.id === saved) ||
+              providerModels.find((m) => saved && m.id.startsWith(saved + "-")) ||
+              (!saved && providerModels.find((m) => m.recommended));
+            const selectedModel = listed ? listed.id : saved || "";
+            const modelOptions = providerModels.map((m) => ({
+              value: m.id,
+              label: m.recommended ? t('settings.ai.recommendedLabel', { name: m.name }) : m.name,
+            }));
+            if (saved && !listed && providerModels.length) modelOptions.push({ value: saved, label: saved });
+            const chooseQuality = (v) => {
+              if (v === "pro" && !isPro) {
+                showToast(t('settings.ai.qualityProOnly'));
+                return;
+              }
+              saveSetting("ai_quality", v);
+            };
             return (
               <>
                 <div className="set-section-label first">{t('settings.ai.title')}</div>
@@ -994,24 +1028,46 @@ export default function Settings() {
                   </button>
                 </div>
 
-                <div className="set-card stack">
-                  <div className="set-card-icon"><StarIcon size={14} /></div>
-                  <div className="set-card-main">
-                    <div className="set-card-name">{t('settings.ai.model')}</div>
-                    <div className="set-card-desc">{t('settings.ai.modelDesc', { name: active.name })}</div>
+                {bundled ? (
+                  <div className="set-card stack">
+                    <div className="set-card-icon"><StarIcon size={14} /></div>
+                    <div className="set-card-main">
+                      <div className="set-card-name">{t('settings.ai.quality')}</div>
+                      <div className="set-card-desc">{t('settings.ai.qualityDesc')}</div>
+                    </div>
+                    <div className="set-card-control">
+                      <Select
+                        value={isPro ? settings.ai_quality || "standard" : "standard"}
+                        onChange={chooseQuality}
+                        ariaLabel={t('settings.ai.quality')}
+                        options={[
+                          { value: "standard", label: t('settings.ai.qualityStandard') },
+                          { value: "pro", label: t('settings.ai.qualityPro') },
+                        ]}
+                      />
+                    </div>
                   </div>
-                  <div className="set-card-control">
-                    <Select
-                      value={selectedModel}
-                      onChange={(v) => saveSetting(active.modelKey, v)}
-                      options={
-                        providerModels.length === 0
-                          ? [{ value: "", label: t('settings.ai.loading') }]
-                          : providerModels.map((m) => ({ value: m.id, label: m.name }))
-                      }
-                    />
+                ) : (
+                  <div className="set-card stack">
+                    <div className="set-card-icon"><StarIcon size={14} /></div>
+                    <div className="set-card-main">
+                      <div className="set-card-name">{t('settings.ai.model')}</div>
+                      <div className="set-card-desc">{t('settings.ai.modelDesc', { name: active.name })}</div>
+                    </div>
+                    <div className="set-card-control">
+                      <Select
+                        value={selectedModel}
+                        onChange={(v) => saveSetting(active.modelKey, v)}
+                        ariaLabel={t('settings.ai.model')}
+                        options={
+                          modelOptions.length === 0
+                            ? [{ value: "", label: t('settings.ai.loading') }]
+                            : modelOptions
+                        }
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </>
             );
           })()}

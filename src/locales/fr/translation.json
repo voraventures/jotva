@@ -330,6 +330,12 @@
       "getKey": "Obtenez votre clé API {{name}} →",
       "model": "Modèle",
       "modelDesc": "Choisissez le modèle {{name}} utilisé pour rédiger vos notes.",
+      "quality": "Qualité des notes",
+      "qualityDesc": "Standard est rapide et précis pour les réunions du quotidien. Haute qualité utilise un modèle plus performant et est incluse avec Pro.",
+      "qualityStandard": "Standard",
+      "qualityPro": "Haute qualité (Pro)",
+      "qualityProOnly": "Les notes haute qualité sont incluses avec Jotva Pro.",
+      "recommendedLabel": "{{name}} (recommandé)",
       "loading": "Chargement…",
       "keyLabel": {
         "anthropic": "Clé API Anthropic (facultative — les notes IA sont incluses dans Jotva)",
@@ -661,7 +667,8 @@
       "processingFailed": "Échec du traitement",
       "recordingFailed": "Échec de l'enregistrement",
       "joinWatching": "Ouverture de l'appel — Jotva proposera d'enregistrer dès que la conversation commencera.",
-      "joinFailed": "Impossible d'ouvrir le lien de la réunion"
+      "joinFailed": "Impossible d'ouvrir le lien de la réunion",
+      "modelSwitched": "{{from}} n'est plus disponible, Jotva est donc passé à {{to}}. Vous pouvez le modifier dans Réglages → IA."
     },
     "notify": {
       "recordingStartedTitle": "Enregistrement démarré",

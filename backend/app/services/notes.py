@@ -10,8 +10,9 @@ from ..config import (
     NOTES_DIR,
     write_secure_text,
 )
-from ..db import get_setting
+from ..db import get_setting, set_setting
 from ..events import hub
+from . import model_catalog
 from .keychain import get_secret
 
 log = logging.getLogger("jotva.notes")
@@ -46,7 +47,36 @@ def get_client():
         return anthropic.Anthropic(api_key=api_key)
     from ..routes.workspace import _install_id
 
-    return anthropic.Anthropic(api_key=_install_id(), base_url=AI_PROXY_URL)
+    return _ProxyClient(anthropic.Anthropic(api_key=_install_id(), base_url=AI_PROXY_URL))
+
+
+class _ProxyMessages:
+    """messages.create for the bundled proxy. License servers that predate tier
+    aliases reject them with a 400, so retry once with the tier's concrete model."""
+
+    def __init__(self, messages):
+        self._messages = messages
+
+    def create(self, **kwargs):
+        import anthropic
+
+        try:
+            return self._messages.create(**kwargs)
+        except anthropic.BadRequestError:
+            concrete = _TIER_CONCRETE.get(kwargs.get("model"))
+            if not concrete:
+                raise
+            log.warning("Bundled AI rejected %s; retrying with %s", kwargs["model"], concrete)
+            return self._messages.create(**{**kwargs, "model": concrete})
+
+
+class _ProxyClient:
+    def __init__(self, client):
+        self._client = client
+        self.messages = _ProxyMessages(client.messages)
+
+    def __getattr__(self, name):
+        return getattr(self._client, name)
 
 
 def get_openai_client():
@@ -72,32 +102,67 @@ def get_gemini_client():
     return genai
 
 
-# Models the bundled-inference proxy will serve. A user's own key can use any model.
-_PROXY_MODELS = {"claude-haiku-4-5", "claude-sonnet-5"}
+# The bundled-inference proxy is asked for a quality TIER, never a concrete model:
+# the license server maps tiers to models (and fails over when one is retired),
+# so changing models needs no app release. A user's own key can use any model.
+TIER_STANDARD = "jotva-standard"
+TIER_PRO = "jotva-pro"
+# What each tier meant before the proxy understood tiers (see _ProxyMessages).
+_TIER_CONCRETE = {TIER_STANDARD: "claude-haiku-4-5", TIER_PRO: "claude-sonnet-5"}
 # Saved preferences from earlier releases, upgraded in place to the newer (and
 # cheaper) generation so nobody is stranded on a model we no longer list.
 _LEGACY_MODELS = {"claude-sonnet-4-6": "claude-sonnet-5", "claude-opus-4-8": "claude-opus-5"}
+# Before the ai_quality setting existed, bundled users picked a concrete model.
+_PRO_QUALITY_MODELS = {"claude-sonnet-5", "claude-sonnet-4-6"}
+
+_MODEL_SETTINGS = {
+    "anthropic": ("claude_model", CLAUDE_MODEL),
+    "openai": ("openai_model", DEFAULT_OPENAI_MODEL),
+    "google": ("gemini_model", DEFAULT_GEMINI_MODEL),
+}
 
 
-def _clamp_for_proxy(model: str) -> str:
-    model = _LEGACY_MODELS.get(model, model)
-    if get_secret("anthropic_api_key"):
-        return model
-    return model if model in _PROXY_MODELS else CLAUDE_MODEL
+def bundled_tier() -> str:
+    """Tier alias for the bundled proxy: pro only for Pro users who chose higher quality."""
+    from . import license as license_svc
+
+    quality = get_setting("ai_quality")
+    if quality not in ("standard", "pro"):
+        legacy = get_setting("claude_model", CLAUDE_MODEL)
+        quality = "pro" if legacy in _PRO_QUALITY_MODELS else "standard"
+    return TIER_PRO if quality == "pro" and license_svc.is_pro() else TIER_STANDARD
+
+
+def _own_key_model(provider: str) -> str:
+    """The user's saved model for a bring-your-own-key provider. If the provider's
+    live list says it no longer exists, switch to the recommended model and leave
+    a one-time notice for the UI."""
+    key, default = _MODEL_SETTINGS[provider]
+    saved = get_setting(key, default)
+    model = _LEGACY_MODELS.get(saved, saved) if provider == "anthropic" else saved
+    replacement = model_catalog.check_saved(provider, model)
+    if replacement:
+        log.warning("Saved %s model %s is no longer available; using %s", provider, model, replacement)
+        set_setting(key, replacement)
+        notice = {"provider": provider, "from": model, "to": replacement}
+        set_setting("model_notice", notice)
+        hub.emit("model_notice", notice)
+        return replacement
+    return model
 
 
 def current_model() -> str:
     # Anthropic model only — shared by ai.py / conflicts.py, which call the Anthropic
     # client. Per-provider note generation resolves its model via _model_for().
-    return _clamp_for_proxy(get_setting("claude_model", CLAUDE_MODEL))
+    if get_secret("anthropic_api_key"):
+        return _own_key_model("anthropic")
+    return bundled_tier()
 
 
 def _model_for(provider: str) -> str:
-    if provider == "openai":
-        return get_setting("openai_model", DEFAULT_OPENAI_MODEL)
-    if provider == "google":
-        return get_setting("gemini_model", DEFAULT_GEMINI_MODEL)
-    return _clamp_for_proxy(get_setting("claude_model", CLAUDE_MODEL))
+    if provider in ("openai", "google"):
+        return _own_key_model(provider)
+    return current_model()
 
 
 def generate_notes(

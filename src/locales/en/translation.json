@@ -330,6 +330,12 @@
       "getKey": "Get your {{name}} API key →",
       "model": "Model",
       "modelDesc": "Choose the {{name}} model used to write your notes.",
+      "quality": "Note quality",
+      "qualityDesc": "Standard is fast and accurate for everyday meetings. Higher quality uses a more capable model and is included with Pro.",
+      "qualityStandard": "Standard",
+      "qualityPro": "Higher quality (Pro)",
+      "qualityProOnly": "Higher-quality notes are included with Jotva Pro.",
+      "recommendedLabel": "{{name}} (recommended)",
       "loading": "Loading…",
       "keyLabel": {
         "anthropic": "Anthropic API key (optional — AI notes are included with Jotva)",
@@ -661,7 +667,8 @@
       "processingFailed": "Processing failed",
       "recordingFailed": "Recording failed",
       "joinWatching": "Opening the call — Jotva will offer to record once people start talking.",
-      "joinFailed": "Couldn't open the meeting link"
+      "joinFailed": "Couldn't open the meeting link",
+      "modelSwitched": "{{from}} is no longer available, so Jotva switched to {{to}}. You can change it in Settings → AI."
     },
     "notify": {
       "recordingStartedTitle": "Recording started",

@@ -330,6 +330,12 @@
       "getKey": "获取你的 {{name}} API 密钥 →",
       "model": "模型",
       "modelDesc": "选择用于撰写你笔记的 {{name}} 模型。",
+      "quality": "笔记质量",
+      "qualityDesc": "标准模式快速准确，适合日常会议。高质量模式使用更强大的模型，包含在 Pro 中。",
+      "qualityStandard": "标准",
+      "qualityPro": "高质量 (Pro)",
+      "qualityProOnly": "高质量笔记包含在 Jotva Pro 中。",
+      "recommendedLabel": "{{name}}（推荐）",
       "loading": "加载中…",
       "keyLabel": {
         "anthropic": "Anthropic API 密钥（可选 — AI 笔记已包含在 Jotva 中）",
@@ -660,7 +666,8 @@
       "processingFailed": "处理失败",
       "recordingFailed": "录制失败",
       "joinWatching": "正在打开通话 — 有人开始说话后 Jotva 会提示录制。",
-      "joinFailed": "无法打开会议链接"
+      "joinFailed": "无法打开会议链接",
+      "modelSwitched": "{{from}} 已不再可用，Jotva 已切换到 {{to}}。你可以在设置 → AI 中更改。"
     },
     "notify": {
       "recordingStartedTitle": "录制已开始",
