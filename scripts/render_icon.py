@@ -1,6 +1,6 @@
 """Render the Jotva app + tray icons.
 
-App icon: the vector mark (src/logoGeometry.js) on a dark macOS-grid squircle -> icon-1024.png,
+App icon: the vector mark (src/logoGeometry.js) on a light macOS-grid squircle -> icon-1024.png,
 icon.png (512), icon.ico, icon.icns. Tray: a monochrome template silhouette of the three
 sheets (with gaps so they read at 16px) -> tray-icon.png (16px) + tray-icon@2x.png (32px).
 
@@ -42,26 +42,18 @@ def app_icon():
                     .point(lambda v: int(v * 0.45)).filter(ImageFilter.GaussianBlur(40)))
     img.alpha_composite(shadow)
 
-    # Deep indigo body with a soft top-left lift.
-    grad = Image.new("RGBA", (S, S))
-    gd = ImageDraw.Draw(grad)
-    for y in range(S):
-        t = y / S
-        gd.line([(0, y), (S, y)], fill=(int(14 + 6 * (1 - t)), int(13 + 4 * (1 - t)), int(30 + 14 * (1 - t)), 255))
-    mask = rounded_mask((S, S), box, radius)
-    img.paste(grad, (0, 0), mask)
+    # Light white -> lavender body with a soft periwinkle glow behind the mark, so the
+    # tile reads at full size on both light and dark Docks.
+    t = np.linspace(0, 1, S)[:, None, None]
+    body_rgb = (np.array([255, 255, 255]) * (1 - t) + np.array([232, 230, 250]) * t) * np.ones((1, S, 1))
+    yy, xx = np.mgrid[0:S, 0:S]
+    glow = np.clip(1 - np.hypot(xx - S / 2, yy - S * .47) / (body * .55), 0, 1) ** 1.6 * .6
+    body_rgb = body_rgb * (1 - glow[..., None]) + np.array([200, 210, 255]) * glow[..., None]
+    fill = Image.fromarray(np.dstack([body_rgb, np.full((S, S), 255)]).astype(np.uint8))
+    img.paste(fill, (0, 0), rounded_mask((S, S), box, radius))
 
-    # Blue -> violet hairline border, like the concept's glowing frame.
-    border = Image.new("RGBA", (S, S), (0, 0, 0, 0))
-    bd = ImageDraw.Draw(border)
-    for x in range(S):
-        t = x / S
-        bd.line([(x, 0), (x, S)], fill=(int(70 + 90 * t), int(110 - 50 * t), 255, 255))
-    ring = ImageChops.subtract(mask, rounded_mask((S, S), (inset + 6, inset + 6, inset + body - 6, inset + body - 6), radius - 6))
-    border.putalpha(ring.point(lambda v: int(v * 0.55)))
-    img.alpha_composite(border)
-
-    img.alpha_composite(render_mark(S, target_w=int(body * 0.64), center=(S // 2, S // 2 + 20)))
+    img.alpha_composite(render_mark(S, target_w=int(body * 0.80), center=(S // 2, S // 2 + 10),
+                                 shadow=0.32, shadow_rgb=(40, 30, 120)))
 
     return img.resize((1024, 1024), Image.LANCZOS)
 
@@ -79,7 +71,7 @@ def _ramp(t, stops):
     return out
 
 
-def render_mark(S, target_w, center):
+def render_mark(S, target_w, center, shadow=0.75, shadow_rgb=(3, 2, 26)):
     """Rasterise the three sheets like the SVG: gradient fill, rim light, drop shadow, bloom."""
     polys = dict(zip(("front", "mid", "back"), (sample(d, 48) for d in sheet_paths())))
     allp = [p for v in polys.values() for p in v]
@@ -106,9 +98,9 @@ def render_mark(S, target_w, center):
 
     for name in ("back", "mid", "front"):
         m = masks[name]
-        sh = Image.new("RGBA", (S, S), (3, 2, 26, 0))
+        sh = Image.new("RGBA", (S, S), shadow_rgb + (0,))
         sh.putalpha(ImageChops.offset(m, int(-8 * k), int(10 * k)).filter(ImageFilter.GaussianBlur(16 * k))
-                    .point(lambda v: int(v * 0.75)))
+                    .point(lambda v: int(v * shadow)))
         out.alpha_composite(sh)
 
         bx0, by0, bx1, by1 = m.getbbox()
