@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStore } from "../store.jsx";
 import { DOCK_GROUPS } from "../navigation.js";
@@ -15,6 +15,26 @@ export default function Dock() {
   const triggers = useRef({});
   const focusLast = useRef(false);
   const label = (value) => t(`dock.labels.${value}`, { defaultValue: value });
+  const isSelected = (group) => settingsOpen ? group.items.some(i => i.section === settingsSection)
+    : (recording.active || captureOpen) ? group.id === "record" : group.items.some(i => i.nav === nav);
+
+  // Glass "lens" that glides to the hovered/focused button, resting on the selected one.
+  const [hover, setHover] = useState(null);
+  const [lens, setLens] = useState(null);
+  const lensTarget = hover || DOCK_GROUPS.find(isSelected)?.id;
+  useLayoutEffect(() => {
+    const measure = () => {
+      const button = triggers.current[lensTarget], bar = root.current;
+      if (!button || !bar) { setLens(null); return; }
+      const b = button.getBoundingClientRect(), n = bar.getBoundingClientRect();
+      setLens((prev) => ({ x: b.left - n.left, w: b.width, animate: !!prev }));
+    };
+    measure();
+    if (typeof ResizeObserver === "undefined") return undefined;
+    const observer = new ResizeObserver(measure);
+    observer.observe(root.current);
+    return () => observer.disconnect();
+  }, [lensTarget]);
 
   useEffect(() => {
     if (!open) return;
@@ -50,11 +70,14 @@ export default function Dock() {
   };
 
   return <nav className="bottom-dock" aria-label={t("dock.navigation", { defaultValue: "Main navigation" })} data-tour="nav-section" ref={root}
-    onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(null); }}>
+    onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) { setOpen(null); setHover(null); } }}
+    onPointerMove={(e) => root.current.style.setProperty("--mx", `${e.clientX - root.current.getBoundingClientRect().left}px`)}
+    onPointerLeave={() => setHover(null)}>
+    <span className={`dock-lens${lens?.animate ? " animate" : ""}`} aria-hidden="true"
+      style={lens ? { transform: `translateX(${lens.x}px)`, width: lens.w } : { opacity: 0 }} />
     {DOCK_GROUPS.map(group => {
       const Icon = ICONS[group.id];
-      const selected = settingsOpen ? group.items.some(i => i.section === settingsSection)
-        : (recording.active || captureOpen) ? group.id === "record" : group.items.some(i => i.nav === nav);
+      const selected = isSelected(group);
       return <div className="dock-group" key={group.id}>
         {open === group.id && <div className="dock-menu" id={`dock-menu-${group.id}`} role="menu" aria-labelledby={`dock-${group.id}`} ref={menu} onKeyDown={menuKey}>
           <div className="dock-menu-heading" aria-hidden="true">{label(group.label)}</div>
@@ -68,6 +91,7 @@ export default function Dock() {
         <button id={`dock-${group.id}`} className={`dock-button${selected ? " selected" : ""}${open === group.id ? " expanded" : ""}`}
           ref={el => { triggers.current[group.id] = el; }} aria-haspopup="menu" aria-expanded={open === group.id}
           aria-controls={open === group.id ? `dock-menu-${group.id}` : undefined} data-tour={group.id === "record" ? "record-btn" : undefined}
+          onPointerEnter={() => setHover(group.id)} onFocus={() => setHover(group.id)}
           onClick={() => { focusLast.current = false; setOpen(open === group.id ? null : group.id); }}
           onKeyDown={e => {
             if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); focusLast.current = e.key === "ArrowUp"; setOpen(group.id); }
