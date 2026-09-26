@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld("jotva", {
   speakerSetup: action => ['status', 'zoom', 'meet'].includes(action) ? ipcRenderer.invoke('jotva:speaker-setup', action) : Promise.resolve({error: 'invalid_action'}),
 
   getBackend: () => ipcRenderer.invoke("jotva:get-backend"),
+  mcpConfig: () => ipcRenderer.invoke("jotva:mcp-config"),
+  mcpInstallClaude: () => ipcRenderer.invoke("jotva:mcp-install-claude"),
 
   openExternal: (url) => {
     if (typeof url !== "string") return Promise.resolve({ ok: false });

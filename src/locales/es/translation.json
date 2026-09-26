@@ -524,6 +524,16 @@
       "setupNote": "Primero se necesita una configuración rápida y única: Jotva debe registrarse como una aplicación en tu cuenta de {{provider}} para que pueda solicitar acceso al calendario. La guía de abajo te lo explica en unos dos minutos; luego vuelve aquí y pulsa Conectar de nuevo.",
       "learnMore": "Más información",
       "close": "Cerrar"
+    },
+    "mcp": {
+      "title": "Asistentes de IA (MCP)",
+      "desc": "Permite que Claude, Cursor y otras apps MCP busquen y lean tus notas, transcripciones, tareas y decisiones. Solo lectura. El audio nunca se comparte.",
+      "privacy": "Cuando un asistente lee una reunión, ese texto se envía a su proveedor. Desactívalo cuando quieras; el cambio es inmediato.",
+      "addClaude": "Añadir a Claude Desktop",
+      "copy": "Copiar configuración para otras apps",
+      "added": "Añadido. Reinicia Claude Desktop para conectar Jotva.",
+      "addFailed": "No se pudo actualizar la configuración de Claude Desktop. Usa “Copiar configuración para otras apps”.",
+      "copied": "Configuración copiada. Pégala en los ajustes MCP de tu app."
     }
   },
   "notes": {

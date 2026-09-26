@@ -373,6 +373,38 @@ function registerShortcuts() {
 }
 
 // ---------- IPC (all inputs validated, C6) ----------
+// ---------- MCP: let AI assistants (Claude Desktop, Cursor, ...) read meetings ----------
+// The assistant launches the backend in `--mcp` mode itself; Jotva needn't be running.
+function mcpServerConfig() {
+  const { exe, useExe } = resolveBackend();
+  // No cwd in MCP client configs, so dev passes run.py by absolute path (Python then
+  // resolves the backend's imports from the script's own directory).
+  return { command: exe, args: useExe ? ["--mcp"] : [path.join(PROJECT_ROOT, "backend", "run.py"), "--mcp"] };
+}
+
+ipcMain.handle("jotva:mcp-config", () => mcpServerConfig());
+
+ipcMain.handle("jotva:mcp-install-claude", async () => {
+  const file = path.join(app.getPath("appData"), "Claude", "claude_desktop_config.json");
+  let config = {};
+  try {
+    config = JSON.parse(await fs.promises.readFile(file, "utf8"));
+  } catch (err) {
+    // Never overwrite a config we can't parse — the user may have hand-edited it.
+    if (err.code !== "ENOENT") return { error: "unreadable" };
+  }
+  if (!config || typeof config !== "object" || Array.isArray(config)) return { error: "unreadable" };
+  try {
+    if (fs.existsSync(file)) await fs.promises.copyFile(file, `${file}.jotva-backup`);
+    config.mcpServers = { ...(config.mcpServers || {}), jotva: mcpServerConfig() };
+    await fs.promises.mkdir(path.dirname(file), { recursive: true });
+    await fs.promises.writeFile(file, JSON.stringify(config, null, 2) + "\n");
+    return { ok: true };
+  } catch {
+    return { error: "write_failed" };
+  }
+});
+
 ipcMain.handle("jotva:get-backend", async () => {
   const info = await getBackendInfo();
   return { port: info.port, token: info.token };

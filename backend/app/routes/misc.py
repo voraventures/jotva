@@ -54,6 +54,7 @@ def _is_word_list(v):
 
 SETTING_VALIDATORS = {
     "speaker_identification": lambda v: isinstance(v, bool),
+    "mcp_enabled": lambda v: isinstance(v, bool),
     "theme": lambda v: v in ("default", "dark", "purple", "navy", "warm", "neon"),
     "recording_mode": lambda v: v in ("all", "confirm_30s", "manual", "off"),
     "mic_device": _is_device,
@@ -211,6 +212,7 @@ def get_settings():
         "default_template": get_setting("default_template", "builtin-default"),
         "font_size": get_setting("font_size", "medium"),
         "reduce_motion": get_setting("reduce_motion", False),
+        "mcp_enabled": get_setting("mcp_enabled", False),
     }
 
 

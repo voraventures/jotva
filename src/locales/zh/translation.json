@@ -524,6 +524,16 @@
       "setupNote": "首先需要一次快速的一次性设置：必须将 Jotva 注册为你 {{provider}} 账户中的一个应用，这样它才被允许请求日历访问权限。下面的指南将引导你完成，大约需要两分钟 — 然后回到这里再次点击连接。",
       "learnMore": "了解更多",
       "close": "关闭"
+    },
+    "mcp": {
+      "title": "AI 助手 (MCP)",
+      "desc": "允许 Claude、Cursor 等 MCP 应用搜索和读取你的会议笔记、转录、待办和决定。只读，音频永不共享。",
+      "privacy": "助手读取会议时，相关文本会发送给该助手的服务商。可随时关闭，立即生效。",
+      "addClaude": "添加到 Claude Desktop",
+      "copy": "复制其他应用的配置",
+      "added": "已添加。重启 Claude Desktop 即可连接 Jotva。",
+      "addFailed": "无法更新 Claude Desktop 的设置，请改用“复制其他应用的配置”。",
+      "copied": "配置已复制，请粘贴到应用的 MCP 设置中。"
     }
   },
   "notes": {

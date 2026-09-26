@@ -9,6 +9,13 @@ import socket
 import sys
 import atexit
 
+# `--mcp`: serve the read-only MCP server over stdio for AI assistants. Stdout carries the
+# protocol, so this must run before anything else can print.
+if __name__ == '__main__' and len(sys.argv) > 1 and sys.argv[1] == '--mcp':
+    from app.mcp_server import main as mcp_main
+    mcp_main()
+    sys.exit(0)
+
 # Handle a disposable analysis worker before importing the full application.
 if __name__ == '__main__' and len(sys.argv) > 1 and sys.argv[1] == '--speaker-worker':
     from app.services.speaker_worker import main as speaker_main

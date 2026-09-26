@@ -524,6 +524,16 @@
       "setupNote": "One quick one-time setup is needed first: Jotva has to be registered as an app in your {{provider}} account so it's allowed to ask for calendar access. The guide below walks you through it in about two minutes — then come back here and hit Connect again.",
       "learnMore": "Learn more",
       "close": "Close"
+    },
+    "mcp": {
+      "title": "AI assistants (MCP)",
+      "desc": "Let Claude, Cursor and other MCP apps search and read your meeting notes, transcripts, action items and decisions. Read-only. Audio is never shared.",
+      "privacy": "When an assistant reads a meeting, that text is sent to the assistant's provider. Turn this off any time; it takes effect immediately.",
+      "addClaude": "Add to Claude Desktop",
+      "copy": "Copy setup for other apps",
+      "added": "Added. Restart Claude Desktop to connect Jotva.",
+      "addFailed": "Couldn't update Claude Desktop's settings. Use “Copy setup for other apps” instead.",
+      "copied": "Setup copied. Paste it into your app's MCP settings."
     }
   },
   "notes": {

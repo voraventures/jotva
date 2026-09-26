@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import i18n, { setLanguage } from "../i18n.js";
 import { api, openExternal } from "../api.js";
 import { THEMES, useStore } from "../store.jsx";
-import { UsersIcon, XIcon } from "./icons.jsx";
+import { SparkIcon, UsersIcon, XIcon } from "./icons.jsx";
 import { Select } from "./ui.jsx";
 import { AppleCalendarLogo, BRAND_LOGOS, GoogleCalendarLogo, OutlookCalendarLogo } from "./brandLogos.jsx";
 import { imageFileToAvatar, initialsOf } from "../avatar.js";
@@ -263,6 +263,47 @@ function ToggleSwitch({ checked, onChange, label }) {
     >
       <span className="set-toggle-thumb" />
     </button>
+  );
+}
+
+// Opt-in MCP access: AI assistants launch Jotva's read-only MCP server themselves.
+function McpAccessCard({ enabled, onToggle, showToast }) {
+  const { t } = useTranslation();
+  const bridge = window.jotva;
+  const [busy, setBusy] = useState(false);
+  const addToClaude = async () => {
+    setBusy(true);
+    try {
+      const r = await bridge.mcpInstallClaude();
+      if (r?.ok) showToast(t("settings.mcp.added"));
+      else showToast(t("settings.mcp.addFailed"), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+  const copySetup = async () => {
+    const server = await bridge.mcpConfig();
+    await navigator.clipboard.writeText(JSON.stringify({ mcpServers: { jotva: server } }, null, 2));
+    showToast(t("settings.mcp.copied"));
+  };
+  return (
+    <div className="set-card mcp-card">
+      <div className="set-card-icon"><SparkIcon size={17} /></div>
+      <div className="set-card-main">
+        <div className="set-card-name">{t("settings.mcp.title")}</div>
+        <div className="set-card-desc">{t("settings.mcp.desc")}</div>
+      </div>
+      <div className="set-card-control">
+        <ToggleSwitch checked={enabled} onChange={onToggle} label={t("settings.mcp.title")} />
+      </div>
+      {enabled && (
+        <div className="mcp-actions">
+          {bridge?.mcpInstallClaude && <button className="btn" disabled={busy} onClick={addToClaude}>{t("settings.mcp.addClaude")}</button>}
+          {bridge?.mcpConfig && <button className="btn secondary" onClick={copySetup}>{t("settings.mcp.copy")}</button>}
+        </div>
+      )}
+      <p className="mcp-note">{t("settings.mcp.privacy")}</p>
+    </div>
   );
 }
 
@@ -1121,6 +1162,10 @@ export default function Settings() {
             </>
           )}
 
+          {tab === "integrations" && (
+            <McpAccessCard enabled={settings.mcp_enabled === true} showToast={showToast}
+              onToggle={(on) => saveSetting("mcp_enabled", on)} />
+          )}
           {tab === "integrations" && (() => {
             const igConnected = (ig) =>
               ig.oauth ? !!calendarStatus.google : ig.fields.every((f) => secrets[f]);
