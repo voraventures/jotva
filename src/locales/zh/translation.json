@@ -264,7 +264,13 @@
       "yourNameDesc": "用于在会议中识别你的行动项",
       "namePlaceholder": "例如：李雷",
       "nameSaved": "名字已保存",
-      "language": "语言"
+      "language": "语言",
+      "photoUpload": "上传照片",
+      "photoChange": "更换照片",
+      "photoRemove": "移除",
+      "photoSaved": "照片已更新",
+      "photoRemoved": "照片已移除",
+      "photoInvalid": "请选择小于 15 MB 的 JPG、PNG、WebP 或 GIF 图片。"
     },
     "appearance": {
       "label": "外观",

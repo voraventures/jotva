@@ -264,7 +264,13 @@
       "yourNameDesc": "회의에서 내 할 일 항목을 식별하는 데 사용됩니다",
       "namePlaceholder": "예: 홍길동",
       "nameSaved": "이름 저장됨",
-      "language": "언어"
+      "language": "언어",
+      "photoUpload": "사진 업로드",
+      "photoChange": "사진 변경",
+      "photoRemove": "삭제",
+      "photoSaved": "사진이 업데이트됐어요",
+      "photoRemoved": "사진이 삭제됐어요",
+      "photoInvalid": "15MB 이하의 JPG, PNG, WebP 또는 GIF 이미지를 선택하세요."
     },
     "appearance": {
       "label": "화면",

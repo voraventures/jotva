@@ -245,7 +245,9 @@ function applyContentSecurityPolicy() {
     "connect-src 'self' app: http://127.0.0.1:* ws://127.0.0.1:* http://localhost:* ws://localhost:* https://license.jotva.com; " +
     // Audio playback from the local backend — must match index.html's meta CSP,
     // since the effective policy is the stricter of the two.
-    "media-src 'self' http://127.0.0.1:* http://localhost:*";
+    "media-src 'self' http://127.0.0.1:* http://localhost:*; " +
+    // Profile photo is stored as a small re-encoded data: URL (images can't run script).
+    "img-src 'self' app: data:";
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: {

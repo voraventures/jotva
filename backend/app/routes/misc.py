@@ -1,4 +1,8 @@
 """License, export, integrations, settings, secrets."""
+import base64
+import binascii
+import re
+
 import httpx
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -264,6 +268,46 @@ def set_user_name(body: UserNameBody):
         raise HTTPException(status_code=422, detail="Name must be 1-100 characters")
     set_setting("user_name", name)
     return {"ok": True, "user_name": name}
+
+
+# ---------- profile photo ----------
+# The renderer crops/resizes the photo to 256px and re-encodes it (which also drops
+# EXIF/GPS metadata); we still verify it really is a small JPEG/PNG/WebP before storing.
+_AVATAR_RE = re.compile(r"^data:image/(jpeg|png|webp);base64,([A-Za-z0-9+/]+={0,2})$")
+_AVATAR_MAGIC = {"jpeg": b"\xff\xd8\xff", "png": b"\x89PNG\r\n\x1a\n", "webp": b"RIFF"}
+AVATAR_MAX_BYTES = 256 * 1024
+
+
+class AvatarBody(BaseModel):
+    image: str = Field(max_length=360_000)
+
+
+@router.get("/settings/avatar")
+def get_avatar():
+    return {"avatar": get_setting("user_avatar")}
+
+
+@router.post("/settings/avatar")
+def set_avatar(body: AvatarBody):
+    match = _AVATAR_RE.match(body.image)
+    if not match:
+        raise HTTPException(status_code=422, detail="Photo must be a JPEG, PNG or WebP image")
+    kind, payload = match.groups()
+    try:
+        raw = base64.b64decode(payload, validate=True)
+    except (binascii.Error, ValueError):
+        raise HTTPException(status_code=422, detail="Photo data is corrupted")
+    valid = raw.startswith(_AVATAR_MAGIC[kind]) and (kind != "webp" or raw[8:12] == b"WEBP")
+    if not valid or len(raw) > AVATAR_MAX_BYTES:
+        raise HTTPException(status_code=422, detail="Photo is not a valid image or is too large")
+    set_setting("user_avatar", body.image)
+    return {"ok": True}
+
+
+@router.delete("/settings/avatar")
+def delete_avatar():
+    set_setting("user_avatar", None)
+    return {"ok": True}
 
 
 # ---------- templates ----------

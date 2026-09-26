@@ -36,6 +36,7 @@ export function StoreProvider({ children }) {
   const [selectedId, setSelectedId] = useState(null);
   const [meetingDetail, setMeetingDetail] = useState(null);
   const [license, setLicense] = useState(null);
+  const [avatar, setAvatar] = useState(null); // profile photo data: URL, or null
   const [myWork, setMyWork] = useState(null);
   const [recording, setRecording] = useState({ active: false, meetingId: null });
   const [recordingLevel, setRecordingLevel] = useState(0);
@@ -231,6 +232,7 @@ export function StoreProvider({ children }) {
           if (s.default_template) setSelectedTemplate(s.default_template);
         }).catch(() => {}),
         refreshTemplates(),
+        api.get("/api/settings/avatar").then((r) => setAvatar(r.avatar || null)).catch(() => {}),
         api
           .get("/api/recording/status")
           .then((s) => setRecording({ active: s.recording, meetingId: s.meeting_id }))
@@ -593,6 +595,8 @@ export function StoreProvider({ children }) {
     health,
     theme,
     setTheme,
+    avatar,
+    setAvatar,
     nav,
     setNav,
     meetings,

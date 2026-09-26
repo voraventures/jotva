@@ -6,7 +6,7 @@ import { CalendarIcon, ChevronDownIcon } from "./icons.jsx";
 
 export default function AppHeader() {
   const { t } = useTranslation();
-  const { upcoming, activeCall, recording, startRecording, dismissActiveCall, openSettings, license } = useStore();
+  const { upcoming, activeCall, recording, startRecording, dismissActiveCall, openSettings, license, avatar } = useStore();
   const logo = useLogo();
   const [name, setName] = useState("");
   const [now, setNow] = useState(Date.now());
@@ -31,7 +31,7 @@ export default function AppHeader() {
       </span> : null}
     </div>
     <button className="header-account" onClick={() => openSettings("license")} aria-label={t("dock.account", { defaultValue: "Account and subscription" })}>
-      <span className="avatar">{initials}</span><span>{license?.tier === "pro" ? "Pro" : t("sidebar.account.upgrade")}</span><ChevronDownIcon size={14} aria-hidden="true" />
+      <span className="avatar">{avatar ? <img src={avatar} alt="" /> : initials}</span><span>{license?.tier === "pro" ? "Pro" : t("sidebar.account.upgrade")}</span><ChevronDownIcon size={14} aria-hidden="true" />
     </button>
   </header>;
 }

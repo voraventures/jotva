@@ -264,7 +264,13 @@
       "yourNameDesc": "Se usa para identificar tus elementos de acción en las reuniones",
       "namePlaceholder": "p. ej. Sir David Attenborough",
       "nameSaved": "Nombre guardado",
-      "language": "Idioma"
+      "language": "Idioma",
+      "photoUpload": "Subir foto",
+      "photoChange": "Cambiar foto",
+      "photoRemove": "Quitar",
+      "photoSaved": "Foto actualizada",
+      "photoRemoved": "Foto eliminada",
+      "photoInvalid": "Elige una imagen JPG, PNG, WebP o GIF de menos de 15 MB."
     },
     "appearance": {
       "label": "Apariencia",

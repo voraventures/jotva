@@ -9,6 +9,7 @@ import { THEMES, useStore } from "../store.jsx";
 import { UsersIcon, XIcon } from "./icons.jsx";
 import { Select } from "./ui.jsx";
 import { AppleCalendarLogo, BRAND_LOGOS, GoogleCalendarLogo, OutlookCalendarLogo } from "./brandLogos.jsx";
+import { imageFileToAvatar, initialsOf } from "../avatar.js";
 
 // Template glyphs (14px, stroke-based) — scoped to Settings only.
 const TI = ({ size = 14, children }) => (
@@ -431,6 +432,8 @@ export default function Settings() {
     openSettings,
     theme,
     setTheme,
+    avatar,
+    setAvatar,
     settings,
     setSettings,
     calendarStatus,
@@ -455,6 +458,27 @@ export default function Settings() {
   const [portalLoading, setPortalLoading] = useState(false);
   const [autoLaunch, setAutoLaunch] = useState(false);
   const [userName, setUserName] = useState("");
+  const photoInput = useRef(null);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const choosePhoto = async (file) => {
+    if (!file) return;
+    setPhotoBusy(true);
+    try {
+      const image = await imageFileToAvatar(file);
+      await api.post("/api/settings/avatar", { image });
+      setAvatar(image);
+      showToast(t("settings.general.photoSaved"));
+    } catch (e) {
+      showToast(e.message === "invalid-image" ? t("settings.general.photoInvalid") : e.message, "error");
+    } finally {
+      setPhotoBusy(false);
+      if (photoInput.current) photoInput.current.value = "";
+    }
+  };
+  const removePhoto = () =>
+    api.delete("/api/settings/avatar")
+      .then(() => { setAvatar(null); showToast(t("settings.general.photoRemoved")); })
+      .catch((e) => showToast(e.message, "error"));
   const [models, setModels] = useState({});
   const [editingTemplate, setEditingTemplate] = useState(null); // {id?,name,description,body}
   const [vaultPassword, setVaultPassword] = useState("");
@@ -585,11 +609,22 @@ export default function Settings() {
           {tab === "general" && (
             <>
               <div className="set-section-label first">{t('settings.general.label')}</div>
-              <div className="set-card stack">
-                <div className="set-card-icon"><UsersIcon size={14} /></div>
+              <div className="set-card stack profile-card">
+                <button type="button" className="profile-avatar" onClick={() => photoInput.current?.click()}
+                  disabled={photoBusy} aria-label={t(avatar ? 'settings.general.photoChange' : 'settings.general.photoUpload')}>
+                  {avatar ? <img src={avatar} alt="" /> : initialsOf(userName) || <UsersIcon size={18} />}
+                </button>
                 <div className="set-card-main">
                   <div className="set-card-name">{t('settings.general.yourName')}</div>
                   <div className="set-card-desc">{t('settings.general.yourNameDesc')}</div>
+                  <div className="profile-actions">
+                    <button type="button" className="btn secondary compact" disabled={photoBusy} onClick={() => photoInput.current?.click()}>
+                      {t(avatar ? 'settings.general.photoChange' : 'settings.general.photoUpload')}
+                    </button>
+                    {avatar && <button type="button" className="btn secondary compact" onClick={removePhoto}>{t('settings.general.photoRemove')}</button>}
+                    <input ref={photoInput} type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden
+                      onChange={(e) => choosePhoto(e.target.files?.[0])} />
+                  </div>
                 </div>
                 <div className="set-card-control">
                   <input
