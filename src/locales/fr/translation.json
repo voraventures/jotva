@@ -729,7 +729,7 @@
       "upcoming": "À venir"
     },
     "status": {
-      "growing": "En pleine croissance…",
+      "growing": "Prise de notes…",
       "failed": "Échec — ouvrir pour les détails"
     },
     "scopeToday": "Aujourd'hui",
@@ -852,7 +852,7 @@
     "recordNow": "Enregistrer"
   },
   "processing": {
-    "growing": "Votre réunion grandit…",
+    "growing": "Prise de notes de votre réunion…",
     "takesAbout": "Cela prend environ 30 secondes.",
     "aria": "Traitement"
   },
@@ -884,7 +884,7 @@
   },
   "transcript": {
     "emptyHead": "Pas encore de transcription",
-    "emptySub": "La transcription apparaîtra ici une fois la réunion prête.",
+    "emptySub": "La transcription apparaîtra ici une fois vos notes prêtes.",
     "play": "Lecture",
     "pause": "Pause",
     "scrub": "Avancer",

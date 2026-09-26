@@ -729,7 +729,7 @@
       "upcoming": "Upcoming"
     },
     "status": {
-      "growing": "Growing…",
+      "growing": "Jotting…",
       "failed": "Failed — open for details"
     },
     "scopeToday": "Today",
@@ -852,7 +852,7 @@
     "recordNow": "Record now"
   },
   "processing": {
-    "growing": "Growing your meeting…",
+    "growing": "Jotting down your meeting…",
     "takesAbout": "This usually takes about 30 seconds.",
     "aria": "Processing"
   },
@@ -884,7 +884,7 @@
   },
   "transcript": {
     "emptyHead": "No transcript yet",
-    "emptySub": "The transcript will appear here once the meeting has grown.",
+    "emptySub": "The transcript will appear here once your notes are ready.",
     "play": "Play",
     "pause": "Pause",
     "scrub": "Seek",

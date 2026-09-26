@@ -729,7 +729,7 @@
       "upcoming": "Em breve"
     },
     "status": {
-      "growing": "Crescendo…",
+      "growing": "Anotando…",
       "failed": "Falhou — abra para detalhes"
     },
     "scopeToday": "Hoje",
@@ -852,7 +852,7 @@
     "recordNow": "Gravar agora"
   },
   "processing": {
-    "growing": "Sua reunião está crescendo…",
+    "growing": "Anotando sua reunião…",
     "takesAbout": "Isso costuma levar cerca de 30 segundos.",
     "aria": "Processando"
   },
@@ -884,7 +884,7 @@
   },
   "transcript": {
     "emptyHead": "Ainda não há transcrição",
-    "emptySub": "A transcrição aparecerá aqui quando a reunião estiver pronta.",
+    "emptySub": "A transcrição aparecerá aqui quando suas notas estiverem prontas.",
     "play": "Reproduzir",
     "pause": "Pausar",
     "scrub": "Avançar",

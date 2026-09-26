@@ -728,7 +728,7 @@
       "upcoming": "예정됨"
     },
     "status": {
-      "growing": "생성 중…",
+      "growing": "정리 중…",
       "failed": "실패 — 자세히 보려면 열기"
     },
     "scopeToday": "오늘",
@@ -848,7 +848,7 @@
     "recordNow": "지금 녹음"
   },
   "processing": {
-    "growing": "회의가 자라나고 있어요…",
+    "growing": "회의 내용을 정리하고 있어요…",
     "takesAbout": "보통 30초 정도 걸립니다.",
     "aria": "처리 중"
   },
@@ -880,7 +880,7 @@
   },
   "transcript": {
     "emptyHead": "아직 전사가 없어요",
-    "emptySub": "회의 처리가 끝나면 전사가 여기에 표시됩니다.",
+    "emptySub": "노트가 준비되면 전사가 여기에 표시됩니다.",
     "play": "재생",
     "pause": "일시정지",
     "scrub": "탐색",
