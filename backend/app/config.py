@@ -40,8 +40,11 @@ DEFAULT_GEMINI_MODEL = os.environ.get("JOTVA_GEMINI_MODEL", "gemini-2.0-flash")
 # speed cost (~9s extra per 3 min of audio on Apple Silicon). A user's explicit
 # whisper_model setting still overrides this.
 WHISPER_MODEL = os.environ.get("JOTVA_WHISPER_MODEL", "small")
+# Until getjotva.com is live, the license server answers on its original domain.
+# Everything that talks to it (AI proxy, checkout, portal, Google OAuth broker)
+# derives from this one value.
 LICENSE_SERVER_URL = os.environ.get(
-    "JOTVA_LICENSE_SERVER", "https://license.jotva.com/api"
+    "JOTVA_LICENSE_SERVER", "https://license.aguacatenotes.com/api"
 )
 # Bundled-AI proxy base URL. The Anthropic SDK appends /v1/messages; the proxy
 # authenticates by install_id and holds the real API key server-side.

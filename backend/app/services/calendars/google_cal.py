@@ -13,7 +13,7 @@ import urllib.parse
 
 import httpx
 
-from ...config import GOOGLE_CLIENT_ID, load_oauth_credentials
+from ...config import GOOGLE_CLIENT_ID, LICENSE_SERVER_URL, load_oauth_credentials
 
 log = logging.getLogger("jotva.google")
 
@@ -22,7 +22,7 @@ AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 # Token exchange/refresh are brokered server-side so the client_secret never
 # lives on the device — the broker holds it. See vora-jotva-license.
-OAUTH_BROKER = "https://license.jotva.com/api/oauth/google"
+OAUTH_BROKER = f"{LICENSE_SERVER_URL}/oauth/google"
 
 # CSRF state tokens with TTL (C9)
 _pending: dict[str, dict] = {}

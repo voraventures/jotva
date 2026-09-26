@@ -12,6 +12,7 @@ from ..config import (
     DEFAULT_AI_PROVIDER,
     DEFAULT_GEMINI_MODEL,
     DEFAULT_OPENAI_MODEL,
+    LICENSE_SERVER_URL,
     is_safe_managed_path,
 )
 from ..db import get_db, get_setting, set_setting
@@ -121,7 +122,7 @@ def license_portal_url():
 
     def _post(token):
         return httpx.post(
-            "https://license.jotva.com/api/portal",
+            f"{LICENSE_SERVER_URL}/portal",
             json={"install_id": install, "portal_token": token},
             timeout=10,
         )

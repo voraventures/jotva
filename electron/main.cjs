@@ -242,7 +242,7 @@ function applyContentSecurityPolicy() {
     "default-src 'self'; " +
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' app:; " +
     "style-src 'self' 'unsafe-inline' app:; " +
-    "connect-src 'self' app: http://127.0.0.1:* ws://127.0.0.1:* http://localhost:* ws://localhost:* https://license.jotva.com; " +
+    "connect-src 'self' app: http://127.0.0.1:* ws://127.0.0.1:* http://localhost:* ws://localhost:*; " +
     // Audio playback from the local backend — must match index.html's meta CSP,
     // since the effective policy is the stricter of the two.
     "media-src 'self' http://127.0.0.1:* http://localhost:*; " +
