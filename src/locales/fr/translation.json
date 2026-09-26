@@ -271,7 +271,7 @@
       "theme": "Thème",
       "themeDesc": "Définit la palette de couleurs dans toute l'application.",
       "themes": {
-        "default": "Par défaut",
+        "default": "Clair",
         "dark": "Sombre"
       },
       "fontSize": "Taille du texte",
@@ -789,8 +789,8 @@
       }
     },
     "titlePrefix": "Chaque conversation",
-    "titleEmphasis": "grandit",
-    "titleSuffix": "en connaissance."
+    "titleEmphasis": "devient",
+    "titleSuffix": "connaissance."
   },
   "tour": {
     "stepIndicator": "ÉTAPE {{step}} SUR {{total}}",

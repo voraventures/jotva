@@ -10,6 +10,7 @@ import "../../src/fonts.css";
 import "../../src/styles.css";
 import "../../src/screen-type.css";
 import "../../src/green-glass.css";
+import "../../src/jotva-theme.css";
 
 if (!import.meta.env.DEV) throw new Error("Design fixtures are development-only");
 // Each gallery frame gets its own in-memory preferences; no cross-frame races

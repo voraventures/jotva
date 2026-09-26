@@ -7,6 +7,7 @@ import "./fonts.css";
 import "./styles.css";
 import "./screen-type.css";
 import "./green-glass.css";
+import "./jotva-theme.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>

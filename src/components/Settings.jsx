@@ -266,8 +266,8 @@ function ToggleSwitch({ checked, onChange, label }) {
 }
 
 const THEME_PREVIEW = {
-  default: ["#f3f6f5", "#176b46", "#18241f"],
-  dark: ["#111916", "#91d5ac", "#edf5ef"],
+  default: ["#f5f5fb", "#6b58e6", "#16152a"],
+  dark: ["#07070d", "#8b7bff", "#eeeef6"],
 };
 
 const SECRET_FIELDS = [

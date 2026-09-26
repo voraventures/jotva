@@ -271,7 +271,7 @@
       "theme": "Tema",
       "themeDesc": "Define a paleta de cores em todo o aplicativo.",
       "themes": {
-        "default": "Padrão",
+        "default": "Claro",
         "dark": "Escuro"
       },
       "fontSize": "Tamanho da fonte",
@@ -789,8 +789,8 @@
       }
     },
     "titlePrefix": "Cada conversa",
-    "titleEmphasis": "cresce",
-    "titleSuffix": "e vira conhecimento."
+    "titleEmphasis": "vira",
+    "titleSuffix": "conhecimento."
   },
   "tour": {
     "stepIndicator": "PASSO {{step}} DE {{total}}",

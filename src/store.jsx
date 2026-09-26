@@ -29,7 +29,7 @@ export function StoreProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
     // migrate stored values for removed themes (sky/warm etc.) to default
     const stored = localStorage.getItem("jotva_theme");
-    return THEMES.includes(stored) ? stored : "default";
+    return THEMES.includes(stored) ? stored : "dark";
   });
   const [nav, setNav] = useState("meetings"); // meetings|actions|decisions|topics|people
   const [meetings, setMeetings] = useState([]);

@@ -271,7 +271,7 @@
       "theme": "主题",
       "themeDesc": "设置整个应用的配色方案。",
       "themes": {
-        "default": "默认",
+        "default": "浅色",
         "dark": "深色"
       },
       "fontSize": "字体大小",
@@ -785,9 +785,9 @@
         "desc": "转写 100% 在设备上运行"
       }
     },
-    "titlePrefix": "每一次对话都会",
-    "titleEmphasis": "成长",
-    "titleSuffix": "为知识。"
+    "titlePrefix": "每一次对话都",
+    "titleEmphasis": "化为",
+    "titleSuffix": "知识。"
   },
   "tour": {
     "stepIndicator": "第 {{step}} 步，共 {{total}} 步",

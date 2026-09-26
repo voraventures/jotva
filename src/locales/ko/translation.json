@@ -271,7 +271,7 @@
       "theme": "테마",
       "themeDesc": "앱 전체의 색상 팔레트를 설정합니다.",
       "themes": {
-        "default": "기본",
+        "default": "라이트",
         "dark": "다크"
       },
       "fontSize": "글자 크기",
@@ -785,8 +785,8 @@
         "desc": "전사가 100% 기기에서 실행됩니다"
       }
     },
-    "titlePrefix": "모든 대화는",
-    "titleEmphasis": "성장하여",
+    "titlePrefix": "모든 대화가",
+    "titleEmphasis": "그대로",
     "titleSuffix": "지식이 돼요."
   },
   "tour": {

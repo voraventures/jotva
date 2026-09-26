@@ -271,7 +271,7 @@
       "theme": "Theme",
       "themeDesc": "Sets the color palette across the whole app.",
       "themes": {
-        "default": "Default",
+        "default": "Light",
         "dark": "Dark"
       },
       "fontSize": "Font size",
@@ -789,8 +789,8 @@
       }
     },
     "titlePrefix": "Every conversation",
-    "titleEmphasis": "grows",
-    "titleSuffix": "into knowledge."
+    "titleEmphasis": "becomes",
+    "titleSuffix": "knowledge."
   },
   "tour": {
     "stepIndicator": "STEP {{step}} OF {{total}}",
