@@ -22,7 +22,7 @@
     --warning: #f5b45a; --warning-bg: rgba(245, 180, 90, .1);
     --danger: #ff7b86; --danger-strong: #ff5f7a; --danger-bg: rgba(255, 95, 122, .12); --danger-border: rgba(255, 95, 122, .3);
     --heads-up-bg: rgba(245, 180, 90, .07); --heads-up-border: rgba(245, 180, 90, .22); --heads-up-icon: #f5b45a;
-    --glass-solid: #15151f; --glass: rgba(22, 22, 34, .72); --glass-line: rgba(255, 255, 255, .13); --menu-glass: rgba(20, 20, 30, .94);
+    --glass-solid: #15151f; --glass: rgba(22, 22, 34, .72); --glass-line: rgba(255, 255, 255, .13); --menu-glass: rgba(20, 20, 30, .98);
     --panel-glass: rgba(255, 255, 255, .045);
     --dock-shadow: 0 18px 50px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .07);
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4); --shadow-md: 0 8px 24px rgba(0, 0, 0, .35); --shadow-lg: 0 24px 70px rgba(0, 0, 0, .6);
@@ -249,4 +249,38 @@
   }
   :root[data-theme="default"] .glass-lens::after { opacity: .35; }
   :root[data-theme="default"] .meeting-card-list .glass-lens { box-shadow: inset 0 1px 0 #ffffff, 0 4px 14px rgba(40, 30, 120, .10); }
+}
+
+/* ---- glass edge on floating surfaces: soft top light band + fine top highlight ----
+   Added as a background layer (not an overlay) so content is never tinted or blocked. */
+@media screen {
+  :root[data-theme="dark"] {
+    --gloss: linear-gradient(180deg, rgba(255, 255, 255, .08) 0%, rgba(255, 255, 255, .025) 26%, rgba(255, 255, 255, 0) 48%);
+    --gloss-edge: inset 0 1px 0 rgba(255, 255, 255, .16), inset 0 0 0 1px rgba(255, 255, 255, .03);
+  }
+  :root, :root[data-theme="default"] {
+    --gloss: linear-gradient(180deg, rgba(255, 255, 255, .95) 0%, rgba(255, 255, 255, 0) 45%);
+    --gloss-edge: inset 0 1px 0 #ffffff;
+  }
+  .dock-menu, .meeting-options-menu, .card-menu-dropdown, .ws-more-menu, .select-menu,
+  .settings-panel, .capture-card, .modal {
+    background-image: var(--gloss);
+    box-shadow: var(--gloss-edge), var(--shadow-lg);
+  }
+  /* the settings header sits on top of the panel's own gloss, so it carries it */
+  .settings-panel .modal-header { background-image: var(--gloss); }
+}
+
+/* ---- segmented controls: glass thumb (the old --panel fill is darker than its track in dark) ---- */
+@media screen {
+  .seg-slider { width: 100%; }
+  .seg-pill, .segmented button.active {
+    background: linear-gradient(180deg, rgba(255, 255, 255, .22), rgba(255, 255, 255, .08)) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 3px 10px rgba(0, 0, 0, .3) !important;
+  }
+  .seg-slider button.active { background: transparent !important; box-shadow: none !important; }
+  :root[data-theme="default"] .seg-pill, :root[data-theme="default"] .segmented button.active {
+    background: #ffffff !important; box-shadow: inset 0 1px 0 #ffffff, 0 2px 8px rgba(40, 30, 120, .14) !important;
+  }
+  :root[data-theme="default"] .seg-slider button.active { background: transparent !important; box-shadow: none !important; }
 }
