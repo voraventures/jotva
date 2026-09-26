@@ -14,7 +14,7 @@ from fastapi.testclient import TestClient
 from app.config import ensure_dirs
 from app.db import get_db, get_setting, set_setting
 from app.routes import calendar, meetings
-from app.services import conflicts, license, notes, pipeline
+from app.services import conflicts, license, notes, pipeline, telemetry
 
 ensure_dirs()
 app = FastAPI()
@@ -34,6 +34,7 @@ def isolated(monkeypatch):
                         lambda *a, **k: {"content": "## Summary\nok", "path": ""})
     monkeypatch.setattr(pipeline.intelligence, "index_notes", lambda *a, **k: None)
     monkeypatch.setattr(conflicts, "detect_conflicts", lambda *a, **k: None)
+    monkeypatch.setattr(telemetry, "emit", lambda *a, **k: None)
     db = get_db()
     for table in ("ai_note_usage", "notes", "meetings", "settings"):
         db.execute(f"DELETE FROM {table}")

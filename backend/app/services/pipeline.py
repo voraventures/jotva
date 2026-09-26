@@ -91,6 +91,9 @@ def _generate_and_index(meeting_id: str, transcript_text: str, segments: list[di
     if not license.can_write_ai_notes(meeting_id):
         db.execute("UPDATE meetings SET ai_paused=1 WHERE id=?", (meeting_id,))
         db.commit()
+        from . import telemetry
+
+        telemetry.emit("free_limit_reached")
         return
 
     generated = notes.generate_notes(
