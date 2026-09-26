@@ -1,4 +1,9 @@
-"""Free tier (5 lifetime meetings) + Pro license validated against remote server."""
+"""Freemium plan + Pro license validated against the remote server.
+
+Free, forever: unlimited recording and on-device transcription, plus AI notes for
+FREE_AI_NOTES_PER_MONTH meetings a month through the bundled AI. Pro unlocks
+unlimited notes and the power features in PRO_FEATURES. A free user never loses
+access to anything they already have — past notes stay readable and exportable."""
 import json
 import logging
 import os
@@ -7,8 +12,9 @@ from datetime import datetime, timezone
 
 import httpx
 
+from fastapi import HTTPException
+
 from ..config import (
-    FREE_TIER_LIMIT,
     LICENSE_PUBLIC_KEY_PEM,
     LICENSE_SERVER_URL,
     STRIPE_CHECKOUT_URL,
@@ -17,6 +23,22 @@ from ..db import get_db, get_setting, set_setting
 from .keychain import get_secret, set_secret
 
 log = logging.getLogger("jotva.license")
+
+# AI notes a free install gets each calendar month via the bundled AI (Vora pays).
+# Users who bring their own AI key pay their provider, so they aren't counted.
+FREE_AI_NOTES_PER_MONTH = 10
+
+# Pro-only features. Keys are shared with the UI (license.features) and 402 errors.
+PRO_FEATURES = (
+    "unlimited_notes",   # no monthly cap on bundled-AI notes
+    "higher_quality",    # the Pro AI tier (Sonnet-class)
+    "ask_all",           # Ask across every meeting
+    "auto_record",       # calendar auto-start ("all" recording mode)
+    "mcp",               # AI-assistant access over MCP
+    "followup",          # follow-up email drafts
+    "templates",         # custom note templates
+    "integrations",      # Slack / Notion / workspace sharing
+)
 
 # Offline grace: a previously-validated license stays valid 72h without re-check.
 OFFLINE_GRACE_SEC = 72 * 3600
@@ -61,6 +83,92 @@ def meetings_used() -> int:
     return max(db_count, _keychain_counter())
 
 
+def _month() -> str:
+    return datetime.now().strftime("%Y-%m")
+
+
+def _kc_month_key(month: str) -> str:
+    return f"ai_notes_{month}"
+
+
+def _keychain_month_count(month: str) -> int:
+    if _keyring is None:
+        return 0
+    try:
+        raw = _keyring.get_password(_KC_SERVICE, _kc_month_key(month))
+        return int(raw) if raw and raw.isdigit() else 0
+    except Exception:
+        return 0
+
+
+def ai_notes_used(month: str | None = None) -> int:
+    """Meetings that got bundled-AI notes this month. Mirrored in the keychain so
+    deleting meetings or the database can't reset the allowance."""
+    month = month or _month()
+    db_count = get_db().execute(
+        "SELECT COUNT(*) c FROM ai_note_usage WHERE month=?", (month,)
+    ).fetchone()["c"]
+    return max(db_count, _keychain_month_count(month))
+
+
+def uses_bundled_ai() -> bool:
+    """True when notes go through Vora's bundled AI rather than the user's own key."""
+    return get_setting("ai_provider", "anthropic") == "anthropic" and not get_secret("anthropic_api_key")
+
+
+def is_pro() -> bool:
+    cached = get_setting("license_status", {})
+    if cached.get("dev"):  # DEV ONLY
+        return True
+    return bool(cached.get("valid")) and (time.time() - cached.get("checked_at", 0) < OFFLINE_GRACE_SEC)
+
+
+def has_feature(feature: str) -> bool:
+    return feature not in PRO_FEATURES or is_pro()
+
+
+def require_pro(feature: str) -> None:
+    """Raise 402 for a Pro-only feature on the free plan. The UI keys its upgrade
+    prompt off `code`/`feature`; `message` is the human-readable fallback."""
+    if not has_feature(feature):
+        raise HTTPException(
+            status_code=402,
+            detail={"code": "pro_required", "feature": feature,
+                    "message": "This is a Jotva Pro feature. Upgrade to unlock it."},
+        )
+
+
+def can_write_ai_notes(meeting_id: str | None = None) -> bool:
+    """Pro, a user's own key, a meeting already counted (regenerating), or free
+    allowance left this month."""
+    if is_pro() or not uses_bundled_ai():
+        return True
+    if meeting_id and get_db().execute(
+        "SELECT 1 FROM ai_note_usage WHERE meeting_id=?", (meeting_id,)
+    ).fetchone():
+        return True
+    return ai_notes_used() < FREE_AI_NOTES_PER_MONTH
+
+
+def record_ai_notes(meeting_id: str) -> None:
+    """Count a meeting against the free monthly allowance (once per meeting)."""
+    if is_pro() or not uses_bundled_ai():
+        return
+    month = _month()
+    db = get_db()
+    cur = db.execute(
+        "INSERT OR IGNORE INTO ai_note_usage(meeting_id, month, created_at) VALUES(?,?,?)",
+        (meeting_id, month, datetime.now(timezone.utc).isoformat()),
+    )
+    db.commit()
+    if cur.rowcount and _keyring is not None:
+        try:
+            _keyring.set_password(_KC_SERVICE, _kc_month_key(month),
+                                  str(max(_keychain_month_count(month), ai_notes_used(month) - 1) + 1))
+        except Exception as exc:
+            log.warning("Could not bump keychain AI-notes counter: %s", exc)
+
+
 def _sync_install_id_key() -> None:
     """The Stripe webhook keys the issued license to the install_id, so the
     install_id IS the license key — users never enter one manually. Keep the
@@ -77,23 +185,31 @@ def _sync_install_id_key() -> None:
 
 def status() -> dict:
     _sync_install_id_key()  # on app start: ensure license_key == install_id
-    used = meetings_used()
     cached = get_setting("license_status", {})
     is_dev = bool(cached.get("dev"))  # DEV ONLY: no expiry, no grace window
-    is_pro = is_dev or (
-        bool(cached.get("valid"))
-        and (time.time() - cached.get("checked_at", 0) < OFFLINE_GRACE_SEC)
-    )
+    pro = is_pro()
+    used = ai_notes_used()
+    bundled = uses_bundled_ai()
     return {
-        "tier": "pro" if is_pro else "free",
-        "plan_name": "Pro (Developer)" if is_dev else ("Pro" if is_pro else "Free"),
-        "meetings_used": used,
-        "free_limit": FREE_TIER_LIMIT,
-        "remaining": max(0, FREE_TIER_LIMIT - used),
-        "can_record": is_pro or used < FREE_TIER_LIMIT,
+        "tier": "pro" if pro else "free",
+        "plan_name": "Pro (Developer)" if is_dev else ("Pro" if pro else "Free"),
+        "meetings_used": meetings_used(),
+        "can_record": True,  # recording + transcription are free forever
+        # Free plan's monthly AI-notes allowance (None = unlimited: Pro or own key).
+        "ai_notes_limit": None if pro or not bundled else FREE_AI_NOTES_PER_MONTH,
+        "ai_notes_used": used,
+        "ai_notes_remaining": None if pro or not bundled else max(0, FREE_AI_NOTES_PER_MONTH - used),
+        "ai_notes_resets_on": _next_month_start(),
+        "features": {f: pro for f in PRO_FEATURES},
         "checkout_url": STRIPE_CHECKOUT_URL,
         "license_key_set": bool(get_secret("license_key")),
     }
+
+
+def _next_month_start() -> str:
+    now = datetime.now()
+    return (now.replace(year=now.year + 1, month=1, day=1) if now.month == 12
+            else now.replace(month=now.month + 1, day=1)).date().isoformat()
 
 
 def activate(license_key: str) -> dict:
@@ -124,6 +240,14 @@ def set_tier(tier: str) -> dict:  # DEV ONLY
     else:
         set_setting("license_status", {"valid": False, "checked_at": time.time()})
         _reset_keychain_counter()
+        month = _month()
+        get_db().execute("DELETE FROM ai_note_usage WHERE month=?", (month,))
+        get_db().commit()
+        if _keyring is not None:
+            try:
+                _keyring.set_password(_KC_SERVICE, _kc_month_key(month), "0")
+            except Exception:
+                pass
     return status()
 
 

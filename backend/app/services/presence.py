@@ -110,6 +110,10 @@ def _fire_prompt(event_id: str) -> None:
     mode = get_setting("recording_mode", "confirm_30s")
     if mode in ("manual", "off"):
         return
+    from . import license
+
+    if mode == "all" and not license.has_feature("auto_record"):
+        mode = "confirm_30s"  # free plan: ask instead of auto-starting
     db = get_db()
     row = db.execute(
         "SELECT * FROM calendar_events WHERE id=? AND cancelled=0 AND prompted=0 "

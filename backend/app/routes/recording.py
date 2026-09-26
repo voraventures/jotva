@@ -56,12 +56,6 @@ def status():
 
 @router.post("/start")
 def start(body: StartBody):
-    lic = license_svc.status()
-    if not lic["can_record"]:
-        raise HTTPException(
-            status_code=402,
-            detail="Free tier limit reached (5 meetings). Upgrade to Pro to keep recording.",
-        )
     if recorder.is_recording:
         raise HTTPException(status_code=409, detail="Already recording")
 

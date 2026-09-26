@@ -83,6 +83,10 @@ def set_mode(body: ModeBody):
         from fastapi import HTTPException
 
         raise HTTPException(status_code=422, detail="Invalid mode")
+    if body.mode == "all":
+        from ..services import license
+
+        license.require_pro("auto_record")
     set_setting("recording_mode", body.mode)
     return {"ok": True, "mode": body.mode}
 

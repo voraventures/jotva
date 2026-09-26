@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from ..db import get_db, new_id, now_iso, row_to_dict
-from ..services import intelligence, notes as notes_svc, pipeline
+from ..services import intelligence, license as license_svc, notes as notes_svc, pipeline
 
 router = APIRouter(prefix="/api/meetings", tags=["meetings"])
 
@@ -170,9 +170,10 @@ def get_meeting(meeting_id: str):
 def save_jot(meeting_id: str, body: JotBody):
     """Autosaved jot pad: the user's own notes, used to steer the AI notes."""
     db = get_db()
-    if db.execute("UPDATE meetings SET jot_notes=? WHERE id=?", (body.text, meeting_id)).rowcount == 0:
+    updated = db.execute("UPDATE meetings SET jot_notes=? WHERE id=?", (body.text, meeting_id)).rowcount
+    db.commit()  # always end the write transaction, or this thread's connection keeps the DB locked
+    if not updated:
         raise HTTPException(status_code=404, detail="Meeting not found")
-    db.commit()
     return {"ok": True}
 
 
@@ -266,6 +267,10 @@ def regenerate(meeting_id: str, body: RegenerateBody | None = None):
     db = get_db()
     if not db.execute("SELECT 1 FROM meetings WHERE id=?", (meeting_id,)).fetchone():
         raise HTTPException(status_code=404, detail="Meeting not found")
+    if not license_svc.can_write_ai_notes(meeting_id):
+        raise HTTPException(status_code=402, detail={
+            "code": "ai_limit", "feature": "unlimited_notes",
+            "message": "You've used this month's free AI notes. Upgrade to Pro for unlimited notes."})
     pipeline.regenerate_notes_async(
         meeting_id, template_id=body.template_id if body else None
     )
@@ -276,6 +281,8 @@ def regenerate(meeting_id: str, body: RegenerateBody | None = None):
 def compose_followup(meeting_id: str, body: FollowupBody):
     """Smart Follow-up Composer: Claude drafts the email from the notes."""
     from ..services.ai import compose_followup as compose
+
+    license_svc.require_pro("followup")
 
     try:
         draft = compose(meeting_id, body.tone)
@@ -293,6 +300,8 @@ def compose_followup(meeting_id: str, body: FollowupBody):
 def share_to_workspace(meeting_id: str):
     """Share a meeting to the team workspace."""
     from .workspace import share_meeting_to_workspace
+
+    license_svc.require_pro("integrations")
 
     try:
         return share_meeting_to_workspace(meeting_id)

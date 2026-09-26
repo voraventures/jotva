@@ -10,7 +10,7 @@ import numpy as np
 from ..config import RECORDINGS_DIR, write_secure_text
 from ..db import close_db, get_db, now_iso
 from ..events import hub
-from . import intelligence, notes, transcriber, speakers
+from . import intelligence, license, notes, transcriber, speakers
 
 log = logging.getLogger("jotva.pipeline")
 
@@ -86,6 +86,13 @@ def _generate_and_index(meeting_id: str, transcript_text: str, segments: list[di
     attendees = json.loads(row["attendees"]) if row else []
     markers = json.loads(row["markers"] or "[]") if row else []
 
+    # Free plan: once this month's AI notes are used up, keep the transcript and
+    # pause the notes. They can be written later (next month, or on Pro).
+    if not license.can_write_ai_notes(meeting_id):
+        db.execute("UPDATE meetings SET ai_paused=1 WHERE id=?", (meeting_id,))
+        db.commit()
+        return
+
     generated = notes.generate_notes(
         meeting_id,
         row["title"] if row else "Meeting",
@@ -110,9 +117,10 @@ def _generate_and_index(meeting_id: str, transcript_text: str, segments: list[di
         (meeting_id, content, json.dumps(sections), now_iso()),
     )
     db.execute(
-        "UPDATE meetings SET notes_path=? WHERE id=?", (generated["path"], meeting_id)
+        "UPDATE meetings SET notes_path=?, ai_paused=0 WHERE id=?", (generated["path"], meeting_id)
     )
     db.commit()
+    license.record_ai_notes(meeting_id)
 
     intelligence.index_notes(meeting_id, content)
 

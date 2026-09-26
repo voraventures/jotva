@@ -10,7 +10,7 @@ STATUS: NOT YET WIRED. Emission points to add during the redesign:
   - emit("app_first_run")            -> backend startup, once (guarded here)
   - emit("first_meeting_completed")  -> after notes generated for meeting #1
   - emit("meeting_milestone_3")      -> after meeting #3 completes
-  - emit("free_limit_reached")       -> where FREE_TIER_LIMIT blocks meeting #6
+  - emit("free_limit_reached")       -> where the free plan's monthly AI notes run out
       (services/license.py meetings_used() consumers)
   - emit("checkout_opened")          -> where STRIPE_CHECKOUT_URL is opened
 Settings UI: expose the 'telemetry_enabled' toggle with the disclosure copy.

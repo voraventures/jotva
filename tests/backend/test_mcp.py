@@ -40,6 +40,7 @@ def seeded():
     db.execute("INSERT INTO topics(id,meeting_id,name) VALUES('t1','m1','Pricing')")
     db.commit()
     set_setting("mcp_enabled", True)
+    set_setting("license_status", {"valid": True, "dev": True})  # MCP is a Pro feature
 
 
 def run(*calls):
@@ -75,6 +76,12 @@ def test_refuses_everything_until_the_user_opts_in():
                         {"meeting_id": "m1"} if name == "get_meeting" else {}) for name in sorted(TOOLS)])
     for r in results:
         assert r.is_error and "turned off" in r.content[0].text
+
+
+def test_free_plan_is_told_it_is_a_pro_feature():
+    set_setting("license_status", {"valid": False})
+    _, (r,) = run(("list_meetings", {}))
+    assert r.is_error and "Pro" in r.content[0].text
 
 
 def test_tools_return_meeting_data():

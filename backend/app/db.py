@@ -127,6 +127,11 @@ CREATE TABLE IF NOT EXISTS mobile_sessions (
     expires_at TEXT NOT NULL,
     revoked INTEGER NOT NULL DEFAULT 0
 );
+CREATE TABLE IF NOT EXISTS ai_note_usage (
+    meeting_id TEXT PRIMARY KEY,
+    month TEXT NOT NULL,              -- YYYY-MM the bundled-AI notes were first written
+    created_at TEXT NOT NULL
+);
 CREATE INDEX IF NOT EXISTS idx_actions_meeting ON action_items(meeting_id);
 CREATE INDEX IF NOT EXISTS idx_topics_meeting ON topics(meeting_id);
 CREATE INDEX IF NOT EXISTS idx_topics_name ON topics(name);
@@ -145,6 +150,7 @@ _MIGRATIONS = {
         ("starred", "INTEGER NOT NULL DEFAULT 0"),
         ("is_demo", "INTEGER NOT NULL DEFAULT 0"),  # onboarding sample meeting, not real AI output
         ("jot_notes", "TEXT NOT NULL DEFAULT ''"),  # what the user jotted during the meeting
+        ("ai_paused", "INTEGER NOT NULL DEFAULT 0"),  # free plan's monthly AI notes used up
     ],
     "speaker_events": [("connection", "TEXT NOT NULL DEFAULT 'connected'")],
     "transcripts": [("segments", "TEXT NOT NULL DEFAULT '[]'"),

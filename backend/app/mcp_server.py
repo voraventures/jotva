@@ -7,6 +7,7 @@ an assistant reads is sent to that assistant's provider — the Settings UI says
 """
 import json
 import sqlite3
+import time
 from contextlib import closing
 from datetime import date, timedelta
 
@@ -15,6 +16,7 @@ from mcp.server.mcpserver.exceptions import ToolError
 from mcp.types import ToolAnnotations
 
 from .config import DB_PATH
+from .services.license import OFFLINE_GRACE_SEC
 
 TRANSCRIPT_LIMIT = 40_000
 READ_ONLY = ToolAnnotations(read_only_hint=True, open_world_hint=False)
@@ -44,7 +46,21 @@ def _connect() -> sqlite3.Connection:
             "Access to Jotva is turned off. The user can allow it in Jotva → Settings → "
             "Integrations → AI assistants."
         )
+    if not _is_pro(conn):
+        conn.close()
+        raise ToolError("AI-assistant access is a Jotva Pro feature. The user can upgrade in Jotva → Settings.")
     return conn
+
+
+def _is_pro(conn: sqlite3.Connection) -> bool:
+    """Same rule as services.license.is_pro, read from the cached license row."""
+    row = conn.execute("SELECT value FROM settings WHERE key = 'license_status'").fetchone()
+    cached = json.loads(row["value"]) if row else {}
+    if not isinstance(cached, dict):
+        return False
+    if cached.get("dev"):
+        return True
+    return bool(cached.get("valid")) and time.time() - cached.get("checked_at", 0) < OFFLINE_GRACE_SEC
 
 
 def _clamp(limit: int, top: int = 100) -> int:

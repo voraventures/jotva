@@ -254,6 +254,10 @@ def _check_auto_record() -> None:
     mode = get_setting("recording_mode", "confirm_30s")  # all|confirm_30s|manual|off
     if mode in ("manual", "off"):
         return
+    from .. import license
+
+    if mode == "all" and not license.has_feature("auto_record"):
+        mode = "confirm_30s"  # free plan: ask before recording instead of auto-starting
     from .. import presence  # local import: presence imports this module
 
     watching = presence.watching()
