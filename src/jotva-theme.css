@@ -125,3 +125,56 @@
   .capture-card { background: var(--glass-solid); border: 1px solid var(--border-strong); box-shadow: var(--shadow-lg); }
   .meeting-options-menu, .card-menu-dropdown, .ws-more-menu, .select-menu { background: var(--menu-glass); border-color: var(--border-strong); }
 }
+
+/* ---- typography: SF Pro, refined (few sizes, three weights, calm spacing) ----
+   Sizes are rem-relative so Appearance → Font size still scales everything.
+   1rem = --font-size-base (13 / 14 / 16px for small / medium / large). */
+@media screen {
+  :root, :root[data-theme] { --font-size-base: 14px; }
+  :root[data-fontsize="small"] { --font-size-base: 13px; }
+  :root[data-fontsize="large"] { --font-size-base: 16px; }
+
+  body { line-height: 1.5; letter-spacing: 0; }
+  b, strong { font-weight: 600; }
+
+  /* titles: let SF Pro's built-in optical tracking do the work */
+  .ws-title, .view-title { font-size: calc(24rem / 14); font-weight: 600; letter-spacing: -.01em; line-height: 1.25; }
+  .meeting-day-header h2 { font-size: calc(20rem / 14); font-weight: 600; letter-spacing: -.01em; }
+  .brand-wordmark { font-size: calc(17rem / 14); font-weight: 600; letter-spacing: -.01em; }
+  .brand-wordmark-large { font-size: calc(22rem / 14); }
+  .capture-title, .onboarding-title { font-weight: 600; letter-spacing: -.01em; }
+  .empty-title, .view-section-title, .modal-title, .ask-empty-title { font-size: calc(17rem / 14); font-weight: 600; letter-spacing: 0; }
+
+  /* section headings */
+  .ov-eyebrow, .surface-title, .plain-section .surface-title { font-size: calc(15rem / 14); font-weight: 600; letter-spacing: 0; color: var(--text); }
+  .set-card-name { font-size: 1rem; font-weight: 500; }
+
+  /* reading text */
+  .summary-body { font-size: calc(15rem / 14); line-height: 1.7; }
+  .summary-key { font-weight: 600; }
+  .section-body, .workspace .section-body, .view .section-body, .section-body li p { font-size: 1rem; line-height: 1.65; }
+
+  /* body / UI text */
+  .meeting-card-title { font-size: 1rem; font-weight: 500; line-height: 1.4; }
+  .ov-action-text, .ov-highlight-text { font-size: 1rem; font-weight: 400; line-height: 1.5; }
+  .ws-tab { font-size: calc(13rem / 14); font-weight: 400; }
+  .ws-tab.active { font-weight: 500; }
+  .btn, .dock-menu button { font-weight: 500; }
+
+  /* metadata */
+  .ws-meta, .ws-meta .meta-item, .meeting-card-meta, .ov-action-owner, .ov-action-due,
+  .set-card-desc, .meeting-day-header p, .no-recordings-today { font-size: calc(13rem / 14); font-weight: 400; color: var(--muted); }
+
+  /* small labels */
+  .meeting-day-group h3, .up-next-label, .summary-eyebrow, .callout-title, .ov-count,
+  .meeting-sample, .demo-badge { font-size: calc(12rem / 14); font-weight: 500; letter-spacing: 0; }
+  .ov-topic-chip, .section-body .topic-chip, .ask-suggestion { font-size: calc(13rem / 14); font-weight: 400; }
+  .dock-button { font-size: calc(12rem / 14); font-weight: 500; }
+
+  /* breathing room */
+  .ws-inner, .view-inner { padding: 32px 40px 44px; }
+  .summary-hero { padding: 22px 26px; margin-bottom: 32px; }
+  .ov-action-row { padding: 12px 0; }
+  .meeting-card-main { padding: 12px 44px 12px 14px; }
+  .meeting-card-meta { margin-top: 4px; }
+}
