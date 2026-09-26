@@ -666,7 +666,8 @@
       "recordingFailed": "录制失败",
       "joinWatching": "正在打开通话 — 有人开始说话后 Jotva 会提示录制。",
       "joinFailed": "无法打开会议链接",
-      "modelSwitched": "{{from}} 已不再可用，Jotva 已切换到 {{to}}。你可以在设置 → AI 中更改。"
+      "modelSwitched": "{{from}} 已不再可用，Jotva 已切换到 {{to}}。你可以在设置 → AI 中更改。",
+      "micSettings": "麦克风设置"
     },
     "notify": {
       "recordingStartedTitle": "录制已开始",
@@ -984,6 +985,11 @@
     "name": {
       "label": "会议名称",
       "placeholder": "例如：每周计划（可选）"
+    },
+    "mic": {
+      "using": "使用 {{name}}",
+      "none": "未找到麦克风",
+      "change": "更改"
     }
   },
   "upcomingToast": {

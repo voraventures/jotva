@@ -267,6 +267,12 @@ def save_setting(body: SettingBody):
     if pro_only:
         license_svc.require_pro(pro_only)
     set_setting(body.key, body.value)
+    if body.key in ("mic_device", "system_device"):
+        # Remember the device by name too: indexes shift as devices come and go.
+        from ..services.recorder import list_input_devices
+
+        name = next((d["name"] for d in list_input_devices() if d["index"] == body.value), None)
+        set_setting(f"{body.key}_name", name)
     if body.key == 'speaker_identification':
         from ..services.speaker_capture import capture
         capture.boundary()

@@ -99,6 +99,36 @@ def _is_loopback_like(name: str) -> bool:
     )
 
 
+def refresh_devices() -> None:
+    """PortAudio snapshots the device list when it starts, so a mic plugged in
+    (or reconnected, or made the macOS default) after launch stays invisible.
+    Re-scan — but only while no stream is open, since re-initializing PortAudio
+    would cut off a live recording or the presence watcher."""
+    if not AUDIO_AVAILABLE:
+        return
+    from . import presence
+
+    if recorder.is_recording or presence.watching():
+        return
+    try:
+        sd._terminate()
+        sd._initialize()
+    except Exception as exc:
+        log.warning("Could not refresh audio devices: %s", exc)
+
+
+def saved_device(index: int | None, name: str | None) -> int | None:
+    """Device indexes shift when devices come and go, so a saved choice is
+    matched by name. If that device is gone, use the system default (None)."""
+    if not name:
+        return index
+    for dev in list_input_devices():
+        if dev["name"] == name:
+            return dev["index"]
+    log.warning("Saved input device %r is not connected; using the system default", name)
+    return None
+
+
 def list_input_devices() -> list[dict]:
     devices = []
     if AUDIO_AVAILABLE:
@@ -153,8 +183,9 @@ def _resolve_mic_device(requested: int | None) -> int | None:
             )
             return dev["index"]
     raise RuntimeError(
-        "No real microphone found — the system default input is a virtual "
-        "device (e.g. BlackHole). Select a microphone in Settings → Recording."
+        "No microphone found. Plug in or connect a microphone, or choose one in "
+        "Jotva → Settings → Recording. (The Mac's current input is a virtual "
+        "device such as BlackHole, which Jotva won't record from.)"
     )
 
 

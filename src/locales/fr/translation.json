@@ -667,7 +667,8 @@
       "recordingFailed": "Échec de l'enregistrement",
       "joinWatching": "Ouverture de l'appel — Jotva proposera d'enregistrer dès que la conversation commencera.",
       "joinFailed": "Impossible d'ouvrir le lien de la réunion",
-      "modelSwitched": "{{from}} n'est plus disponible, Jotva est donc passé à {{to}}. Vous pouvez le modifier dans Réglages → IA."
+      "modelSwitched": "{{from}} n'est plus disponible, Jotva est donc passé à {{to}}. Vous pouvez le modifier dans Réglages → IA.",
+      "micSettings": "Réglages du micro"
     },
     "notify": {
       "recordingStartedTitle": "Enregistrement démarré",
@@ -996,6 +997,11 @@
     "name": {
       "label": "Nom de la réunion",
       "placeholder": "ex. Planification hebdo (facultatif)"
+    },
+    "mic": {
+      "using": "Micro : {{name}}",
+      "none": "Aucun micro détecté",
+      "change": "Changer"
     }
   },
   "upcomingToast": {

@@ -129,6 +129,7 @@ export default function CaptureFlow() {
     setNav,
     progress,
     settings,
+    openSettings,
   } = useStore();
   const logoUrl = useLogo();
   const [systemReducedMotion, setSystemReducedMotion] = useState(false);
@@ -170,6 +171,20 @@ export default function CaptureFlow() {
     if (phase === "idle") setMeetingName("");
   }, [phase]);
   const start = () => startRecording({ title: meetingName.trim() });
+
+  // Which microphone "Start recording" will use, so a wrong or missing input is
+  // visible (and fixable) before the meeting, not after.
+  const [micName, setMicName] = useState(null);
+  useEffect(() => {
+    if (phase !== "idle") return;
+    api.get("/api/recording/devices").then((d) => {
+      const chosen = d.devices?.find((dev) => dev.index === d.mic_device);
+      const name = chosen?.name || d.default_input?.name;
+      const virtual = chosen ? chosen.is_loopback_like : d.default_input?.is_loopback_like;
+      const real = d.devices?.find((dev) => !dev.is_loopback_like);
+      setMicName(virtual ? real?.name || "" : name || "");
+    }).catch(() => setMicName(null));
+  }, [phase]);
 
   // ---- elapsed mm:ss (recording controls row) — stands still while paused ----
   const startRef = useRef(Date.now());
@@ -395,6 +410,14 @@ export default function CaptureFlow() {
             </label>
             <textarea id="capture-jot-input" autoFocus value={jot} maxLength={20000} spellCheck
               placeholder={t("capture.jot.placeholder")} onChange={(e) => onJot(e.target.value)} />
+          </div>
+        )}
+
+        {phase === "idle" && micName !== null && (
+          <div className={`capture-mic${micName ? "" : " missing"}`}>
+            <MicIcon size={13} aria-hidden="true" />
+            <span>{micName ? t("capture.mic.using", { name: micName }) : t("capture.mic.none")}</span>
+            <button type="button" onClick={() => openSettings("recording")}>{t("capture.mic.change")}</button>
           </div>
         )}
 

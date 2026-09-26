@@ -667,7 +667,8 @@
       "recordingFailed": "Recording failed",
       "joinWatching": "Opening the call — Jotva will offer to record once people start talking.",
       "joinFailed": "Couldn't open the meeting link",
-      "modelSwitched": "{{from}} is no longer available, so Jotva switched to {{to}}. You can change it in Settings → AI."
+      "modelSwitched": "{{from}} is no longer available, so Jotva switched to {{to}}. You can change it in Settings → AI.",
+      "micSettings": "Microphone settings"
     },
     "notify": {
       "recordingStartedTitle": "Recording started",
@@ -996,6 +997,11 @@
     "name": {
       "label": "Meeting name",
       "placeholder": "e.g. Weekly planning (optional)"
+    },
+    "mic": {
+      "using": "Using {{name}}",
+      "none": "No microphone found",
+      "change": "Change"
     }
   },
   "upcomingToast": {

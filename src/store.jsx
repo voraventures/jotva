@@ -420,17 +420,22 @@ export function StoreProvider({ children }) {
         return result;
       } catch (err) {
         const raw = err.message || i18n.t("store.toast.recordingFailed");
+        // Every start failure is about the audio input, so offer the way to fix it.
+        const toMic = {
+          duration: 9000,
+          action: { label: i18n.t("store.toast.micSettings"), onAction: () => openSettings("recording") },
+        };
         if (/portaudio|input.?stream|undefined error.*-50|audio.*unavailable|unavailable.*audio/i.test(raw)) {
-          showToast(i18n.t("store.toast.micDenied"), "error");
+          showToast(i18n.t("store.toast.micDenied"), "error", toMic);
         } else {
-          showToast(raw, "error");
+          showToast(raw, "error", toMic);
         }
         throw err;
       } finally {
         startInFlightRef.current = false;
       }
     },
-    [refreshMeetings, selectMeeting, showToast]
+    [refreshMeetings, selectMeeting, showToast, openSettings]
   );
 
   const joinMeeting = useCallback(

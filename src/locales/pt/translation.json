@@ -667,7 +667,8 @@
       "recordingFailed": "Falha na gravação",
       "joinWatching": "Abrindo a chamada — o Jotva vai oferecer gravar assim que começarem a falar.",
       "joinFailed": "Não foi possível abrir o link da reunião",
-      "modelSwitched": "{{from}} não está mais disponível, então o Jotva mudou para {{to}}. Você pode alterar em Configurações → IA."
+      "modelSwitched": "{{from}} não está mais disponível, então o Jotva mudou para {{to}}. Você pode alterar em Configurações → IA.",
+      "micSettings": "Configurações do microfone"
     },
     "notify": {
       "recordingStartedTitle": "Gravação iniciada",
@@ -996,6 +997,11 @@
     "name": {
       "label": "Nome da reunião",
       "placeholder": "ex.: Planejamento semanal (opcional)"
+    },
+    "mic": {
+      "using": "Usando {{name}}",
+      "none": "Nenhum microfone encontrado",
+      "change": "Alterar"
     }
   },
   "upcomingToast": {

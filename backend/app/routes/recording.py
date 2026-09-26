@@ -12,6 +12,8 @@ from ..services.recorder import (
     AUDIO_AVAILABLE,
     default_input_status,
     list_input_devices,
+    refresh_devices,
+    saved_device,
     recorder,
 )
 
@@ -34,6 +36,7 @@ class PauseBody(BaseModel):
 
 @router.get("/devices")
 def devices():
+    refresh_devices()
     return {
         "available": AUDIO_AVAILABLE,
         "devices": list_input_devices(),
@@ -93,10 +96,11 @@ def start(body: StartBody):
     db.commit()
 
     try:
+        refresh_devices()
         recorder.start(
             meeting_id,
-            mic_device=get_setting("mic_device"),
-            system_device=get_setting("system_device"),
+            mic_device=saved_device(get_setting("mic_device"), get_setting("mic_device_name")),
+            system_device=saved_device(get_setting("system_device"), get_setting("system_device_name")),
         )
     except Exception as exc:
         # Any capture failure (RuntimeError, PortAudioError, ...) must roll the
