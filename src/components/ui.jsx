@@ -1,6 +1,7 @@
 // Shared UI primitives: styled Select (replaces native <select>) and Confirm
 // dialog (replaces window.confirm). Plain React + CSS, no dependencies.
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 
 // Styled listbox. options: [{ value, label }]. Values are compared with ===,
@@ -108,7 +109,8 @@ export function Confirm({ title, body, confirmLabel, danger, onConfirm, onCancel
     return () => window.removeEventListener("keydown", onKey);
   }, [onCancel]);
 
-  return (
+  // Portaled to <body>: a glass ancestor (backdrop-filter) would otherwise clip it.
+  return createPortal(
     <div
       className="modal-backdrop"
       style={{ zIndex: 90 }}
@@ -130,6 +132,7 @@ export function Confirm({ title, body, confirmLabel, danger, onConfirm, onCancel
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
