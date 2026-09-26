@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jotva logo motion</title>
+<style>
+  :root { --bg: #07070b; --card: #0d0d14; --line: #1d1d2a; --ink: #e9e9f2; --muted: #8a8aa0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+  p.sub { color: var(--muted); margin: 0 0 28px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+  .stage { aspect-ratio: 1; display: grid; place-items: center; overflow: hidden; border-radius: 10px; background: #000; position: relative; }
+  .stage svg { overflow: visible; }
+  #sheets { width: 46%; }
+  #orbit { width: 38%; }
+  .meta { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 8px; flex-wrap: wrap; }
+  .meta b { font-weight: 600; }
+  .meta span { color: var(--muted); }
+  button { background: #1a1a26; color: var(--ink); border: 1px solid #2a2a3a; border-radius: 8px; padding: 6px 12px; font: inherit; cursor: pointer; }
+  button:hover { background: #232333; }
+  .debug #ref03 { opacity: .5; }
+  #ref03 { opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Jotva logo motion</h1>
+  <p class="sub">Code-built (SVG + JS): exact timing, transparent background, loops forever.</p>
+  <div class="grid">
+    <section class="card">
+      <div class="stage">
+        <svg id="sheets" viewBox="-100 -632 700 638" aria-label="Jotva mark: layered sheets">
+          <defs>
+            <path id="p1" d="M0,0 C-40,-4 -70,-30 -72,-72 L-72,-332 C-72,-400 -30,-455 30,-482 L320,-622 C345,-634 364,-626 362,-600 L342,-345 C334,-270 300,-215 230,-170 C150,-118 50,-70 0,0 Z"/>
+            <path id="p2"/>
+            <path id="p3"/>
+            <linearGradient id="g1" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#d8fcff"/>
+              <stop offset=".42" stop-color="#4e90f8"/>
+              <stop offset=".78" stop-color="#a98cf6"/>
+              <stop offset="1" stop-color="#ffc2f1"/>
+            </linearGradient>
+            <linearGradient id="g2" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#6f88ff"/>
+              <stop offset=".35" stop-color="#3452f6"/>
+              <stop offset="1" stop-color="#110d55"/>
+            </linearGradient>
+            <linearGradient id="g3" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#b27dff"/>
+              <stop offset=".35" stop-color="#7a3df6"/>
+              <stop offset="1" stop-color="#1b0b52"/>
+            </linearGradient>
+            <linearGradient id="rim" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#fff" stop-opacity=".85"/>
+              <stop offset=".5" stop-color="#fff" stop-opacity=".18"/>
+              <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="sweepGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+              <stop offset=".5" stop-color="#fff" stop-opacity=".75"/>
+              <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+            </linearGradient>
+            <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="-8" dy="10" stdDeviation="16" flood-color="#03021a" flood-opacity=".75"/>
+            </filter>
+            <filter id="bloom" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="22"/>
+            </filter>
+            <clipPath id="sheetsClip">
+              <use href="#p3"/><use href="#p2"/><use href="#p1"/>
+            </clipPath>
+          </defs>
+          <image id="ref03" href="../logo-candidates/isolated/03-layered-petals-dark-mark-only.png" x="-100" y="-632" width="700" height="638"/>
+          <g filter="url(#bloom)" opacity=".45">
+            <use href="#p3" fill="#7a3df6"/>
+            <use href="#p2" fill="#3452f6"/>
+            <use href="#p1" fill="#4e90f8"/>
+          </g>
+          <use href="#p3" fill="url(#g3)" stroke="url(#rim)" stroke-width="3" filter="url(#shadow)"/>
+          <use href="#p2" fill="url(#g2)" stroke="url(#rim)" stroke-width="3" filter="url(#shadow)"/>
+          <use href="#p1" fill="url(#g1)" stroke="url(#rim)" stroke-width="3" filter="url(#shadow)"/>
+          <g clip-path="url(#sheetsClip)">
+            <rect id="sweep" x="-160" y="-1000" width="200" height="1400" fill="url(#sweepGrad)" style="mix-blend-mode:screen" opacity="0"/>
+          </g>
+        </svg>
+      </div>
+      <div class="meta"><div><b>03 · Snap-fan + light sweep</b><br><span>3.2s loop</span></div>
+        <div><button data-debug>Compare to original</button> <button data-replay="sheets">Replay</button></div></div>
+    </section>
+
+    <section class="card">
+      <div class="stage">
+        <svg id="orbit" viewBox="0 0 668 716" aria-label="Jotva mark: crossed bars and orbiting dot">
+          <defs>
+            <filter id="trailBlur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>
+            <radialGradient id="flashGrad"><stop offset="0" stop-color="#fff6d8" stop-opacity="1"/><stop offset=".45" stop-color="#ffc24a" stop-opacity=".55"/><stop offset="1" stop-color="#ff9a1f" stop-opacity="0"/></radialGradient>
+            <filter id="sparkGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <g id="trail" filter="url(#trailBlur)"></g>
+          <image href="assets/x-bars.webp" x="0" y="0" width="668" height="716"/>
+          <circle id="flash" r="60" fill="url(#flashGrad)" opacity="0"/>
+          <g id="spark" filter="url(#sparkGlow)"></g>
+          <g id="dotG" transform="translate(586 364)"><image href="assets/dot.webp" x="-120" y="-120" width="240" height="240"/></g>
+        </svg>
+      </div>
+      <div class="meta"><div><b>06 · Even orbit + comet trail + landing spark</b><br><span>4.2s loop</span></div>
+        <div><button data-replay="orbit">Replay</button></div></div>
+    </section>
+  </div>
+</main>
+
+<script>
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const easeInCubic = t => t * t * t;
+const easeInOutCubic = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const smooth = (a, b, t) => { const x = clamp((t - a) / (b - a)); return x * x * (3 - 2 * x); };
+// damped spring from 0 -> 1 with a small overshoot
+const spring = t => t <= 0 ? 0 : 1 - Math.exp(-7 * t) * Math.cos(9 * t);
+
+/* ---------- 03: snap-fan + light sweep ---------- */
+// Back sheets are the front sheet's control points pushed through a vertical-preserving
+// shear/stretch (x' = A·x, y' = C·x + D·y, pivoting on the shared bottom-left tip), weighted
+// toward the right so their hidden left side stays tucked behind the front sheet.
+const FRONT = [['M', [0, 0]], ['C', [-40, -4], [-70, -30], [-72, -72]], ['L', [-72, -332]],
+  ['C', [-72, -400], [-30, -455], [30, -482]], ['L', [320, -622]], ['C', [345, -634], [364, -626], [362, -600]],
+  ['L', [342, -345]], ['C', [334, -270], [300, -215], [230, -170]], ['C', [150, -118], [50, -70], [0, 0]], ['Z']];
+const sheetD = ([A, C, D], f) => FRONT.map(([cmd, ...pts]) => cmd + pts.map(([x, y]) => {
+  const w = f * smooth(-20, 300, x);
+  return (x + w * (A * x - x)).toFixed(1) + ',' + (y + w * (C * x + D * y - y)).toFixed(1);
+}).join(' ')).join(' ');
+
+const S = {
+  loop: 3200,
+  M: [null, [1.37, 0.33, 1.03], [1.68, 0.72, 1.03]],
+  paths: [null, document.getElementById('p2'), document.getElementById('p3')],
+  sweep: document.getElementById('sweep'),
+  start: performance.now(),
+  frame(now) {
+    const t = (now - S.start) % S.loop;
+    for (const i of [1, 2]) {
+      let f;
+      if (t < 300) f = 1 - easeInCubic(t / 300);                 // tuck in
+      else if (t < 450) f = 0;                                    // hold collapsed
+      else f = spring((t - 450 - (i - 1) * 110) / 1000 * 1.9);    // staggered snap out
+      S.paths[i].setAttribute('d', sheetD(S.M[i], f));
+    }
+    const st = clamp((t - 850) / 750);
+    S.sweep.setAttribute('opacity', st > 0 && st < 1 ? 1 : 0);
+    S.sweep.setAttribute('transform', `rotate(22) translate(${-420 + st * 1000} 0)`);
+  }
+};
+
+/* ---------- 06: even orbit + comet trail + landing spark ---------- */
+const O = {
+  loop: 4200, hold: 900, dur: 1700,
+  cx: 283, cy: 364, rest: 303, R: 440,
+  dot: document.getElementById('dotG'),
+  trail: document.getElementById('trail'),
+  spark: document.getElementById('spark'),
+  start: performance.now(),
+  init() {
+    const ns = 'http://www.w3.org/2000/svg';
+    O.trailDots = Array.from({ length: 16 }, () => { const c = document.createElementNS(ns, 'circle'); c.setAttribute('fill', '#ffb338'); O.trail.appendChild(c); return c; });
+    O.flash = document.getElementById('flash');
+    // fixed pseudo-random scatter so every loop sparks identically
+    let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    O.particles = Array.from({ length: 16 }, () => {
+      const c = document.createElementNS(ns, 'circle');
+      c.setAttribute('fill', rnd() > .4 ? '#fff1b8' : '#ffb13a');
+      O.spark.appendChild(c);
+      return { el: c, ang: rnd() * Math.PI * 2, dist: 90 + rnd() * 150, size: 3 + rnd() * 6, life: 380 + rnd() * 320 };
+    });
+  },
+  pos(t) {
+    const p = clamp((t - O.hold) / O.dur);
+    const theta = -2 * Math.PI * easeInOutCubic(p);
+    const lift = smooth(0, .2, p) * (1 - smooth(.8, 1, p));
+    const r = O.rest + (O.R - O.rest) * lift;
+    return [O.cx + r * Math.cos(theta), O.cy + r * Math.sin(theta), p];
+  },
+  frame(now) {
+    const t = (now - O.start) % O.loop;
+    const [x, y] = O.pos(t);
+
+    // landing squash + spark
+    const land = t - (O.hold + O.dur);
+    const pop = land > 0 && land < 350 ? 1 + .18 * Math.exp(-land / 90) * Math.cos(land / 45) : 1;
+    O.dot.setAttribute('transform', `translate(${x} ${y}) scale(${pop})`);
+
+    O.trailDots.forEach((c, i) => {
+      const k = (i + 1) / O.trailDots.length;
+      const [hx, hy, hp] = O.pos(t - k * 240);
+      const moving = hp > 0 && hp < 1;
+      c.setAttribute('cx', hx); c.setAttribute('cy', hy);
+      c.setAttribute('r', 48 * (1 - k) + 4);
+      c.setAttribute('opacity', moving ? .6 * (1 - k) : 0);
+    });
+
+    const ox = O.cx + O.rest, oy = O.cy;
+    const fs = clamp(land / 420);
+    O.flash.setAttribute('cx', ox); O.flash.setAttribute('cy', oy);
+    O.flash.setAttribute('r', 70 + 110 * (1 - Math.pow(1 - fs, 3)));
+    O.flash.setAttribute('opacity', land > 0 && fs < 1 ? .9 * Math.pow(1 - fs, 1.6) : 0);
+    O.particles.forEach(pt => {
+      const s = clamp(land / pt.life);
+      const d = 55 + pt.dist * (1 - Math.pow(1 - s, 3));
+      pt.el.setAttribute('cx', ox + Math.cos(pt.ang) * d); pt.el.setAttribute('cy', oy + Math.sin(pt.ang) * d);
+      pt.el.setAttribute('r', pt.size * (1 - .7 * s));
+      pt.el.setAttribute('opacity', land > 0 && s < 1 ? 1 - s * s : 0);
+    });
+  }
+};
+O.init();
+
+function tick(now) { S.frame(now); O.frame(now); requestAnimationFrame(tick); }
+if (reduce) { S.frame(S.start + 3000); O.frame(O.start); }
+else requestAnimationFrame(tick);
+
+document.querySelectorAll('[data-replay]').forEach(b => b.addEventListener('click', () => {
+  (b.dataset.replay === 'sheets' ? S : O).start = performance.now();
+}));
+document.querySelector('[data-debug]').addEventListener('click', e => {
+  document.body.classList.toggle('debug');
+  e.target.textContent = document.body.classList.contains('debug') ? 'Hide original' : 'Compare to original';
+});
+</script>
+</body>
+</html>
