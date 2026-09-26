@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useGlassLens } from "../glassLens.js";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../api.js";
@@ -71,7 +72,7 @@ function MeetingCard({ meeting, selected, onSelect, progress, showDate, onOption
       : ["error", "failed"].includes(stage) ? t("list.cards.failed") : "";
   const metadata = [scheduledTime(meeting.started_at, i18n.language, showDate), meetingDuration(meeting, i18n.language)].filter(Boolean).join(" · ");
   return (
-    <article ref={ref} className={`meeting-card${selected ? " is-selected" : ""}`}>
+    <article ref={ref} data-meeting-id={meeting.id} className={`meeting-card${selected ? " is-selected" : ""}`}>
       <button className="meeting-card-main" aria-label={meeting.title} aria-current={selected ? "true" : undefined}
         title={meeting.title} onClick={() => onSelect(meeting.id)}>
         <span className="meeting-card-title">{meeting.title}</span>
@@ -109,6 +110,13 @@ export default function MeetingList({ children }) {
   const [results, setResults] = useState(null);
   const [now, setNow] = useState(() => new Date());
   const searchRef = useRef(null);
+  const listRef = useRef(null);
+  const [listHover, setListHover] = useState(null);
+  const lensId = listHover ?? selectedId;
+  const listLens = useGlassLens(listRef,
+    () => lensId == null ? null : listRef.current?.querySelector(`.meeting-card[data-meeting-id="${String(lensId).replace(/"/g, "")}"]`),
+    `${lensId}:${meetings.length}:${query}:${results?.length}`);
+  const hoverCard = (e) => { const id = e.target.closest?.(".meeting-card")?.dataset.meetingId; if (id) setListHover(id); };
 
   useEffect(() => {
     const refresh = () => setNow(new Date());
@@ -158,7 +166,9 @@ export default function MeetingList({ children }) {
             value={query} onChange={e => { setMenuTarget(null); setQuery(e.target.value); }} spellCheck={false} />
         </div>
       </div>
-      <div className="list-scroll meeting-card-list">
+      <div className="list-scroll meeting-card-list" ref={listRef} onPointerOver={hoverCard} onFocus={hoverCard}
+        onPointerLeave={() => setListHover(null)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setListHover(null); }}>
+        <span {...listLens} />
         {searching ? <>
           {results === null && <div className="list-no-match" role="status">{t("common.loading")}</div>}
           {visibleResults?.length === 0 && <div className="list-no-match">{t("list.noMatch", { query })}</div>}

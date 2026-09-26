@@ -9,6 +9,7 @@
 // quiet unboxed sections below the two columns (extra generated content),
 // so the primary layout stays pixel-true while nothing is removed.
 import React, { useEffect, useRef, useState } from "react";
+import { useGlassLens } from "../glassLens.js";
 import { useTranslation } from "react-i18next";
 import { api, showInFolder } from "../api.js";
 import { useStore, useLogo } from "../store.jsx";
@@ -206,6 +207,11 @@ export default function NotesPanel() {
   } = useStore();
   const logoUrl = useLogo();
   const [tab, setTab] = useState("overview"); // overview | timeline | transcript | ask
+  const tabsRef = useRef(null);
+  const tabRefs = useRef({});
+  const [tabHover, setTabHover] = useState(null);
+  const tabLensTarget = tabHover || tab;
+  const tabLens = useGlassLens(tabsRef, () => tabRefs.current[tabLensTarget], `${tabLensTarget}:${meetingDetail?.id}:${!!meetingDetail?.notes}`);
   const [menu, setMenu] = useState(null); // null | "main" | "send" | "regen"
   const [followUpOpen, setFollowUpOpen] = useState(false);
   const [shareModal, setShareModal] = useState(null); // { url }
@@ -573,11 +579,16 @@ export default function NotesPanel() {
           </div>
         ) : (
           <>
-            <div className="ws-tabs">
+            <div className="ws-tabs" ref={tabsRef} onPointerLeave={() => setTabHover(null)}
+              onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setTabHover(null); }}>
+              <span {...tabLens} />
               {["overview", "timeline", "transcript", "ask"].map((k) => (
                 <button
                   key={k}
+                  ref={(el) => { tabRefs.current[k] = el; }}
                   className={`ws-tab${tab === k ? " active" : ""}`}
+                  onPointerEnter={() => setTabHover(k)}
+                  onFocus={() => setTabHover(k)}
                   onClick={() => setTab(k)}
                 >
                   {t(`notes.tab.${k}`)}

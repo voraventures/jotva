@@ -1,4 +1,5 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useGlassLens } from "../glassLens.js";
 import { useTranslation } from "react-i18next";
 import { useStore } from "../store.jsx";
 import { DOCK_GROUPS } from "../navigation.js";
@@ -18,23 +19,10 @@ export default function Dock() {
   const isSelected = (group) => settingsOpen ? group.items.some(i => i.section === settingsSection)
     : (recording.active || captureOpen) ? group.id === "record" : group.items.some(i => i.nav === nav);
 
-  // Glass "lens" that glides to the hovered/focused button, resting on the selected one.
+  // Glass lens glides to the hovered/focused button and rests on the selected one.
   const [hover, setHover] = useState(null);
-  const [lens, setLens] = useState(null);
   const lensTarget = hover || DOCK_GROUPS.find(isSelected)?.id;
-  useLayoutEffect(() => {
-    const measure = () => {
-      const button = triggers.current[lensTarget], bar = root.current;
-      if (!button || !bar) { setLens(null); return; }
-      const b = button.getBoundingClientRect(), n = bar.getBoundingClientRect();
-      setLens((prev) => ({ x: b.left - n.left, w: b.width, animate: !!prev }));
-    };
-    measure();
-    if (typeof ResizeObserver === "undefined") return undefined;
-    const observer = new ResizeObserver(measure);
-    observer.observe(root.current);
-    return () => observer.disconnect();
-  }, [lensTarget]);
+  const lens = useGlassLens(root, () => triggers.current[lensTarget], lensTarget);
 
   useEffect(() => {
     if (!open) return;
@@ -73,8 +61,7 @@ export default function Dock() {
     onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) { setOpen(null); setHover(null); } }}
     onPointerMove={(e) => root.current.style.setProperty("--mx", `${e.clientX - root.current.getBoundingClientRect().left}px`)}
     onPointerLeave={() => setHover(null)}>
-    <span className={`dock-lens${lens?.animate ? " animate" : ""}`} aria-hidden="true"
-      style={lens ? { transform: `translateX(${lens.x}px)`, width: lens.w } : { opacity: 0 }} />
+    <span {...lens} />
     {DOCK_GROUPS.map(group => {
       const Icon = ICONS[group.id];
       const selected = isSelected(group);

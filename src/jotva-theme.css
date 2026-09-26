@@ -197,19 +197,40 @@
   .bottom-dock:hover::after { opacity: 1; }
   .dock-group { z-index: 1; }
 
-  .dock-lens {
-    position: absolute; top: 6px; bottom: 6px; left: 0; z-index: 0; border-radius: 14px; pointer-events: none;
+  .glass-lens {
+    position: absolute; top: 0; left: 0; z-index: 0; border-radius: 14px; pointer-events: none;
     background: linear-gradient(180deg, rgba(255, 255, 255, .22), rgba(255, 255, 255, .06) 55%, rgba(255, 255, 255, .10));
     border: 1px solid rgba(255, 255, 255, .20);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), inset 0 -1px 0 rgba(255, 255, 255, .08), 0 8px 22px rgba(0, 0, 0, .38);
     backdrop-filter: blur(8px) saturate(170%) brightness(1.15);
   }
   /* diagonal glint on the lens surface */
-  .dock-lens::after {
+  .glass-lens::after {
     content: ""; position: absolute; inset: 1px; border-radius: inherit;
     background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, .20) 38%, transparent 52%);
   }
-  .dock-lens.animate { transition: transform .5s cubic-bezier(.3, 1.35, .5, 1), width .5s cubic-bezier(.3, 1.35, .5, 1); }
+  .glass-lens.animate {
+    transition: transform .5s cubic-bezier(.3, 1.35, .5, 1), width .5s cubic-bezier(.3, 1.35, .5, 1), height .5s cubic-bezier(.3, 1.35, .5, 1);
+  }
+
+  /* meeting tabs */
+  .ws-tabs { position: relative; }
+  .ws-tab { position: relative; z-index: 1; }
+  .ws-tab.active { background: transparent; box-shadow: none; }
+  .ws-tab:hover { color: var(--text); }
+  .ws-tabs .glass-lens { border-radius: 9px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 3px 10px rgba(0, 0, 0, .3); }
+
+  /* meeting list: calmer lens over a larger area */
+  .meeting-card-list { position: relative; }
+  .meeting-card { z-index: 1; }
+  .meeting-card:hover, .meeting-card.is-selected { background: transparent; border-color: transparent; box-shadow: none; }
+  .meeting-card-list .glass-lens {
+    background: linear-gradient(180deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .04));
+    border-color: rgba(255, 255, 255, .13);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 6px 18px rgba(0, 0, 0, .28);
+    backdrop-filter: none;
+  }
+  .meeting-card-list .glass-lens::after { opacity: .5; }
 
   /* the lens now carries hover + selection */
   .dock-button, .dock-button:hover, .dock-button.expanded, .dock-button.selected { background: transparent; box-shadow: none; }
@@ -221,9 +242,11 @@
   :root[data-theme="default"] .bottom-dock::before {
     background: linear-gradient(180deg, rgba(255, 255, 255, .9) 0%, rgba(255, 255, 255, .35) 45%, rgba(255, 255, 255, 0) 55%);
   }
-  :root[data-theme="default"] .dock-lens {
+  :root[data-theme="default"] .glass-lens {
     background: linear-gradient(180deg, #ffffff, rgba(255, 255, 255, .75));
     border-color: rgba(40, 30, 120, .10);
     box-shadow: inset 0 1px 0 #ffffff, 0 6px 18px rgba(40, 30, 120, .16);
   }
+  :root[data-theme="default"] .glass-lens::after { opacity: .35; }
+  :root[data-theme="default"] .meeting-card-list .glass-lens { box-shadow: inset 0 1px 0 #ffffff, 0 4px 14px rgba(40, 30, 120, .10); }
 }
