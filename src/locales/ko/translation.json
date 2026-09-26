@@ -598,7 +598,8 @@
       "star": "회의 즐겨찾기",
       "unstar": "즐겨찾기 해제",
       "titleAria": "회의 제목",
-      "today": "오늘"
+      "today": "오늘",
+      "rename": "회의 이름 바꾸기"
     },
     "error": {
       "processingFailed": "처리 실패",
@@ -979,6 +980,10 @@
       "saved": "저장됨",
       "saving": "저장 중…",
       "error": "저장하지 못했어요"
+    },
+    "name": {
+      "label": "회의 이름",
+      "placeholder": "예: 주간 계획 (선택)"
     }
   },
   "upcomingToast": {

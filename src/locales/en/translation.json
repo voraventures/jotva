@@ -599,7 +599,8 @@
       "star": "Star meeting",
       "unstar": "Unstar meeting",
       "titleAria": "Meeting title",
-      "today": "Today"
+      "today": "Today",
+      "rename": "Rename meeting"
     },
     "error": {
       "processingFailed": "Processing failed",
@@ -991,6 +992,10 @@
       "saved": "Saved",
       "saving": "Saving…",
       "error": "Couldn't save"
+    },
+    "name": {
+      "label": "Meeting name",
+      "placeholder": "e.g. Weekly planning (optional)"
     }
   },
   "upcomingToast": {

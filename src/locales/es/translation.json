@@ -599,7 +599,8 @@
       "star": "Destacar reunión",
       "unstar": "Quitar destacado",
       "titleAria": "Título de la reunión",
-      "today": "Hoy"
+      "today": "Hoy",
+      "rename": "Cambiar nombre de la reunión"
     },
     "error": {
       "processingFailed": "El procesamiento falló",
@@ -991,6 +992,10 @@
       "saved": "Guardado",
       "saving": "Guardando…",
       "error": "No se pudo guardar"
+    },
+    "name": {
+      "label": "Nombre de la reunión",
+      "placeholder": "p. ej., Planificación semanal (opcional)"
     }
   },
   "upcomingToast": {

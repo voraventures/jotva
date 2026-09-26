@@ -4,7 +4,7 @@ import json
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from ..db import get_db, get_setting, new_id, now_iso
+from ..db import UNNAMED, get_db, get_setting, new_id, now_iso
 from ..services import license as license_svc
 from ..services import pipeline, templates as templates_svc
 from ..services.coach import coach
@@ -77,7 +77,7 @@ def start(body: StartBody):
         "VALUES(?,?,?,?,?,?,?)",
         (
             meeting_id,
-            title or "Untitled meeting",
+            title or UNNAMED,
             now_iso(),
             "recording",
             json.dumps(attendees),
@@ -113,7 +113,7 @@ def start(body: StartBody):
     license_svc.record_meeting_created()
     return {
         "meeting_id": meeting_id,
-        "title": title or "Untitled meeting",
+        "title": title or UNNAMED,
         "template": template["name"],
     }
 

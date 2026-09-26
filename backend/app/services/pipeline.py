@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 
 from ..config import RECORDINGS_DIR, write_secure_text
-from ..db import close_db, get_db, now_iso
+from ..db import UNNAMED, close_db, get_db, now_iso
 from ..events import hub
 from . import intelligence, license, notes, transcriber, speakers
 
@@ -124,6 +124,15 @@ def _generate_and_index(meeting_id: str, transcript_text: str, segments: list[di
     )
     db.commit()
     license.record_ai_notes(meeting_id)
+
+    # Calendar recordings keep the event's name and users name manual ones; only
+    # a manual recording left unnamed gets a suggested name (renamable anytime).
+    if row and (row["title"] or "").strip() in ("", UNNAMED):
+        suggested = notes.suggest_title(content)
+        if suggested:
+            db.execute("UPDATE meetings SET title=? WHERE id=? AND title IN ('', ?)",
+                       (suggested, meeting_id, UNNAMED))
+            db.commit()
 
     intelligence.index_notes(meeting_id, content)
 

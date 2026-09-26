@@ -1,11 +1,16 @@
 # Jotva — project principles
 
 **Core product principle: Jotva does the organizing.**
-Everything is auto-generated from the conversation — the meeting **title**, summary,
-actions, decisions, topics, questions, timeline, and highlights. Never ask the user to
-type a title, tag, label, or manually organize; titles/knowledge appear *after*
-processing (the capture flow reveals the meeting name at the Ready phase).
-The one input we invite is the **jot pad**: while recording, the user can jot quick
+Everything else is auto-generated from the conversation — summary, actions, decisions,
+topics, questions, timeline, and highlights. Never ask the user to tag, label, or
+manually organize.
+
+**Meeting names (product decision, 2026-09-26):** a recording started from a calendar
+event (Google, Outlook, Apple…) takes the event's name. A manual recording is named
+by the user — an optional "Meeting name" field in the Ready to Jot card, and the title
+is renamable from the meeting header. Only if a manual recording is left unnamed does
+Jotva suggest a name after the notes are written.
+The other input we invite is the **jot pad**: while recording, the user can jot quick
 notes, which steer what the AI emphasizes. It's prominent in the recording card but
 always optional. Don't market any of this as "zero manual labor".
 

@@ -163,6 +163,14 @@ export default function CaptureFlow() {
     if (phase === "idle") setAmp(new Array(AMP_LEN).fill(0.28));
   }, [phase]);
 
+  // Manual recordings are named by the user (calendar recordings take the event's
+  // name). Left blank, Jotva suggests a name once the notes are written.
+  const [meetingName, setMeetingName] = useState("");
+  useEffect(() => {
+    if (phase === "idle") setMeetingName("");
+  }, [phase]);
+  const start = () => startRecording({ title: meetingName.trim() });
+
   // ---- elapsed mm:ss (recording controls row) — stands still while paused ----
   const startRef = useRef(Date.now());
   const pausedTotalRef = useRef(0);
@@ -370,6 +378,15 @@ export default function CaptureFlow() {
           </div>
         )}
 
+        {phase === "idle" && (
+          <div className="capture-name">
+            <label htmlFor="capture-name-input">{t("capture.name.label")}</label>
+            <input id="capture-name-input" autoFocus value={meetingName} maxLength={300} spellCheck
+              placeholder={t("capture.name.placeholder")} onChange={(e) => setMeetingName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && start()} />
+          </div>
+        )}
+
         {phase === "recording" && (
           <div className="capture-jot">
             <label htmlFor="capture-jot-input" className="capture-jot-label">
@@ -383,7 +400,7 @@ export default function CaptureFlow() {
 
         <div className="capture-controls">
           {phase === "idle" && (
-            <button className="capture-start-btn" onClick={() => startRecording()}>
+            <button className="capture-start-btn" onClick={start}>
               <MicIcon size={17} />
               {t("capture.startRecording")}
             </button>

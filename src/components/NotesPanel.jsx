@@ -469,7 +469,14 @@ export default function NotesPanel() {
         <div className="ws-header">
           <div className="ws-header-left">
             <div className="ws-title-row">
-              <h1 className="ws-title">{m.title}</h1>
+              <MeetingTitle
+                meeting={m}
+                onRenamed={() => {
+                  refreshDetail();
+                  refreshMeetings();
+                }}
+                onError={handleError}
+              />
               {!!m.is_demo && <span className="demo-badge">{t("list.demoBadge")}</span>}
               <button
                 className={`ws-star${m.starred ? " on" : ""}`}
@@ -917,5 +924,42 @@ function NotesPausedCard({ license, onWrite, onUpgrade }) {
         <button className="btn upgrade-cta" onClick={onUpgrade}>{t("notesPaused.upgrade")}</button>
       </div>
     </div>
+  );
+}
+
+// Click the title to rename the meeting; Enter or leaving the field saves, Escape cancels.
+function MeetingTitle({ meeting, onRenamed, onError }) {
+  const { t } = useTranslation();
+  const [draft, setDraft] = useState(null);
+  const save = () => {
+    const title = (draft || "").trim();
+    setDraft(null);
+    if (!title || title === meeting.title) return;
+    api.patch(`/api/meetings/${meeting.id}`, { title }).then(onRenamed).catch(onError);
+  };
+  if (draft === null) {
+    return (
+      <h1 className="ws-title">
+        <button type="button" className="ws-title-edit" title={t("notes.header.rename")} onClick={() => setDraft(meeting.title)}>
+          {meeting.title}
+        </button>
+      </h1>
+    );
+  }
+  return (
+    <input
+      className="ws-title ws-title-input"
+      aria-label={t("notes.header.rename")}
+      autoFocus
+      maxLength={300}
+      value={draft}
+      onChange={(e) => setDraft(e.target.value)}
+      onFocus={(e) => e.target.select()}
+      onBlur={save}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.currentTarget.blur();
+        if (e.key === "Escape") setDraft(null);
+      }}
+    />
   );
 }

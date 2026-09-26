@@ -25,11 +25,13 @@ SHARED_RULES = """Rules for every section:
   (the crux of what changed or was decided) in *single asterisks* for emphasis."""
 
 SHARED_TAIL = """## Decisions Made
-A bullet list of concrete decisions. If none, write "- No decisions recorded."
+A bullet list of genuine decisions or agreements (a choice made, an option
+ruled out, a direction set). Do not restate action items here. If none, write
+"- No decisions recorded."
 
 ## Action Items
 A markdown table with exactly these columns: | Owner | Action | Due |
-Use "TBD" for unknown owners and "" for unknown due dates.
+Use "TBD" for unknown owners. Due is YYYY-MM-DD, or "" when no date is known.
 
 ## Next Steps
 A short bullet list of what happens next."""

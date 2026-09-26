@@ -139,6 +139,9 @@ CREATE INDEX IF NOT EXISTS idx_shares_token ON shares(token);
 CREATE INDEX IF NOT EXISTS idx_mobile_token ON mobile_sessions(mobile_token);
 """
 
+# Placeholder title for a manual recording the user hasn't named (yet).
+UNNAMED = "Untitled meeting"
+
 # Idempotent column additions for existing databases.
 _MIGRATIONS = {
     "meetings": [

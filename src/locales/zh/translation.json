@@ -598,7 +598,8 @@
       "star": "收藏会议",
       "unstar": "取消收藏",
       "titleAria": "会议标题",
-      "today": "今天"
+      "today": "今天",
+      "rename": "重命名会议"
     },
     "error": {
       "processingFailed": "处理失败",
@@ -979,6 +980,10 @@
       "saved": "已保存",
       "saving": "正在保存…",
       "error": "未能保存"
+    },
+    "name": {
+      "label": "会议名称",
+      "placeholder": "例如：每周计划（可选）"
     }
   },
   "upcomingToast": {

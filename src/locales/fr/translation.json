@@ -599,7 +599,8 @@
       "star": "Marquer la réunion",
       "unstar": "Retirer le marquage",
       "titleAria": "Titre de la réunion",
-      "today": "Aujourd'hui"
+      "today": "Aujourd'hui",
+      "rename": "Renommer la réunion"
     },
     "error": {
       "processingFailed": "Échec du traitement",
@@ -991,6 +992,10 @@
       "saved": "Enregistré",
       "saving": "Enregistrement…",
       "error": "Échec de l'enregistrement"
+    },
+    "name": {
+      "label": "Nom de la réunion",
+      "placeholder": "ex. Planification hebdo (facultatif)"
     }
   },
   "upcomingToast": {
