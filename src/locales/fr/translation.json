@@ -729,7 +729,7 @@
       "upcoming": "À venir"
     },
     "status": {
-      "growing": "Prise de notes…",
+      "jotting": "Prise de notes…",
       "failed": "Échec — ouvrir pour les détails"
     },
     "scopeToday": "Aujourd'hui",
@@ -852,7 +852,7 @@
     "recordNow": "Enregistrer"
   },
   "processing": {
-    "growing": "Prise de notes de votre réunion…",
+    "jotting": "Prise de notes de votre réunion…",
     "takesAbout": "Cela prend environ 30 secondes.",
     "aria": "Traitement"
   },

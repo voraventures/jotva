@@ -729,7 +729,7 @@
       "upcoming": "Próximas"
     },
     "status": {
-      "growing": "Anotando…",
+      "jotting": "Anotando…",
       "failed": "Error — abre para ver detalles"
     },
     "scopeToday": "Hoy",
@@ -852,7 +852,7 @@
     "recordNow": "Grabar ahora"
   },
   "processing": {
-    "growing": "Anotando tu reunión…",
+    "jotting": "Anotando tu reunión…",
     "takesAbout": "Esto suele tardar unos 30 segundos.",
     "aria": "Procesando"
   },

@@ -728,7 +728,7 @@
       "upcoming": "即将开始"
     },
     "status": {
-      "growing": "记录中…",
+      "jotting": "记录中…",
       "failed": "失败 — 打开查看详情"
     },
     "scopeToday": "今天",
@@ -848,7 +848,7 @@
     "recordNow": "立即录制"
   },
   "processing": {
-    "growing": "正在整理你的会议…",
+    "jotting": "正在整理你的会议…",
     "takesAbout": "通常大约需要 30 秒。",
     "aria": "处理中"
   },

@@ -729,7 +729,7 @@
       "upcoming": "Upcoming"
     },
     "status": {
-      "growing": "Jotting…",
+      "jotting": "Jotting…",
       "failed": "Failed — open for details"
     },
     "scopeToday": "Today",
@@ -852,7 +852,7 @@
     "recordNow": "Record now"
   },
   "processing": {
-    "growing": "Jotting down your meeting…",
+    "jotting": "Jotting down your meeting…",
     "takesAbout": "This usually takes about 30 seconds.",
     "aria": "Processing"
   },

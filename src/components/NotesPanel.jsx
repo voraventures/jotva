@@ -592,7 +592,7 @@ export default function NotesPanel() {
 
         {busy ? (
           <div className="empty-state" style={{ height: "auto", padding: "120px 24px" }}>
-            <div className="empty-title">{t("processing.growing")}</div>
+            <div className="empty-title">{t("processing.jotting")}</div>
             <div className="empty-sub">{t("processing.takesAbout")}</div>
           </div>
         ) : live === "error" ? (

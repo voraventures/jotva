@@ -243,7 +243,7 @@ export default function CaptureFlow() {
       : phase === "recording"
         ? t("capture.recordingTitle")
         : phase === "processing"
-          ? t(progress[processingId]?.stage === 'speaker_analysis' ? 'speakers.processing' : "processing.growing")
+          ? t(progress[processingId]?.stage === 'speaker_analysis' ? 'speakers.processing' : "processing.jotting")
           : readyMeeting?.title || "";
   const subtitle =
     phase === "idle"
@@ -354,7 +354,7 @@ export default function CaptureFlow() {
             </>
           )}
           {phase === "processing" && (
-            <div className="capture-dots" aria-label={t("processing.growing")}>
+            <div className="capture-dots" aria-label={t("processing.jotting")}>
               <span style={{ animationDelay: "0s" }} />
               <span style={{ animationDelay: "0.2s" }} />
               <span style={{ animationDelay: "0.4s" }} />

@@ -728,7 +728,7 @@
       "upcoming": "예정됨"
     },
     "status": {
-      "growing": "정리 중…",
+      "jotting": "정리 중…",
       "failed": "실패 — 자세히 보려면 열기"
     },
     "scopeToday": "오늘",
@@ -848,7 +848,7 @@
     "recordNow": "지금 녹음"
   },
   "processing": {
-    "growing": "회의 내용을 정리하고 있어요…",
+    "jotting": "회의 내용을 정리하고 있어요…",
     "takesAbout": "보통 30초 정도 걸립니다.",
     "aria": "처리 중"
   },
