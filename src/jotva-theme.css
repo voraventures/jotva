@@ -315,3 +315,26 @@
   /* the settings panel sizes card text for a 36px icon; make room for the 52px photo */
   .settings-panel .profile-card .set-card-main { flex-basis: calc(100% - 68px); }
 }
+
+/* ---- left panel depth: top light, frosted sticky day headings, soft scroll edge ---- */
+@media screen {
+  :root[data-theme="dark"] { --list-head-bg: rgba(19, 19, 28, .88); }
+  :root, :root[data-theme="default"] { --list-head-bg: rgba(250, 250, 254, .9); }
+  .green-glass .list-panel {
+    background-image: var(--gloss);
+    box-shadow: var(--gloss-edge), var(--shadow-sm);
+  }
+  .meeting-day-group h3 {
+    position: sticky; top: 0; z-index: 2;
+    margin: 0 -8px 8px; padding: 7px 8px; border-radius: 10px;
+    /* matches the panel surface, so it's invisible at rest and frosts whatever scrolls under it */
+    background: var(--list-head-bg);
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+  }
+  /* cards fade out at the bottom edge instead of being cut off */
+  .meeting-card-list {
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+  }
+}
