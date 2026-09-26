@@ -969,8 +969,8 @@
     "periodWord_day": "hoje"
   },
   "capture": {
-    "idleTitle": "Pronto para capturar",
-    "idleSubtitle": "Inicie uma gravação e o Jotva vai ouvir.",
+    "idleTitle": "Pronto para anotar?",
+    "idleSubtitle": "Aperte gravar e foque na conversa. O Jotva faz as anotações.",
     "recordingTitle": "Nova gravação",
     "recordingSubtitle": "O Jotva está ouvindo · {{time}}",
     "rec": "REC",

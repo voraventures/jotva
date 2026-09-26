@@ -93,14 +93,14 @@ api.post = api.patch = api.delete = async () => { throw new Error("Writes disabl
 
 function Preview() {
   const [theme, setTheme] = useState(params.get("theme") || "default");
-  const [settings, setSettings] = useState({ font_size: params.get("size") || "medium", reduce_motion: true, ai_provider: "anthropic", claude_model: "claude-haiku-4-5", whisper_model: "base", auto_record_mode: "ask", retention_days: 0 });
+  const [settings, setSettings] = useState({ font_size: params.get("size") || "medium", reduce_motion: params.get("motion") !== "on", ai_provider: "anthropic", claude_model: "claude-haiku-4-5", whisper_model: "base", auto_record_mode: "ask", retention_days: 0 });
   const [nav, setNav] = useState("meetings");
   const [selectedId, selectMeeting] = useState(visibleMeetings[0]?.id || null);
   const [deletedIds, setDeletedIds] = useState([]);
   const [settingsOpen, setOpen] = useState(!!params.get("section"));
   const [upgradeFeature, setUpgradeFeature] = useState(params.get("upgrade"));
   const [settingsSection, setSection] = useState(normalizeSettingsSection(params.get("section")));
-  const [captureOpen, setCaptureOpen] = useState(false);
+  const [captureOpen, setCaptureOpen] = useState(state === "capture-idle");
   const [recording, setRecording] = useState({ active: state === "recording", meetingId: meeting.id });
   const [processingId, setProcessingId] = useState(state === "processing" ? meeting.id : null);
   const [readyMeetingId, setReadyMeetingId] = useState(state === "ready" ? meeting.id : null);

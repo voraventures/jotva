@@ -16,27 +16,80 @@ import { MicIcon, PauseIcon, PlayIcon, RefreshIcon, StopIcon, CheckIcon, XIcon }
 const AMP_LEN = 40;
 const TYPE_MS = 30; // ms per character, per spec
 
+// Idle "snap-fan + light sweep" (the approved logo motion, design-reference/
+// logo-animations): the back sheets tuck in, spring back out one after the
+// other, a light sweeps across, then the mark rests before the next loop.
+const IDLE_LOOP_MS = 4200;
+const easeInCubic = (x) => x * x * x;
+const spring = (x) => (x <= 0 ? 0 : 1 - Math.exp(-7 * x) * Math.cos(9 * x));
+function idleFan(t, i) {
+  if (t < 300) return 1 - easeInCubic(t / 300); // tuck in
+  if (t < 450) return 0; // hold collapsed
+  return spring(((t - 450 - i * 110) / 1000) * 1.9); // staggered snap out
+}
+const idleSweep = (t) => Math.min(1, Math.max(0, (t - 850) / 750));
+
+function useIdleClock(active) {
+  const [t, setT] = useState(IDLE_LOOP_MS - 1); // rest pose until the first frame
+  useEffect(() => {
+    if (!active) return undefined;
+    const start = performance.now();
+    let raf = requestAnimationFrame(function tick(now) {
+      setT((now - start) % IDLE_LOOP_MS);
+      raf = requestAnimationFrame(tick);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [active]);
+  return t;
+}
+
 // The Jotva mark as a live meter: while recording, the back sheets fan open with
-// the speaker's level (quiet = almost stacked, loud = fully fanned).
-function LogoMark({ phase, amp, size = 168 }) {
+// the speaker's level (quiet = almost stacked, loud = fully fanned). While idle
+// it plays the snap-fan loop unless motion is reduced.
+function LogoMark({ phase, amp, size = 168, animate = false }) {
   const uid = useId().replace(/:/g, "");
+  const idle = animate && phase === "idle";
+  const t = useIdleClock(idle);
   const recent = amp.slice(-8);
   const level = recent.reduce((a, b) => a + b, 0) / recent.length;
   const fan = phase === "recording" ? Math.min(1.1, 0.35 + level * 0.75) : phase === "processing" ? 0.8 : 1;
+  const fans = idle ? [idleFan(t, 0), idleFan(t, 1)] : [fan, fan];
+  const sweep = idle ? idleSweep(t) : 0;
   const grad = (id, stops) => (
     <linearGradient id={`${uid}${id}`} x1="1" y1="0" x2="0" y2="1">
       {stops.map(([o, c]) => <stop key={o} offset={o} stopColor={c} />)}
     </linearGradient>
   );
+  const paths = [sheetPath(BACK[1], fans[1]), sheetPath(BACK[0], fans[0]), sheetPath(undefined, 0)];
   const sheet = (d, id) => (
-    <path d={d} fill={`url(#${uid}${id})`} style={{ d: `path("${d}")`, transition: "d 140ms ease-out" }} />
+    <path d={d} fill={`url(#${uid}${id})`} style={idle ? undefined : { d: `path("${d}")`, transition: "d 140ms ease-out" }} />
   );
   return (
-    <svg width={size} height={(size * 664) / 715} viewBox={LOGO_VIEWBOX} aria-hidden="true">
-      <defs>{grad("f", COLORS.front)}{grad("m", COLORS.mid)}{grad("b", COLORS.back)}</defs>
-      {sheet(sheetPath(BACK[1], fan), "b")}
-      {sheet(sheetPath(BACK[0], fan), "m")}
-      {sheet(sheetPath(undefined, 0), "f")}
+    <svg width={size} height={(size * 664) / 715} viewBox={LOGO_VIEWBOX} aria-hidden="true" overflow="visible">
+      <defs>
+        {grad("f", COLORS.front)}{grad("m", COLORS.mid)}{grad("b", COLORS.back)}
+        <linearGradient id={`${uid}sw`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#fff" stopOpacity="0" />
+          <stop offset=".5" stopColor="#fff" stopOpacity=".7" />
+          <stop offset="1" stopColor="#fff" stopOpacity="0" />
+        </linearGradient>
+        <filter id={`${uid}bloom`} x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="22" /></filter>
+        <clipPath id={`${uid}clip`}>{paths.map((d) => <path key={d} d={d} />)}</clipPath>
+      </defs>
+      {phase === "idle" && (
+        <g filter={`url(#${uid}bloom)`} opacity={0.4 + 0.25 * Math.sin(Math.PI * sweep)}>
+          <path d={paths[0]} fill="#7a3df6" /><path d={paths[1]} fill="#3452f6" /><path d={paths[2]} fill="#4e90f8" />
+        </g>
+      )}
+      {sheet(paths[0], "b")}
+      {sheet(paths[1], "m")}
+      {sheet(paths[2], "f")}
+      {sweep > 0 && sweep < 1 && (
+        <g clipPath={`url(#${uid}clip)`}>
+          <rect x="-160" y="-1000" width="200" height="1400" fill={`url(#${uid}sw)`}
+            style={{ mixBlendMode: "screen" }} transform={`rotate(22) translate(${-420 + sweep * 1000} 0)`} />
+        </g>
+      )}
     </svg>
   );
 }
@@ -287,7 +340,7 @@ export default function CaptureFlow() {
             </div>
           )}
           <div className={`capture-mark phase-${phase}`}>
-            <LogoMark phase={phase} amp={amp} />
+            <LogoMark phase={phase} amp={amp} animate={!reducedMotion} />
             {phase === "ready" && (
               <span className="capture-ready-check" key={readyMeetingId}>
                 <CheckIcon size={20} strokeWidth={3.2} />

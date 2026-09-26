@@ -960,8 +960,8 @@
     "periodWord_day": "今天"
   },
   "capture": {
-    "idleTitle": "准备好开始记录",
-    "idleSubtitle": "开始录音，Jotva 会倾听。",
+    "idleTitle": "准备好开始记录了吗？",
+    "idleSubtitle": "点击录音，专注于对话。笔记交给 Jotva。",
     "recordingTitle": "新录音",
     "recordingSubtitle": "Jotva 正在倾听 · {{time}}",
     "rec": "录制",

@@ -960,8 +960,8 @@
     "periodWord_day": "오늘"
   },
   "capture": {
-    "idleTitle": "캡처 준비 완료",
-    "idleSubtitle": "녹음을 시작하면 Jotva가 듣기 시작해요.",
+    "idleTitle": "기록을 시작할까요?",
+    "idleSubtitle": "녹음을 누르고 대화에 집중하세요. 노트는 Jotva가 정리해요.",
     "recordingTitle": "새 녹음",
     "recordingSubtitle": "Jotva가 듣고 있어요 · {{time}}",
     "rec": "REC",
