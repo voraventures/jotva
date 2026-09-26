@@ -334,7 +334,6 @@
       "qualityDesc": "Padrão é rápido e preciso para as reuniões do dia a dia. Alta qualidade usa um modelo mais avançado e está incluída no Pro.",
       "qualityStandard": "Padrão",
       "qualityPro": "Alta qualidade (Pro)",
-      "qualityProOnly": "Notas de alta qualidade estão incluídas no Jotva Pro.",
       "recommendedLabel": "{{name}} (recomendado)",
       "loading": "Carregando…",
       "keyLabel": {
@@ -492,7 +491,6 @@
     "license": {
       "title": "Assinatura",
       "currentPlan": "Plano atual",
-      "remaining": "{{remaining}} de {{limit}} reuniões gratuitas restantes.",
       "manage": "Gerenciar assinatura",
       "manageDesc": "Revalide sua licença ou atualize para o Pro.",
       "opening": "Abrindo…",

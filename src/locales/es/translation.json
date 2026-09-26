@@ -334,7 +334,6 @@
       "qualityDesc": "Estándar es rápido y preciso para las reuniones del día a día. Alta calidad usa un modelo más capaz y está incluida con Pro.",
       "qualityStandard": "Estándar",
       "qualityPro": "Alta calidad (Pro)",
-      "qualityProOnly": "Las notas de alta calidad están incluidas con Jotva Pro.",
       "recommendedLabel": "{{name}} (recomendado)",
       "loading": "Cargando…",
       "keyLabel": {
@@ -492,7 +491,6 @@
     "license": {
       "title": "Suscripción",
       "currentPlan": "Plan actual",
-      "remaining": "{{remaining}} de {{limit}} reuniones gratuitas restantes.",
       "manage": "Gestionar suscripción",
       "manageDesc": "Vuelve a verificar tu licencia o mejora a Pro.",
       "opening": "Abriendo…",

@@ -334,7 +334,6 @@
       "qualityDesc": "표준은 일상적인 회의에 빠르고 정확합니다. 고품질은 더 뛰어난 모델을 사용하며 Pro에 포함되어 있습니다.",
       "qualityStandard": "표준",
       "qualityPro": "고품질 (Pro)",
-      "qualityProOnly": "고품질 노트는 Jotva Pro에 포함되어 있습니다.",
       "recommendedLabel": "{{name}} (권장)",
       "loading": "불러오는 중…",
       "keyLabel": {
@@ -492,7 +491,6 @@
     "license": {
       "title": "구독",
       "currentPlan": "현재 플랜",
-      "remaining": "무료 회의 {{limit}}개 중 {{remaining}}개 남음.",
       "manage": "구독 관리",
       "manageDesc": "라이선스를 다시 확인하거나 Pro로 업그레이드하세요.",
       "opening": "여는 중…",

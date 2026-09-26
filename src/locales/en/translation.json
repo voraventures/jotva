@@ -334,7 +334,6 @@
       "qualityDesc": "Standard is fast and accurate for everyday meetings. Higher quality uses a more capable model and is included with Pro.",
       "qualityStandard": "Standard",
       "qualityPro": "Higher quality (Pro)",
-      "qualityProOnly": "Higher-quality notes are included with Jotva Pro.",
       "recommendedLabel": "{{name}} (recommended)",
       "loading": "Loading…",
       "keyLabel": {
@@ -492,7 +491,6 @@
     "license": {
       "title": "Subscription",
       "currentPlan": "Current plan",
-      "remaining": "{{remaining}} of {{limit}} free meetings remaining.",
       "manage": "Manage subscription",
       "manageDesc": "Re-check your license or upgrade to Pro.",
       "opening": "Opening…",

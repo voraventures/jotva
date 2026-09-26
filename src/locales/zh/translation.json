@@ -334,7 +334,6 @@
       "qualityDesc": "标准模式快速准确，适合日常会议。高质量模式使用更强大的模型，包含在 Pro 中。",
       "qualityStandard": "标准",
       "qualityPro": "高质量 (Pro)",
-      "qualityProOnly": "高质量笔记包含在 Jotva Pro 中。",
       "recommendedLabel": "{{name}}（推荐）",
       "loading": "加载中…",
       "keyLabel": {
@@ -492,7 +491,6 @@
     "license": {
       "title": "订阅",
       "currentPlan": "当前方案",
-      "remaining": "剩余 {{limit}} 次免费会议中的 {{remaining}} 次。",
       "manage": "管理订阅",
       "manageDesc": "重新检查你的许可证或升级到 Pro。",
       "opening": "正在打开…",
