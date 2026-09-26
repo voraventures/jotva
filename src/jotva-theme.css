@@ -284,3 +284,10 @@
   }
   :root[data-theme="default"] .seg-slider button.active { background: transparent !important; box-shadow: none !important; }
 }
+
+/* calendar provider logos: neutral glass tile so brand colours read true */
+@media screen {
+  .set-card-icon.cal-logo { background: var(--surface) !important; border: 1px solid var(--border); }
+  .set-card-icon.cal-logo svg { display: block; border-radius: 5px; box-shadow: 0 1px 2px rgba(0, 0, 0, .25); }
+  .set-card-icon.cal-microsoft svg { box-shadow: none; }
+}

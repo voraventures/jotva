@@ -8,7 +8,7 @@ import { api, openExternal } from "../api.js";
 import { THEMES, useStore } from "../store.jsx";
 import { UsersIcon, XIcon } from "./icons.jsx";
 import { Select } from "./ui.jsx";
-import { BRAND_LOGOS } from "./brandLogos.jsx";
+import { AppleCalendarLogo, BRAND_LOGOS, GoogleCalendarLogo, OutlookCalendarLogo } from "./brandLogos.jsx";
 
 // Template glyphs (14px, stroke-based) — scoped to Settings only.
 const TI = ({ size = 14, children }) => (
@@ -945,7 +945,7 @@ export default function Settings() {
               <p className="set-intro">{t('settings.calendars.intro')}</p>
               <div className="set-section-label">{t('settings.calendars.connected')}</div>
               <div className="set-card">
-                <div className="set-card-icon cal-google" style={{ background: "rgba(66,133,244,0.08)" }}><div style={{ width: 14, height: 14, borderRadius: 3, background: "#4285F4", color: "white", fontSize: 8, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1 }}>G</div></div>
+                <div className="set-card-icon cal-logo cal-google"><GoogleCalendarLogo /></div>
                 <div className="set-card-main">
                   <div className="set-card-name">{t('settings.calendars.google')}</div>
                   <div className="set-card-desc">
@@ -973,7 +973,7 @@ export default function Settings() {
                 </div>
               </div>
               <div className="set-card">
-                <div className="set-card-icon cal-microsoft" style={{ background: "rgba(0,120,212,0.08)" }}><div style={{ width: 14, height: 14, borderRadius: 3, background: "#0078D4", color: "white", fontSize: 8, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1 }}>M</div></div>
+                <div className="set-card-icon cal-logo cal-microsoft"><OutlookCalendarLogo /></div>
                 <div className="set-card-main">
                   <div className="set-card-name">{t('settings.calendars.microsoft')}</div>
                   <div className="set-card-desc">
@@ -1013,7 +1013,7 @@ export default function Settings() {
               )}
               {!isWin && (
                 <div className="set-card">
-                  <div className="set-card-icon cal-apple" style={{ background: "rgba(0,0,0,0.06)" }}><div style={{ width: 14, height: 14, borderRadius: 3, background: "#555555", color: "white", fontSize: 8, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1 }}>A</div></div>
+                  <div className="set-card-icon cal-logo cal-apple"><AppleCalendarLogo /></div>
                   <div className="set-card-main">
                     <div className="set-card-name">{t('settings.calendars.apple')}</div>
                     <div className="set-card-desc">

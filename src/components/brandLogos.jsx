@@ -80,3 +80,42 @@ export const BRAND_LOGOS = {
     ),
   },
 };
+
+// Calendar provider marks, drawn to read at ~22px inside a settings card icon.
+export function GoogleCalendarLogo({ size = 22 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+      <rect width="24" height="24" rx="3.5" fill="#ffffff" />
+      <path d="M3.5 0H19v4.5H4.5V19H0V3.5A3.5 3.5 0 0 1 3.5 0z" fill="#4285F4" />
+      <path d="M19 0h1.5A3.5 3.5 0 0 1 24 3.5V19h-5z" fill="#FBBC04" />
+      <path d="M0 19h19v5H3.5A3.5 3.5 0 0 1 0 20.5z" fill="#34A853" />
+      <path d="M19 19h5l-5 5z" fill="#EA4335" />
+      <text x="11.75" y="15.6" textAnchor="middle" fontSize="8.2" fontWeight="700"
+        fontFamily="-apple-system, BlinkMacSystemFont, sans-serif" fill="#4285F4">31</text>
+    </svg>
+  );
+}
+
+export function OutlookCalendarLogo({ size = 22 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="7" y="4" width="16" height="16" rx="2.5" fill="#28A8EA" />
+      <path d="M7.5 8.5 15 13.5l7.5-5" fill="none" stroke="#0364B8" strokeWidth="1.4" strokeLinejoin="round" />
+      <rect x="1" y="6" width="12" height="12" rx="2.2" fill="#0078D4" />
+      <ellipse cx="7" cy="12" rx="2.7" ry="3.4" fill="none" stroke="#ffffff" strokeWidth="1.9" />
+    </svg>
+  );
+}
+
+export function AppleCalendarLogo({ size = 22, date = new Date() }) {
+  const day = date.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+      <rect width="24" height="24" rx="5" fill="#ffffff" />
+      <text x="12" y="8.2" textAnchor="middle" fontSize="5.4" fontWeight="600" letterSpacing=".2"
+        fontFamily="-apple-system, BlinkMacSystemFont, sans-serif" fill="#FF3B30">{day}</text>
+      <text x="12" y="19.6" textAnchor="middle" fontSize="11.5" fontWeight="400"
+        fontFamily="-apple-system, BlinkMacSystemFont, sans-serif" fill="#1c1c1e">{date.getDate()}</text>
+    </svg>
+  );
+}
