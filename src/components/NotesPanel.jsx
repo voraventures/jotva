@@ -19,7 +19,7 @@ import Markdown from "./Markdown.jsx";
 import Onboarding from "./Onboarding.jsx";
 import TimelineTab from "./TimelineTab.jsx";
 import TranscriptTab from "./TranscriptTab.jsx";
-import { CheckIcon, ClockIcon, DotsIcon, StarIcon, UsersIcon, WarnIcon } from "./icons.jsx";
+import { CheckIcon, ClockIcon, DotsIcon, PlayIcon, StarIcon, UsersIcon, WarnIcon } from "./icons.jsx";
 import { Confirm } from "./ui.jsx";
 
 const INTEGRATION_LABELS = {
@@ -107,8 +107,36 @@ function DetailSkeleton() {
   );
 }
 
+const fmtClock = (sec) => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, "0")}`;
+const OWNER_COLORS = ["#c2762e", "#7048e8", "#1f8a9e", "#b8407a", "#3b7a3b", "#4263eb"];
+const ownerColor = (name) => OWNER_COLORS[[...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % OWNER_COLORS.length];
+
+// "2026-09-15" -> "Sep 15" / "Tomorrow" (localized); free-text dues ("next week") pass through.
+function formatDue(due, lang) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(due || "");
+  if (!m) return { label: due || "", overdue: false };
+  const date = new Date(+m[1], +m[2] - 1, +m[3]);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const days = Math.round((date - today) / 86400000);
+  let label;
+  if (Math.abs(days) <= 1) {
+    label = new Intl.RelativeTimeFormat(lang, { numeric: "auto" }).format(days, "day");
+    label = label.charAt(0).toLocaleUpperCase(lang) + label.slice(1);
+  } else {
+    label = date.toLocaleDateString(lang, { month: "short", day: "numeric", ...(date.getFullYear() !== today.getFullYear() && { year: "numeric" }) });
+  }
+  return { label, overdue: days < 0 };
+}
+
+// Markdown list ("1. …", "- …") -> item strings; null when the text isn't a plain list.
+function listItems(text) {
+  const lines = (text || "").split("\n").map((l) => l.trim()).filter(Boolean);
+  if (!lines.length || !lines.every((l) => /^(\d+[.)]|[-*•])\s+/.test(l))) return null;
+  return lines.map((l) => l.replace(/^(\d+[.)]|[-*•])\s+/, ""));
+}
+
 function ActionRow({ item, onAssign, onComplete }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [assigning, setAssigning] = useState(false);
   const [name, setName] = useState("");
   const isTbd = !item.owner || item.owner.trim().toUpperCase() === "TBD";
@@ -121,6 +149,7 @@ function ActionRow({ item, onAssign, onComplete }) {
     setName("");
   };
 
+  const due = formatDue(item.due, i18n.language);
   return (
     <div className="ov-action-row">
       <button
@@ -130,29 +159,34 @@ function ActionRow({ item, onAssign, onComplete }) {
       >
         {done && <CheckIcon size={10} strokeWidth={3.5} />}
       </button>
-      <span className={`ov-action-text${done ? " done" : ""}`}>{item.action}</span>
-      {assigning ? (
-        <input
-          className="assign-input"
-          autoFocus
-          placeholder={t("notes.action.owner")}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") submit();
-            if (e.key === "Escape") setAssigning(false);
-          }}
-          onBlur={submit}
-        />
-      ) : (
-        <button
-          className={`ov-action-owner${isTbd ? " tbd" : ""}`}
-          onClick={() => setAssigning(true)}
-        >
-          {isTbd ? t("notes.action.tbd") : item.owner}
-        </button>
-      )}
-      <span className="ov-action-due">{done ? t("notes.action.done").toUpperCase() : item.due}</span>
+      <div className="ov-action-main">
+        <span className={`ov-action-text${done ? " done" : ""}`}>{item.action}</span>
+        <div className="ov-action-meta">
+          {assigning ? (
+            <input
+              className="assign-input"
+              autoFocus
+              placeholder={t("notes.action.owner")}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") submit();
+                if (e.key === "Escape") setAssigning(false);
+              }}
+              onBlur={submit}
+            />
+          ) : (
+            <button className={`ov-action-owner${isTbd ? " tbd" : ""}`} onClick={() => setAssigning(true)}>
+              {isTbd ? t("notes.action.assignOwner") : (
+                <><span className="owner-avatar" style={{ background: ownerColor(item.owner) }} aria-hidden="true">{initials(item.owner)}</span>{item.owner}</>
+              )}
+            </button>
+          )}
+          {(done || due.label) && (
+            <span className={`ov-action-due${due.overdue && !done ? " overdue" : ""}`}>{done ? t("notes.action.done") : due.label}</span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -207,6 +241,7 @@ export default function NotesPanel() {
   } = useStore();
   const logoUrl = useLogo();
   const [tab, setTab] = useState("overview"); // overview | timeline | transcript | ask
+  const [jump, setJump] = useState(null); // { sec, id }: Overview highlight -> transcript playback
   const tabsRef = useRef(null);
   const tabRefs = useRef({});
   const [tabHover, setTabHover] = useState(null);
@@ -599,36 +634,21 @@ export default function NotesPanel() {
             {tab === "overview" && ready && (
               <div className="ws-tabbody">
                 {headsUp.length > 0 && (
-                  <div className="callout heads-up-callout">
+                  <div className="callout heads-up-callout ov-banner" role="note" aria-label={t("notes.bar.headsUp")}>
                     <WarnIcon size={15} />
-                    <div className="callout-body">
-                      <div className="callout-title">{t("notes.bar.headsUp")}</div>
-                      <div className="section-body">
-                        <ul>
-                          {headsUp.map((h, i) => (
-                            <li key={i}>{h}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
+                    <div className="ov-banner-body">{headsUp.map((h, i) => <span key={i}>{h}</span>)}</div>
                   </div>
                 )}
                 {hasContent(compliance) && (
-                  <div className="callout risk">
+                  <div className="callout risk ov-banner">
                     <WarnIcon size={15} />
-                    <div className="callout-body">
-                      <div className="callout-title">{t("notes.section.compliance")}</div>
-                      <Markdown text={compliance} />
-                    </div>
+                    <div className="ov-banner-body"><strong>{t("notes.section.compliance")}</strong><Markdown text={compliance} /></div>
                   </div>
                 )}
                 {riskEntries.map(([name, body]) => (
-                  <div className="callout risk" key={name}>
+                  <div className="callout risk ov-banner" key={name}>
                     <WarnIcon size={15} />
-                    <div className="callout-body">
-                      <div className="callout-title">{name}</div>
-                      <Markdown text={body} />
-                    </div>
+                    <div className="ov-banner-body"><strong>{name}</strong><Markdown text={body} /></div>
                   </div>
                 ))}
                 {conflicts.map((c) => (
@@ -653,7 +673,7 @@ export default function NotesPanel() {
                   <div className="ov-col-left">
                     <div className="ov-section-head">
                       <span className="ov-eyebrow">{t("notes.section.actions")}</span>
-                      <span className="ov-count">{String(actions.length).padStart(2, "0")}</span>
+                      <span className="ov-count">{actions.length}</span>
                     </div>
                     {actions.length === 0 ? (
                       <div className="section-empty-note">{t("notes.action.none")}</div>
@@ -672,7 +692,7 @@ export default function NotesPanel() {
 
                     <div className="ov-section-head ov-section-head-spaced">
                       <span className="ov-eyebrow">{t("notes.section.decisions")}</span>
-                      <span className="ov-count">{String(decisions.length).padStart(2, "0")}</span>
+                      <span className="ov-count">{decisions.length}</span>
                     </div>
                     {decisions.length === 0 ? (
                       <div className="section-empty-note">{t("notes.decisions.none")}</div>
@@ -683,6 +703,15 @@ export default function NotesPanel() {
                           <span className={d.status === "superseded" ? "superseded" : ""}>{d.text}</span>
                         </div>
                       ))
+                    )}
+
+                    {keyDiscussions.trim() && (
+                      <>
+                        <div className="ov-section-head ov-section-head-spaced">
+                          <span className="ov-eyebrow">{t("notes.section.discussions")}</span>
+                        </div>
+                        <div className="ov-discussions"><Markdown text={keyDiscussions} /></div>
+                      </>
                     )}
                   </div>
 
@@ -715,29 +744,35 @@ export default function NotesPanel() {
                     {firstMarker != null && (
                       <>
                         <div className="ov-eyebrow ov-eyebrow-spaced">{t("notes.section.highlight")}</div>
-                        <div className="ov-highlight-card">
-                          <span className="ov-highlight-text">{t("notes.section.flaggedMoment")}</span>
-                          <span className="ov-highlight-time">
-                            {`${Math.floor(firstMarker / 60)}:${String(Math.floor(firstMarker % 60)).padStart(2, "0")}`}
-                          </span>
-                        </div>
+                        {m.audio_path ? (
+                          <button className="ov-highlight-card ov-highlight-play"
+                            onClick={() => { setJump({ sec: firstMarker, id: Date.now() }); setTab("transcript"); }}>
+                            <span className="ov-play" aria-hidden="true"><PlayIcon size={11} /></span>
+                            <span className="ov-highlight-text">{t("notes.section.flaggedMoment")}</span>
+                            <span className="ov-highlight-time">{fmtClock(firstMarker)}</span>
+                          </button>
+                        ) : (
+                          <div className="ov-highlight-card">
+                            <span className="ov-highlight-text">{t("notes.section.flaggedMoment")}</span>
+                            <span className="ov-highlight-time">{fmtClock(firstMarker)}</span>
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {nextSteps.trim() && (
+                      <>
+                        <div className="ov-eyebrow ov-eyebrow-spaced">{t("notes.section.nextSteps")}</div>
+                        {listItems(nextSteps) ? (
+                          <ol className="ov-steps">{listItems(nextSteps).map((step, i) => <li key={i}>{renderSummary(step)}</li>)}</ol>
+                        ) : (
+                          <Markdown text={nextSteps} />
+                        )}
                       </>
                     )}
                   </div>
                 </div>
 
-                {nextSteps.trim() && (
-                  <div className="plain-section">
-                    <div className="surface-title">{t("notes.section.nextSteps")}</div>
-                    <Markdown text={nextSteps} />
-                  </div>
-                )}
-                {keyDiscussions.trim() && (
-                  <div className="plain-section">
-                    <div className="surface-title">{t("notes.section.discussions")}</div>
-                    <Markdown text={keyDiscussions} />
-                  </div>
-                )}
                 {otherEntries.map(([name, body]) => (
                   <div className="plain-section" key={name}>
                     <div className="surface-title">{name}</div>
@@ -775,7 +810,7 @@ export default function NotesPanel() {
             )}
             {tab === "transcript" && (
               <div className="ws-tabbody">
-                <TranscriptTab meeting={m} />
+                <TranscriptTab meeting={m} jump={jump} />
               </div>
             )}
             {tab === "ask" && (

@@ -547,7 +547,8 @@
       "noneAssigned": "Aucune action à mener ne vous est attribuée dans cette réunion.",
       "none": "Aucune action dans cette réunion.",
       "showMore_one": "Afficher {{count}} de plus",
-      "showMore_other": "Afficher {{count}} de plus"
+      "showMore_other": "Afficher {{count}} de plus",
+      "assignOwner": "Attribuer un responsable"
     },
     "conflict": {
       "detected": "Conflit détecté",

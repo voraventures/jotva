@@ -547,7 +547,8 @@
       "noneAssigned": "No tienes elementos de acción asignados en esta reunión.",
       "none": "No hay acciones en esta reunión.",
       "showMore_one": "Mostrar {{count}} más",
-      "showMore_other": "Mostrar {{count}} más"
+      "showMore_other": "Mostrar {{count}} más",
+      "assignOwner": "Asignar responsable"
     },
     "conflict": {
       "detected": "Conflicto detectado",

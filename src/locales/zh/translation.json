@@ -546,7 +546,8 @@
       "setNameFilter": "在设置 → 通用中设置你的名字以筛选你的事项",
       "noneAssigned": "本次会议中没有指派给你的行动项。",
       "none": "这场会议没有行动项。",
-      "showMore_other": "显示还有 {{count}} 项"
+      "showMore_other": "显示还有 {{count}} 项",
+      "assignOwner": "指派负责人"
     },
     "conflict": {
       "detected": "检测到冲突",

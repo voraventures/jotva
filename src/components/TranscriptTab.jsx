@@ -39,7 +39,7 @@ function speakerColorIndex(name) {
   return (n - 1) % AVATAR_COLORS.length;
 }
 
-export default function TranscriptTab({ meeting }) {
+export default function TranscriptTab({ meeting, jump }) {
   const { t } = useTranslation();
   const { refreshDetail, showToast } = useStore();
   const [retrying, setRetrying] = useState(false);
@@ -99,6 +99,16 @@ export default function TranscriptTab({ meeting }) {
     });
     if (idx >= 0) rowRefs.current[idx]?.scrollIntoView({ block: "center", behavior: "smooth" });
   };
+
+  // Opened from an Overview highlight: jump to that moment once the audio is ready.
+  useEffect(() => {
+    const el = audioRef.current;
+    if (!jump || !el) return undefined;
+    const go = () => seek(jump.sec);
+    if (el.readyState >= 1) { go(); return undefined; }
+    el.addEventListener("loadedmetadata", go, { once: true });
+    return () => el.removeEventListener("loadedmetadata", go);
+  }, [jump?.id, src]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const cycleSpeed = () => {
     const next = SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length];
