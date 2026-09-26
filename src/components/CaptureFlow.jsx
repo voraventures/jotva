@@ -17,9 +17,10 @@ const AMP_LEN = 40;
 const TYPE_MS = 30; // ms per character, per spec
 
 // Idle "snap-fan + light sweep" (the approved logo motion, design-reference/
-// logo-animations): the back sheets tuck in, spring back out one after the
-// other, a light sweeps across, then the mark rests before the next loop.
-const IDLE_LOOP_MS = 4200;
+// logo-animations), played once when the window opens: the back sheets tuck
+// in, spring back out one after the other and a light sweeps across. The mark
+// then rests with its glow left on.
+const IDLE_INTRO_MS = 2200;
 const easeInCubic = (x) => x * x * x;
 const spring = (x) => (x <= 0 ? 0 : 1 - Math.exp(-7 * x) * Math.cos(9 * x));
 function idleFan(t, i) {
@@ -30,13 +31,14 @@ function idleFan(t, i) {
 const idleSweep = (t) => Math.min(1, Math.max(0, (t - 850) / 750));
 
 function useIdleClock(active) {
-  const [t, setT] = useState(IDLE_LOOP_MS - 1); // rest pose until the first frame
+  const [t, setT] = useState(IDLE_INTRO_MS); // rest pose until the first frame
   useEffect(() => {
     if (!active) return undefined;
     const start = performance.now();
     let raf = requestAnimationFrame(function tick(now) {
-      setT((now - start) % IDLE_LOOP_MS);
-      raf = requestAnimationFrame(tick);
+      const elapsed = now - start;
+      setT(Math.min(elapsed, IDLE_INTRO_MS));
+      if (elapsed < IDLE_INTRO_MS) raf = requestAnimationFrame(tick);
     });
     return () => cancelAnimationFrame(raf);
   }, [active]);
@@ -45,7 +47,7 @@ function useIdleClock(active) {
 
 // The Jotva mark as a live meter: while recording, the back sheets fan open with
 // the speaker's level (quiet = almost stacked, loud = fully fanned). While idle
-// it plays the snap-fan loop unless motion is reduced.
+// it plays the snap-fan once (unless motion is reduced) and keeps its glow.
 function LogoMark({ phase, amp, size = 168, animate = false }) {
   const uid = useId().replace(/:/g, "");
   const idle = animate && phase === "idle";
@@ -77,7 +79,7 @@ function LogoMark({ phase, amp, size = 168, animate = false }) {
         <clipPath id={`${uid}clip`}>{paths.map((d) => <path key={d} d={d} />)}</clipPath>
       </defs>
       {phase === "idle" && (
-        <g filter={`url(#${uid}bloom)`} opacity={0.4 + 0.25 * Math.sin(Math.PI * sweep)}>
+        <g filter={`url(#${uid}bloom)`} opacity={0.5 + 0.2 * Math.sin(Math.PI * sweep)}>
           <path d={paths[0]} fill="#7a3df6" /><path d={paths[1]} fill="#3452f6" /><path d={paths[2]} fill="#4e90f8" />
         </g>
       )}
