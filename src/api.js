@@ -38,8 +38,13 @@ async function request(method, path, body) {
   }
   if (!resp.ok) {
     const detail = data?.detail || `Request failed (${resp.status})`;
-    const err = new Error(detail);
+    // Structured details (e.g. 402 pro_required / ai_limit) carry a code for the UI.
+    const err = new Error(typeof detail === "object" ? detail.message || `Request failed (${resp.status})` : detail);
     err.status = resp.status;
+    if (typeof detail === "object") {
+      err.code = detail.code;
+      err.feature = detail.feature;
+    }
     throw err;
   }
   return data;

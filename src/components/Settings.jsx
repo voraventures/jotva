@@ -270,7 +270,7 @@ function ToggleSwitch({ checked, onChange, label }) {
 }
 
 // Opt-in MCP access: AI assistants launch Jotva's read-only MCP server themselves.
-function McpAccessCard({ enabled, onToggle, showToast }) {
+function McpAccessCard({ enabled, onToggle, showToast, locked }) {
   const { t } = useTranslation();
   const bridge = window.jotva;
   const [busy, setBusy] = useState(false);
@@ -293,7 +293,10 @@ function McpAccessCard({ enabled, onToggle, showToast }) {
     <div className="set-card mcp-card">
       <div className="set-card-icon"><SparkIcon size={17} /></div>
       <div className="set-card-main">
-        <div className="set-card-name">{t("settings.mcp.title")}</div>
+        <div className="set-card-name">
+          {t("settings.mcp.title")}
+          {locked && <span className="pro-badge">{t("upgrade.badge")}</span>}
+        </div>
         <div className="set-card-desc">{t("settings.mcp.desc")}</div>
       </div>
       <div className="set-card-control">
@@ -468,6 +471,34 @@ function IntegrationConfig({ ig, secrets, onSaved }) {
   );
 }
 
+// Free plan: this month's bundled-AI notes (hidden when unlimited: Pro or own key).
+function AiAllowance({ license }) {
+  const { t, i18n } = useTranslation();
+  if (!license || license.ai_notes_limit == null) return null;
+  const { ai_notes_limit: limit, ai_notes_remaining: remaining } = license;
+  const resets = new Intl.DateTimeFormat(i18n.language, { month: "long", day: "numeric" }).format(
+    new Date(`${license.ai_notes_resets_on}T00:00:00`)
+  );
+  return (
+    <div className="ai-allowance">
+      <div className="ai-allowance-row">
+        <span>{t("aiAllowance.left", { remaining, limit })}</span>
+        <span>{t("aiAllowance.resets", { date: resets })}</span>
+      </div>
+      <div className="ai-allowance-bar" role="progressbar" aria-valuemin={0} aria-valuemax={limit} aria-valuenow={limit - remaining}>
+        <span style={{ width: `${Math.min(100, ((limit - remaining) / limit) * 100)}%` }} />
+      </div>
+    </div>
+  );
+}
+
+// Setting values only Pro may turn on (mirrors _PRO_SETTING_VALUES in routes/misc.py).
+const PRO_SETTING_VALUES = {
+  "mcp_enabled:true": "mcp",
+  "recording_mode:all": "auto_record",
+  "ai_quality:pro": "higher_quality",
+};
+
 export default function Settings() {
   const {
     settingsOpen,
@@ -484,13 +515,15 @@ export default function Settings() {
     refreshCalendar,
     license,
     refreshLicense,
-    startProUpgradePolling,
     showToast,
     templates,
     refreshTemplates,
     setSelectedTemplate,
     workspace,
     refreshWorkspace,
+    hasFeature,
+    openUpgrade,
+    handleError,
   } = useStore();
   const { t } = useTranslation();
   const tab = settingsSection || "general";
@@ -498,7 +531,6 @@ export default function Settings() {
   const [secrets, setSecrets] = useState({});
   const [devices, setDevices] = useState({ devices: [] });
   const [msFlow, setMsFlow] = useState(null);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
   const [autoLaunch, setAutoLaunch] = useState(false);
   const [userName, setUserName] = useState("");
@@ -584,8 +616,10 @@ export default function Settings() {
   if (!settingsOpen) return null;
 
   const saveSetting = (key, value) => {
+    const proFeature = PRO_SETTING_VALUES[`${key}:${value}`];
+    if (proFeature && !hasFeature(proFeature)) return openUpgrade(proFeature);
     setSettings((s) => ({ ...s, [key]: value }));
-    api.post("/api/settings", { key, value }).catch((e) => showToast(e.message, "error"));
+    api.post("/api/settings", { key, value }).catch(handleError);
   };
 
   const connectGoogle = () => {
@@ -603,27 +637,6 @@ export default function Settings() {
         openExternal(flow.verification_uri);
       })
       .catch((e) => showToast(e.message, "error"));
-  };
-
-  const startProCheckout = async () => {
-    setCheckoutLoading(true);
-    try {
-      const { install_id } = await api.get("/api/install-id");
-      const resp = await fetch("https://license.jotva.com/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ install_id }),
-      });
-      if (!resp.ok) throw new Error(t('settings.toast.checkoutFailedStatus', { status: resp.status }));
-      const data = await resp.json();
-      if (!data?.url) throw new Error(t('settings.toast.noCheckoutUrl'));
-      openExternal(data.url);
-      startProUpgradePolling();
-    } catch (e) {
-      showToast(e.message || t('settings.toast.checkoutFailed'), "error");
-    } finally {
-      setCheckoutLoading(false);
-    }
   };
 
   const openPortal = () => {
@@ -866,7 +879,7 @@ export default function Settings() {
                     value={settings.recording_mode || "confirm_30s"}
                     onChange={(v) => saveSetting("recording_mode", v)}
                     options={[
-                      { value: "all", label: t('settings.recording.modeAll') },
+                      { value: "all", label: hasFeature("auto_record") ? t('settings.recording.modeAll') : `${t('settings.recording.modeAll')} · ${t('upgrade.badge')}` },
                       { value: "confirm_30s", label: t('settings.recording.mode30') },
                       { value: "manual", label: t('settings.recording.modeManual') },
                       { value: "off", label: t('settings.recording.modeOff') },
@@ -975,13 +988,7 @@ export default function Settings() {
               label: m.recommended ? t('settings.ai.recommendedLabel', { name: m.name }) : m.name,
             }));
             if (saved && !listed && providerModels.length) modelOptions.push({ value: saved, label: saved });
-            const chooseQuality = (v) => {
-              if (v === "pro" && !isPro) {
-                showToast(t('settings.ai.qualityProOnly'));
-                return;
-              }
-              saveSetting("ai_quality", v);
-            };
+            const chooseQuality = (v) => saveSetting("ai_quality", v);
             return (
               <>
                 <div className="set-section-label first">{t('settings.ai.title')}</div>
@@ -1190,7 +1197,10 @@ export default function Settings() {
               <div className="set-card">
                 <div className="set-card-icon"><CalendarClockIcon size={17} /></div>
                 <div className="set-card-main">
-                  <div className="set-card-name">{t('settings.calendars.autoTranscribe')}</div>
+                  <div className="set-card-name">
+                    {t('settings.calendars.autoTranscribe')}
+                    {!hasFeature("auto_record") && <span className="pro-badge">{t('upgrade.badge')}</span>}
+                  </div>
                   <div className="set-card-desc">{t('settings.calendars.autoTranscribeDesc')}</div>
                 </div>
                 <div className="set-card-control">
@@ -1220,7 +1230,7 @@ export default function Settings() {
 
           {tab === "integrations" && (
             <McpAccessCard enabled={settings.mcp_enabled === true} showToast={showToast}
-              onToggle={(on) => saveSetting("mcp_enabled", on)} />
+              locked={!hasFeature("mcp")} onToggle={(on) => saveSetting("mcp_enabled", on)} />
           )}
           {tab === "integrations" && (() => {
             const igConnected = (ig) =>
@@ -1303,15 +1313,18 @@ export default function Settings() {
                         <button
                           className="tpl-item"
                           onClick={() =>
-                            setEditingTemplate({
-                              name: "",
-                              description: "",
-                              body: "## Executive Summary\n2-3 sentences.\n\n## My Section\nWhat to capture here. **Bold** key themes.\n\n{SHARED_TAIL}",
-                            })
+                            hasFeature("templates")
+                              ? setEditingTemplate({
+                                  name: "",
+                                  description: "",
+                                  body: "## Executive Summary\n2-3 sentences.\n\n## My Section\nWhat to capture here. **Bold** key themes.\n\n{SHARED_TAIL}",
+                                })
+                              : openUpgrade("templates")
                           }
                         >
                           <span className="tpl-item-icon"><StarIcon size={14} /></span>
                           <span className="tpl-item-label">{t('settings.templates.new')}</span>
+                          {!hasFeature("templates") && <span className="pro-badge">{t('upgrade.badge')}</span>}
                         </button>
                       </div>
                       <div className="tpl-detail">
@@ -1419,7 +1432,7 @@ export default function Settings() {
                             refreshTemplates();
                             showToast(t('settings.templates.saved'));
                           })
-                          .catch((e) => showToast(e.message, "error"));
+                          .catch(handleError);
                       }}
                     >
                       {t('settings.templates.save')}
@@ -1816,21 +1829,17 @@ export default function Settings() {
           {tab === "license" && (
             <>
               <div className="set-section-label first">{t('settings.license.title')}</div>
-              <div className="set-card">
+              <div className="set-card plan-card">
                 <div className="set-card-icon"><CrownIcon size={14} /></div>
                 <div className="set-card-main">
                   <div className="set-card-name">{t('settings.license.currentPlan')}</div>
-                  {license?.tier !== "pro" && (
-                    <div className="set-card-desc">
-                      {t('settings.license.remaining', { remaining: license?.remaining ?? 5, limit: license?.free_limit ?? 5 })}
-                    </div>
-                  )}
                 </div>
                 <div className="set-card-control">
                   <span style={{ color: "var(--accent)", fontWeight: 600 }}>
                     {license?.plan_name || (license?.tier === "pro" ? t('settings.license.planPro') : t('settings.license.planFree'))}
                   </span>
                 </div>
+                <AiAllowance license={license} />
               </div>
               <div className="set-card">
                 <div className="set-card-icon"><RefreshIcon size={14} /></div>
@@ -1850,8 +1859,8 @@ export default function Settings() {
                     </button>
                   )}
                   {license?.tier !== "pro" && (
-                    <button className="btn" disabled={checkoutLoading} onClick={startProCheckout}>
-                      {checkoutLoading ? t('settings.license.starting') : t('settings.license.getPro')}
+                    <button className="btn upgrade-cta" onClick={() => openUpgrade("default")}>
+                      {t('settings.license.getPro')}
                     </button>
                   )}
                 </div>

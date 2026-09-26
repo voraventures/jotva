@@ -16,6 +16,7 @@ import AppHeader from "./components/AppHeader.jsx";
 import Dock from "./components/Dock.jsx";
 import Titlebar from "./components/Titlebar.jsx";
 import UpcomingToast from "./components/UpcomingToast.jsx";
+import UpgradeModal from "./components/UpgradeModal.jsx";
 import { DigestView, MeetingZeroView, SearchView, TodayView } from "./components/Views.jsx";
 
 const platform = window.jotva?.platform || "darwin";
@@ -167,6 +168,7 @@ export default function App() {
         <Dock />
         <RecordPrompt />
         <UpcomingToast />
+        <UpgradeModal />
         <CoachPanel />
         <BriefPanel />
         {toasts.length > 0 && (

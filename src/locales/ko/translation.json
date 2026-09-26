@@ -1004,5 +1004,69 @@
     "noneIdentified": "발견된 사항 없음",
     "generatedBy": "Jotva에서 생성됨",
     "participantCount_other": "참가자 {{count}}명"
+  },
+  "upgrade": {
+    "eyebrow": "Jotva Pro",
+    "cta": "Pro로 업그레이드",
+    "notNow": "나중에",
+    "badge": "Pro",
+    "foot": "언제든지 해지할 수 있어요. 회의 기록은 항상 Mac에만 저장돼요.",
+    "feature": {
+      "default": {
+        "title": "모든 회의를 더 알차게",
+        "body": "Pro에서는 AI 노트를 무제한으로 쓰고, 회의를 실행으로 이어 주는 도구를 사용할 수 있어요."
+      },
+      "unlimited_notes": {
+        "title": "이번 달 무료 AI 노트를 모두 사용했어요",
+        "body": "녹음과 전사는 안전하게 저장돼 있어요. 무료 AI 노트는 {{date}}에 다시 제공되며, Pro로 업그레이드하면 무제한으로 쓸 수 있어요."
+      },
+      "ask_all": {
+        "title": "모든 회의에 한 번에 질문하기",
+        "body": "무엇이 결정됐는지, 누가 무엇을 맡았는지, 언제 논의됐는지 모든 회의에서 한 번에 답을 찾아요."
+      },
+      "auto_record": {
+        "title": "Jotva가 알아서 녹음해요",
+        "body": "Pro는 캘린더의 회의를 자동으로 녹음해서 하나도 놓치지 않게 해 줘요."
+      },
+      "mcp": {
+        "title": "AI 어시스턴트에서 회의 노트 활용하기",
+        "body": "허락하시면 Claude, Cursor 등 AI 어시스턴트가 회의 노트를 읽을 수 있어요."
+      },
+      "followup": {
+        "title": "후속 메일을 대신 작성해요",
+        "body": "클릭 한 번으로 어떤 회의든 바로 보낼 수 있는 후속 메일로 만들어요."
+      },
+      "templates": {
+        "title": "원하는 형식의 노트",
+        "body": "나만의 템플릿을 만들어 모든 회의 노트를 원하는 형식으로 받아 보세요."
+      },
+      "integrations": {
+        "title": "팀이 일하는 곳에 공유하기",
+        "body": "노트를 Slack과 Notion으로 보내거나 팀 워크스페이스에 공유하세요."
+      },
+      "higher_quality": {
+        "title": "가장 정교한 노트",
+        "body": "Pro에서는 가장 뛰어난 AI로 더 깊이 있고 정확한 회의 노트를 만들어요."
+      }
+    },
+    "perk": {
+      "unlimited_notes": "무제한 AI 노트",
+      "ask_all": "모든 회의에 질문하기",
+      "auto_record": "캘린더 회의 자동 녹음",
+      "higher_quality": "더 높은 품질의 AI 노트",
+      "followup": "후속 메일과 템플릿",
+      "mcp": "Claude 등 AI 어시스턴트에서 접근"
+    }
+  },
+  "notesPaused": {
+    "title": "이 회의의 AI 노트가 일시 중지됐어요",
+    "body": "이번 달 무료 AI 노트 {{limit}}개를 모두 사용했어요. 녹음과 전사는 저장돼 있으며, 노트는 {{date}}부터 또는 Pro에서 바로 작성할 수 있어요.",
+    "write": "지금 노트 작성",
+    "upgrade": "Pro로 업그레이드"
+  },
+  "aiAllowance": {
+    "left": "이번 달 무료 AI 노트 {{limit}}개 중 {{remaining}}개 남음",
+    "resets": "{{date}}에 초기화",
+    "unlimited": "무제한 AI 노트"
   }
 }

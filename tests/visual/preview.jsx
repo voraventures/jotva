@@ -98,6 +98,7 @@ function Preview() {
   const [selectedId, selectMeeting] = useState(visibleMeetings[0]?.id || null);
   const [deletedIds, setDeletedIds] = useState([]);
   const [settingsOpen, setOpen] = useState(!!params.get("section"));
+  const [upgradeFeature, setUpgradeFeature] = useState(params.get("upgrade"));
   const [settingsSection, setSection] = useState(normalizeSettingsSection(params.get("section")));
   const [captureOpen, setCaptureOpen] = useState(false);
   const [recording, setRecording] = useState({ active: state === "recording", meetingId: meeting.id });
@@ -118,7 +119,12 @@ function Preview() {
     recording, recordingLevel: .3, captureOpen, setCaptureOpen, processingId, setProcessingId, readyMeetingId, setReadyMeetingId, paused, muted: false,
     startRecording: async () => { setCaptureOpen(false); setRecording({ active: true, meetingId: meeting.id }); },
     stopRecording: async () => { setRecording({ active: false }); setProcessingId(meeting.id); }, togglePause: () => setPaused(v => !v),
-    license: { tier: "free", meetings_used: 2, meetings_limit: 5, meetings_remaining: 3 },
+    license: {
+      tier: "free", meetings_used: 2, can_record: true, ai_notes_limit: 10, ai_notes_used: 3,
+      ai_notes_remaining: 7, ai_notes_resets_on: "2026-10-01",
+      features: { unlimited_notes: false, higher_quality: false, ask_all: false, auto_record: false,
+                  mcp: false, followup: false, templates: false, integrations: false },
+    },
     upcoming: upcomingFixtures, activeCall: null, prompt: null, upcomingWarning: null, brief: null, coachOpen: false, coachData: null,
     calendarStatus: {}, workspace: null, templates, selectedTemplate: "builtin-default", health: {},
     toasts, showToast: message => setToasts([{ id: 1, message, kind: "error" }]), dismissToast: () => setToasts([]),
@@ -128,6 +134,8 @@ function Preview() {
       if (id === selectedId) selectMeeting(null);
       setToasts([{ id: "fixture-delete", kind: "info", message: "Meeting deleted", action: { label: "Undo", onAction: () => setDeletedIds(ids => ids.filter(deleted => deleted !== id)) } }]);
     }, setSelectedTemplate: noop, dismissActiveCall: noop, setCoachOpen: noop, startProUpgradePolling: noop,
+    upgradeFeature, openUpgrade: (f = "unlimited_notes") => setUpgradeFeature(f), closeUpgrade: () => setUpgradeFeature(null), hasFeature: () => false,
+    proGuard: (_f, fn) => fn, handleError: noop, startCheckout: noop,
   };
   return <StoreContext.Provider value={value}><App /></StoreContext.Provider>;
 }

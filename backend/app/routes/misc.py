@@ -156,6 +156,7 @@ def integrations_status():
 
 @router.post("/integrations/{provider}/send/{meeting_id}")
 def send_to_integration(provider: str, meeting_id: str):
+    license_svc.require_pro("integrations")
     sender = SENDERS.get(provider)
     if not sender:
         raise HTTPException(status_code=422, detail="Unknown integration")
@@ -246,6 +247,14 @@ def dismiss_model_notice():
     return {"ok": True}
 
 
+# Setting values only Pro may turn on (turning them off is always allowed).
+_PRO_SETTING_VALUES = {
+    ("mcp_enabled", True): "mcp",
+    ("recording_mode", "all"): "auto_record",
+    ("ai_quality", "pro"): "higher_quality",
+}
+
+
 @router.post("/settings")
 def save_setting(body: SettingBody):
     validator = SETTING_VALIDATORS.get(body.key)
@@ -253,6 +262,9 @@ def save_setting(body: SettingBody):
         raise HTTPException(status_code=422, detail="Unknown setting")
     if not validator(body.value):
         raise HTTPException(status_code=422, detail="Invalid value for setting")
+    pro_only = _PRO_SETTING_VALUES.get((body.key, body.value if isinstance(body.value, (str, bool)) else None))
+    if pro_only:
+        license_svc.require_pro(pro_only)
     set_setting(body.key, body.value)
     if body.key == 'speaker_identification':
         from ..services.speaker_capture import capture
@@ -336,6 +348,7 @@ def list_templates_route():
 def create_template_route(body: TemplateBody):
     from ..services.templates import create_template
 
+    license_svc.require_pro("templates")
     return create_template(body.name.strip(), body.description.strip(), body.body)
 
 
@@ -343,6 +356,7 @@ def create_template_route(body: TemplateBody):
 def update_template_route(template_id: str, body: TemplateBody):
     from ..services.templates import update_template
 
+    license_svc.require_pro("templates")
     if not update_template(template_id, body.name.strip(), body.description.strip(), body.body):
         raise HTTPException(status_code=404, detail="Template not found or built-in")
     return {"ok": True}
@@ -366,6 +380,7 @@ class AskBody(BaseModel):
 def search_ask(body: AskBody):
     from ..services.ai import semantic_search
 
+    license_svc.require_pro("ask_all")
     try:
         return {"results": semantic_search(body.query.strip())}
     except RuntimeError as exc:

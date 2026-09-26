@@ -1004,5 +1004,69 @@
     "noneIdentified": "未发现问题",
     "generatedBy": "由 Jotva 生成",
     "participantCount_other": "{{count}} 位参与者"
+  },
+  "upgrade": {
+    "eyebrow": "Jotva Pro",
+    "cta": "升级到 Pro",
+    "notNow": "以后再说",
+    "badge": "Pro",
+    "foot": "可随时取消。你的会议始终保存在你的 Mac 上。",
+    "feature": {
+      "default": {
+        "title": "让每场会议更有价值",
+        "body": "Pro 提供无限次 AI 笔记，以及把会议变成行动的工具。"
+      },
+      "unlimited_notes": {
+        "title": "本月的免费 AI 笔记已用完",
+        "body": "你的录音和转录都已安全保存。免费 AI 笔记将于 {{date}} 恢复，或升级 Pro 无限使用。"
+      },
+      "ask_all": {
+        "title": "一次提问所有会议",
+        "body": "同时从所有会议中找到答案：做了什么决定、谁负责什么、何时讨论过。"
+      },
+      "auto_record": {
+        "title": "让 Jotva 替你录音",
+        "body": "Pro 会自动录制日历中的会议，一场都不会错过。"
+      },
+      "mcp": {
+        "title": "把会议带进你的 AI 助手",
+        "body": "经你允许后，Claude、Cursor 等助手可以读取你的会议笔记。"
+      },
+      "followup": {
+        "title": "自动起草跟进邮件",
+        "body": "一键把任何会议变成可直接发送的跟进邮件。"
+      },
+      "templates": {
+        "title": "按你的方式整理笔记",
+        "body": "创建自己的模板，让每场会议的笔记都符合你的习惯。"
+      },
+      "integrations": {
+        "title": "分享到团队工作的地方",
+        "body": "把笔记发送到 Slack 和 Notion，或分享到团队空间。"
+      },
+      "higher_quality": {
+        "title": "最精准的笔记",
+        "body": "Pro 解锁我们最强的 AI，生成更深入、更精准的会议笔记。"
+      }
+    },
+    "perk": {
+      "unlimited_notes": "无限次 AI 笔记",
+      "ask_all": "一次提问所有会议",
+      "auto_record": "自动录制日历会议",
+      "higher_quality": "更高质量的 AI 笔记",
+      "followup": "跟进邮件与模板",
+      "mcp": "可从 Claude 等 AI 助手访问"
+    }
+  },
+  "notesPaused": {
+    "title": "本场会议的 AI 笔记已暂停",
+    "body": "你已用完本月的 {{limit}} 次免费 AI 笔记。录音和转录已保存，笔记可在 {{date}} 生成，或升级 Pro 立即生成。",
+    "write": "立即生成笔记",
+    "upgrade": "升级到 Pro"
+  },
+  "aiAllowance": {
+    "left": "本月免费 AI 笔记剩余 {{remaining}}/{{limit}} 次",
+    "resets": "{{date}} 重置",
+    "unlimited": "无限次 AI 笔记"
   }
 }

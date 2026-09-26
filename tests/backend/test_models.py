@@ -130,7 +130,8 @@ def test_model_setting_rejects_unsafe_values(value):
     assert client.post("/api/settings", json={"key": "claude_model", "value": value}).status_code == 422
 
 
-def test_ai_quality_setting():
+def test_ai_quality_setting(monkeypatch):
+    monkeypatch.setattr(license_svc, "is_pro", lambda: True)  # higher quality is Pro
     assert client.post("/api/settings", json={"key": "ai_quality", "value": "pro"}).status_code == 200
     assert client.post("/api/settings", json={"key": "ai_quality", "value": "max"}).status_code == 422
 

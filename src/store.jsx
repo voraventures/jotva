@@ -542,6 +542,29 @@ export function StoreProvider({ children }) {
     []
   );
 
+  // Freemium: Pro features check license.features before calling the backend and
+  // open the upgrade prompt instead. A 402 from the backend is the backstop.
+  const [upgradeFeature, setUpgradeFeature] = useState(null);
+  const openUpgrade = useCallback((feature = "unlimited_notes") => setUpgradeFeature(feature), []);
+  const closeUpgrade = useCallback(() => setUpgradeFeature(null), []);
+  const hasFeature = useCallback(
+    (feature) => (license?.features ? license.features[feature] !== false : true),
+    [license]
+  );
+  const proGuard = useCallback(
+    (feature, fn) => (...args) => (hasFeature(feature) ? fn(...args) : openUpgrade(feature)),
+    [hasFeature, openUpgrade]
+  );
+  const handleError = useCallback(
+    (e) => (e?.status === 402 ? openUpgrade(e.feature) : showToast(e?.message || String(e), "error")),
+    [openUpgrade, showToast]
+  );
+  const startCheckout = useCallback(async () => {
+    const { url } = await api.post("/api/license/checkout");
+    openExternal(url);
+    startProUpgradePolling();
+  }, [startProUpgradePolling]);
+
   // Passive background license poll: every 5 minutes, re-validate against the
   // license server so a Pro upgrade is reflected even without any user action.
   useEffect(() => {
@@ -626,6 +649,13 @@ export function StoreProvider({ children }) {
     license,
     refreshLicense,
     startProUpgradePolling,
+    upgradeFeature,
+    openUpgrade,
+    closeUpgrade,
+    hasFeature,
+    proGuard,
+    handleError,
+    startCheckout,
     myWork,
     refreshMyWork,
     recording,

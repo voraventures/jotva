@@ -13,13 +13,14 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from app.config import ensure_dirs
 from app.db import get_db, get_setting, set_setting
-from app.routes import calendar, meetings
+from app.routes import calendar, meetings, misc
 from app.services import conflicts, license, notes, pipeline, telemetry
 
 ensure_dirs()
 app = FastAPI()
 app.include_router(meetings.router)
 app.include_router(calendar.router)
+app.include_router(misc.router)
 client = TestClient(app)
 LIMIT = license.FREE_AI_NOTES_PER_MONTH
 
@@ -110,3 +111,22 @@ def test_pro_features_answer_402_on_free():
     r = client.post("/api/calendar/mode", json={"mode": "all"})
     assert r.status_code == 402 and get_setting("recording_mode", None) is None
     assert client.post("/api/calendar/mode", json={"mode": "confirm_30s"}).status_code == 200
+
+
+def test_pro_settings_and_routes_answer_402_on_free():
+    for key, value, feature in (("mcp_enabled", True, "mcp"), ("recording_mode", "all", "auto_record"),
+                                ("ai_quality", "pro", "higher_quality")):
+        r = client.post("/api/settings", json={"key": key, "value": value})
+        assert r.status_code == 402 and r.json()["detail"]["feature"] == feature
+    assert client.post("/api/settings", json={"key": "mcp_enabled", "value": False}).status_code == 200
+    assert client.post("/api/search/ask", json={"query": "pricing"}).status_code == 402
+    r = client.post("/api/templates", json={"name": "Mine", "description": "", "body": "## Notes\n- summary"})
+    assert r.status_code == 402 and r.json()["detail"]["feature"] == "templates"
+    add_meeting("m1")
+    assert client.post("/api/integrations/slack/send/m1").status_code == 402
+
+
+def test_pro_can_turn_on_pro_settings():
+    set_setting("license_status", {"valid": True, "dev": True})
+    assert client.post("/api/settings", json={"key": "mcp_enabled", "value": True}).status_code == 200
+    assert client.post("/api/settings", json={"key": "recording_mode", "value": "all"}).status_code == 200

@@ -1017,5 +1017,69 @@
     "generatedBy": "Gerado pelo Jotva",
     "participantCount_one": "{{count}} participante",
     "participantCount_other": "{{count}} participantes"
+  },
+  "upgrade": {
+    "eyebrow": "Jotva Pro",
+    "cta": "Assinar o Pro",
+    "notNow": "Agora não",
+    "badge": "Pro",
+    "foot": "Cancele quando quiser. Suas reuniões sempre ficam no seu Mac.",
+    "feature": {
+      "default": {
+        "title": "Aproveite mais cada reunião",
+        "body": "O Pro oferece notas com IA ilimitadas e as ferramentas para transformar reuniões em avanços."
+      },
+      "unlimited_notes": {
+        "title": "Você já usou as notas com IA grátis deste mês",
+        "body": "Suas gravações e transcrições estão seguras. As notas com IA grátis voltam em {{date}}, ou fique ilimitado com o Pro."
+      },
+      "ask_all": {
+        "title": "Pergunte sobre todas as suas reuniões",
+        "body": "Receba respostas de todas as reuniões de uma vez: o que foi decidido, quem cuida do quê e quando o assunto surgiu."
+      },
+      "auto_record": {
+        "title": "Deixe o Jotva gravar por você",
+        "body": "O Pro grava automaticamente as reuniões da sua agenda, para você não perder nenhuma."
+      },
+      "mcp": {
+        "title": "Leve suas reuniões para seu assistente de IA",
+        "body": "Deixe o Claude, o Cursor e outros assistentes lerem suas notas de reunião, com sua permissão."
+      },
+      "followup": {
+        "title": "Follow-ups escritos para você",
+        "body": "Transforme qualquer reunião em um e-mail de follow-up pronto para enviar com um clique."
+      },
+      "templates": {
+        "title": "Notas do seu jeito",
+        "body": "Crie seus próprios modelos para que as notas de cada reunião saiam exatamente como você gosta."
+      },
+      "integrations": {
+        "title": "Compartilhe onde sua equipe trabalha",
+        "body": "Envie notas para o Slack e o Notion, ou compartilhe com o espaço da sua equipe."
+      },
+      "higher_quality": {
+        "title": "Nossas notas mais precisas",
+        "body": "O Pro libera nossa IA mais avançada para notas mais profundas e precisas."
+      }
+    },
+    "perk": {
+      "unlimited_notes": "Notas com IA ilimitadas",
+      "ask_all": "Perguntas sobre todas as reuniões",
+      "auto_record": "Gravação automática da agenda",
+      "higher_quality": "Notas com IA de maior qualidade",
+      "followup": "E-mails de follow-up e modelos",
+      "mcp": "Acesso pelo Claude e outros assistentes de IA"
+    }
+  },
+  "notesPaused": {
+    "title": "Notas com IA pausadas nesta reunião",
+    "body": "Você já usou as {{limit}} notas com IA grátis deste mês. A gravação e a transcrição estão salvas: as notas podem ser escritas em {{date}}, ou agora mesmo com o Pro.",
+    "write": "Escrever notas agora",
+    "upgrade": "Assinar o Pro"
+  },
+  "aiAllowance": {
+    "left": "Restam {{remaining}} de {{limit}} notas com IA grátis este mês",
+    "resets": "Renova em {{date}}",
+    "unlimited": "Notas com IA ilimitadas"
   }
 }

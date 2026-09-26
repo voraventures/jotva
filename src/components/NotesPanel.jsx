@@ -238,6 +238,10 @@ export default function NotesPanel() {
     selectMeeting,
     deleteMeeting,
     templates,
+    license,
+    hasFeature,
+    openUpgrade,
+    handleError,
   } = useStore();
   const logoUrl = useLogo();
   const [tab, setTab] = useState("overview"); // overview | timeline | transcript | ask
@@ -422,11 +426,12 @@ export default function NotesPanel() {
 
   const sendTo = (provider) => {
     setMenu(null);
+    if (!hasFeature("integrations")) return openUpgrade("integrations");
     showToast(t("notes.toast.sendingTo", { label: INTEGRATION_LABELS[provider] }));
     api
       .post(`/api/integrations/${provider}/send/${m.id}`)
       .then((r) => showToast(r.message))
-      .catch((e) => showToast(e.message, "error"));
+      .catch(handleError);
   };
 
   const regenerateWith = (templateId) => {
@@ -434,7 +439,7 @@ export default function NotesPanel() {
     api
       .post(`/api/meetings/${m.id}/regenerate`, { template_id: templateId })
       .then(() => showToast(t("notes.toast.regenerating")))
-      .catch((e) => showToast(e.message, "error"));
+      .catch(handleError);
   };
 
   const started = new Date(m.started_at);
@@ -524,10 +529,12 @@ export default function NotesPanel() {
                     className="menu-item"
                     onClick={() => {
                       setMenu(null);
-                      setFollowUpOpen(true);
+                      if (hasFeature("followup")) setFollowUpOpen(true);
+                      else openUpgrade("followup");
                     }}
                   >
                     {t("notes.toolbar.followup")}
+                    {!hasFeature("followup") && <span className="pro-badge">{t("upgrade.badge")}</span>}
                   </button>
                   <button className="menu-item" onClick={() => doExport("pdf")}>
                     {t("notes.toolbar.pdf")}
@@ -549,13 +556,15 @@ export default function NotesPanel() {
                     className="menu-item"
                     onClick={() => {
                       setMenu(null);
+                      if (!hasFeature("integrations")) return openUpgrade("integrations");
                       api
                         .post(`/api/meetings/${m.id}/share-to-workspace`)
                         .then(() => showToast(t("notes.toast.sharedTeam")))
-                        .catch((e) => showToast(e.message, "error"));
+                        .catch(handleError);
                     }}
                   >
                     {t("notes.header.shareTeam")}
+                    {!hasFeature("integrations") && <span className="pro-badge">{t("upgrade.badge")}</span>}
                   </button>
                   <button
                     className="delete-menu-item"
@@ -573,6 +582,7 @@ export default function NotesPanel() {
                   {Object.entries(INTEGRATION_LABELS).map(([key, label]) => (
                     <button key={key} className="menu-item" onClick={() => sendTo(key)}>
                       {label}
+                      {!hasFeature("integrations") && <span className="pro-badge">{t("upgrade.badge")}</span>}
                     </button>
                   ))}
                 </div>
@@ -608,6 +618,12 @@ export default function NotesPanel() {
               </button>
             </div>
           </div>
+        ) : !m.notes && m.ai_paused ? (
+          <NotesPausedCard
+            license={license}
+            onWrite={() => regenerateWith(null)}
+            onUpgrade={() => openUpgrade("unlimited_notes")}
+          />
         ) : !m.notes ? (
           <div className="empty-state" style={{ height: "auto", padding: "80px 24px" }}>
             <div className="empty-sub">{t("notes.error.noNotes")}</div>
@@ -876,6 +892,30 @@ export default function NotesPanel() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// Free plan, month's AI notes used up: the transcript is safe; offer to write the
+// notes now (works once the allowance is back or on Pro) or to upgrade.
+function NotesPausedCard({ license, onWrite, onUpgrade }) {
+  const { t, i18n } = useTranslation();
+  const resets = license?.ai_notes_resets_on
+    ? new Intl.DateTimeFormat(i18n.language, { month: "long", day: "numeric" }).format(
+        new Date(`${license.ai_notes_resets_on}T00:00:00`)
+      )
+    : "";
+  const canWrite = license?.ai_notes_remaining == null || license.ai_notes_remaining > 0;
+  return (
+    <div className="notes-paused" style={{ marginTop: 28 }}>
+      <div className="notes-paused-title">{t("notesPaused.title")}</div>
+      <p className="notes-paused-body">
+        {t("notesPaused.body", { limit: license?.ai_notes_limit ?? 10, date: resets })}
+      </p>
+      <div className="notes-paused-actions">
+        {canWrite && <button className="btn secondary" onClick={onWrite}>{t("notesPaused.write")}</button>}
+        <button className="btn upgrade-cta" onClick={onUpgrade}>{t("notesPaused.upgrade")}</button>
+      </div>
     </div>
   );
 }

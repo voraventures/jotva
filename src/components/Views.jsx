@@ -111,7 +111,7 @@ export function TodayView() {
 /* ---------- Search ---------- */
 export function SearchView() {
   const { t } = useTranslation();
-  const { setNav, selectMeeting } = useStore();
+  const { setNav, selectMeeting, hasFeature, openUpgrade, handleError } = useStore();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState(null);
   const [askResults, setAskResults] = useState(null);
@@ -135,12 +135,16 @@ export function SearchView() {
   const ask = () => {
     const q = query.trim();
     if (q.length < 3 || asking) return;
+    if (!hasFeature("ask_all")) return openUpgrade("ask_all");
     setAsking(true);
     setAskResults(null);
     api
       .post("/api/search/ask", { query: q })
       .then((r) => setAskResults(r.results))
-      .catch(() => setAskResults([]))
+      .catch((e) => {
+        if (e?.status === 402) handleError(e);
+        setAskResults([]);
+      })
       .finally(() => setAsking(false));
   };
 
@@ -209,6 +213,7 @@ export function SearchView() {
             {results.length > 0 && query.trim().length >= 3 && !askResults && !asking && (
               <button className="empty-cta" style={{ marginTop: 20 }} onClick={ask}>
                 {t("search.askCta", { query: query.trim() })}
+                {!hasFeature("ask_all") && <span className="pro-badge">{t("upgrade.badge")}</span>}
               </button>
             )}
           </>

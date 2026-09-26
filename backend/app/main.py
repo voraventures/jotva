@@ -12,7 +12,7 @@ from .auth import SESSION_TOKEN, check_ws_auth, require_token
 from .config import ALLOWED_HOSTS, ALLOWED_ORIGINS, DEV_MODE, ensure_dirs
 from .events import hub
 from .ratelimit import check_rate_limit
-from .routes import calendar, intelligence, meetings, misc, mobile, recording, share, system, workspace, speakers
+from .routes import billing, calendar, intelligence, meetings, misc, mobile, recording, share, system, workspace, speakers
 
 log = logging.getLogger("jotva")
 logging.basicConfig(
@@ -78,6 +78,7 @@ def create_app() -> FastAPI:
     app.include_router(intelligence.router, dependencies=authed)
     app.include_router(calendar.router, dependencies=authed)
     app.include_router(misc.router, dependencies=authed)
+    app.include_router(billing.router, dependencies=authed)
     app.include_router(share.router, dependencies=authed)
     app.include_router(system.router, dependencies=authed)
     app.include_router(workspace.router, dependencies=authed)
