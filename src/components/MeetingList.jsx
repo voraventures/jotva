@@ -116,6 +116,23 @@ export default function MeetingList({ children }) {
   const listLens = useGlassLens(listRef,
     () => lensId == null ? null : listRef.current?.querySelector(`.meeting-card[data-meeting-id="${String(lensId).replace(/"/g, "")}"]`),
     `${lensId}:${meetings.length}:${query}:${results?.length}`);
+  // Frost a day heading only while its section scrolls under it (see .is-stuck in jotva-theme.css).
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return undefined;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const top = list.getBoundingClientRect().top;
+      list.querySelectorAll(".meeting-day-group").forEach((group) => {
+        group.querySelector("h3")?.classList.toggle("is-stuck", group.getBoundingClientRect().top < top - 0.5);
+      });
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
+    list.addEventListener("scroll", onScroll, { passive: true });
+    update();
+    return () => { list.removeEventListener("scroll", onScroll); cancelAnimationFrame(frame); };
+  }, []);
   const hoverCard = (e) => { const id = e.target.closest?.(".meeting-card")?.dataset.meetingId; if (id) setListHover(id); };
 
   useEffect(() => {

@@ -327,11 +327,15 @@
   .meeting-day-group h3 {
     position: sticky; top: 0; z-index: 2;
     margin: 0 -8px 8px; padding: 7px 8px; border-radius: 10px;
-    /* matches the panel surface, so it's invisible at rest and frosts whatever scrolls under it */
-    background: var(--list-head-bg);
-    backdrop-filter: blur(22px) saturate(150%);
-    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    /* frost only while pinned over scrolling cards; at rest it's plain text on the panel */
+    isolation: isolate;
   }
+  .meeting-day-group h3::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+    background: var(--list-head-bg); opacity: 0; transition: opacity .18s ease;
+    backdrop-filter: blur(22px) saturate(150%); -webkit-backdrop-filter: blur(22px) saturate(150%);
+  }
+  .meeting-day-group h3.is-stuck::before { opacity: 1; }
   /* cards fade out at the bottom edge instead of being cut off */
   .meeting-card-list {
     -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
