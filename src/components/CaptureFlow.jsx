@@ -17,18 +17,20 @@ const AMP_LEN = 40;
 const TYPE_MS = 30; // ms per character, per spec
 
 // Idle "snap-fan + light sweep" (the approved logo motion, design-reference/
-// logo-animations), played once when the window opens: the back sheets tuck
-// in, spring back out one after the other and a light sweeps across. The mark
-// then rests with its glow left on.
+// logo-animations). When the window opens the back sheets tuck in and spring
+// back out one after the other, once; the light keeps sweeping across the
+// resting mark every SWEEP_EVERY_MS, and the glow stays on.
 const IDLE_INTRO_MS = 2200;
+const SWEEP_EVERY_MS = 3000;
 const easeInCubic = (x) => x * x * x;
 const spring = (x) => (x <= 0 ? 0 : 1 - Math.exp(-7 * x) * Math.cos(9 * x));
 function idleFan(t, i) {
+  if (t >= IDLE_INTRO_MS) return 1; // fanned once; stays at rest
   if (t < 300) return 1 - easeInCubic(t / 300); // tuck in
   if (t < 450) return 0; // hold collapsed
   return spring(((t - 450 - i * 110) / 1000) * 1.9); // staggered snap out
 }
-const idleSweep = (t) => Math.min(1, Math.max(0, (t - 850) / 750));
+const idleSweep = (t) => (t < 850 ? 0 : Math.min(1, ((t - 850) % SWEEP_EVERY_MS) / 750));
 
 function useIdleClock(active) {
   const [t, setT] = useState(IDLE_INTRO_MS); // rest pose until the first frame
@@ -36,9 +38,8 @@ function useIdleClock(active) {
     if (!active) return undefined;
     const start = performance.now();
     let raf = requestAnimationFrame(function tick(now) {
-      const elapsed = now - start;
-      setT(Math.min(elapsed, IDLE_INTRO_MS));
-      if (elapsed < IDLE_INTRO_MS) raf = requestAnimationFrame(tick);
+      setT(now - start);
+      raf = requestAnimationFrame(tick);
     });
     return () => cancelAnimationFrame(raf);
   }, [active]);
@@ -47,7 +48,7 @@ function useIdleClock(active) {
 
 // The Jotva mark as a live meter: while recording, the back sheets fan open with
 // the speaker's level (quiet = almost stacked, loud = fully fanned). While idle
-// it plays the snap-fan once (unless motion is reduced) and keeps its glow.
+// it fans once, then keeps a light sweeping across it (unless motion is reduced).
 function LogoMark({ phase, amp, size = 168, animate = false }) {
   const uid = useId().replace(/:/g, "");
   const idle = animate && phase === "idle";
