@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jotva redesign · main (dark)</title>
+<style>
+  :root {
+    --bg: #07070d;
+    --glass: rgba(255, 255, 255, .045);
+    --glass-2: rgba(255, 255, 255, .07);
+    --line: rgba(255, 255, 255, .08);
+    --line-2: rgba(255, 255, 255, .13);
+    --ink: #eeeef6;
+    --ink-2: #a6a6bd;
+    --ink-3: #6f6f88;
+    --blue: #5b8cff;
+    --violet: #8b5cf6;
+    --pink: #f0a8f0;
+    --brand: linear-gradient(135deg, #6ea0ff 0%, #7b6cf6 55%, #b17df8 100%);
+    --warn: #f5b45a;
+    --radius: 16px;
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+    --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+    --mono: "SF Mono", ui-monospace, "JetBrains Mono", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #1b1b22; font: 13px/1.5 var(--font); color: var(--ink); -webkit-font-smoothing: antialiased;
+         min-height: 100vh; display: grid; place-items: center; padding: 32px; }
+
+  .window { width: 1320px; height: 860px; border-radius: 14px; overflow: hidden; position: relative;
+            background: var(--bg); box-shadow: 0 40px 120px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08);
+            display: grid; grid-template-rows: 52px 1fr; }
+  /* ambient light from the logo colours */
+  .window::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(700px 420px at 78% -8%, rgba(123,108,246,.22), transparent 70%),
+      radial-gradient(520px 380px at 8% 18%, rgba(91,140,255,.14), transparent 70%),
+      radial-gradient(600px 300px at 60% 110%, rgba(177,125,248,.10), transparent 70%); }
+
+  /* title bar */
+  .titlebar { display: flex; align-items: center; padding: 0 18px; gap: 18px; position: relative; z-index: 1; }
+  .lights { display: flex; gap: 8px; }
+  .lights i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; }
+  .lights i:nth-child(2) { background: #febc2e; } .lights i:nth-child(3) { background: #28c840; }
+  .brand { display: flex; align-items: center; gap: 9px; margin-left: 10px; font: 600 15px/1 var(--display); letter-spacing: -.01em; }
+  .brand img { width: 24px; }
+  .search { margin: 0 auto; width: 420px; height: 32px; border-radius: 10px; background: var(--glass); border: 1px solid var(--line);
+            display: flex; align-items: center; gap: 8px; padding: 0 12px; color: var(--ink-3); }
+  .search kbd { margin-left: auto; font: 11px var(--mono); color: var(--ink-3); border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; }
+  .me { display: flex; align-items: center; gap: 10px; }
+  .pro { font: 600 11px var(--font); padding: 3px 8px; border-radius: 999px; background: var(--brand); color: white; letter-spacing: .02em; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font: 600 11px var(--font);
+            background: linear-gradient(135deg,#2d2d44,#1a1a2a); border: 1px solid var(--line-2); }
+
+  .body { display: grid; grid-template-columns: 300px 1fr; gap: 12px; padding: 0 12px 12px; position: relative; z-index: 1; min-height: 0; }
+
+  /* glass surfaces */
+  .glass { background: var(--glass); border: 1px solid var(--line); border-radius: var(--radius);
+           backdrop-filter: blur(24px) saturate(140%); box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
+
+  /* sidebar */
+  .side { padding: 18px 12px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+  .day { padding: 0 6px; }
+  .day h2 { font: 700 22px/1.1 var(--display); letter-spacing: -.02em; }
+  .day p { color: var(--ink-3); margin-top: 2px; }
+  .upnext { padding: 12px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(91,140,255,.16), rgba(139,92,246,.12));
+            border: 1px solid rgba(139,92,246,.28); }
+  .upnext .eyebrow { color: #b9b2ff; }
+  .upnext b { display: block; font-weight: 600; margin: 3px 0 2px; }
+  .upnext span { color: var(--ink-2); font-size: 12px; }
+  .eyebrow { font: 600 10.5px var(--font); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+  .group { display: flex; flex-direction: column; gap: 6px; }
+  .group .eyebrow { padding: 4px 6px; }
+  .mcard { padding: 11px 12px; border-radius: 12px; border: 1px solid transparent; cursor: default; }
+  .mcard:hover { background: var(--glass); }
+  .mcard b { font-weight: 550; display: block; }
+  .mcard span { color: var(--ink-3); font-size: 12px; }
+  .mcard.active { background: rgba(255,255,255,.06); border-color: var(--line-2); position: relative;
+                  box-shadow: 0 8px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.06); }
+  .mcard.active::before { content: ""; position: absolute; left: -1px; top: 10px; bottom: 10px; width: 3px; border-radius: 3px; background: var(--brand); }
+  .tag { display: inline-block; font: 600 10px var(--font); color: var(--ink-2); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px 6px; margin-left: 6px; }
+  .rec-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #ff5f7a; box-shadow: 0 0 8px #ff5f7a; margin-right: 6px; }
+
+  /* main panel */
+  .main { position: relative; overflow: hidden; display: flex; flex-direction: column; }
+  .scroll { padding: 28px 36px 120px; overflow: hidden; }
+  .head { display: flex; align-items: flex-start; gap: 16px; }
+  .head h1 { font: 700 28px/1.15 var(--display); letter-spacing: -.025em; }
+  .meta { display: flex; gap: 14px; color: var(--ink-3); margin-top: 8px; font-size: 12.5px; }
+  .people { margin-left: auto; display: flex; }
+  .people i { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #11111a; margin-left: -8px; display: grid; place-items: center; font: 600 10.5px var(--font); font-style: normal; }
+  .tabs { display: inline-flex; gap: 2px; padding: 3px; border-radius: 11px; background: rgba(255,255,255,.04); border: 1px solid var(--line); margin: 22px 0 22px; }
+  .tabs a { padding: 6px 14px; border-radius: 8px; color: var(--ink-2); font-weight: 500; }
+  .tabs a.on { background: rgba(255,255,255,.09); color: var(--ink); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 2px 8px rgba(0,0,0,.3); }
+
+  .alert { display: flex; gap: 10px; align-items: center; padding: 11px 14px; border-radius: 12px;
+           background: rgba(245,180,90,.07); border: 1px solid rgba(245,180,90,.2); color: #f2d3a6; margin-bottom: 16px; }
+  .alert svg { flex: none; }
+  .alert a { margin-left: auto; color: var(--warn); font-weight: 600; }
+
+  .summary { position: relative; padding: 20px 22px; border-radius: var(--radius); margin-bottom: 26px;
+             background: linear-gradient(180deg, rgba(123,108,246,.10), rgba(255,255,255,.03)); }
+  .summary::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+                     background: linear-gradient(135deg, rgba(110,160,255,.7), rgba(123,108,246,.35) 40%, rgba(240,168,240,.45));
+                     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  .summary .by { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .summary .by img { width: 16px; }
+  .summary .by span { font-weight: 600; background: var(--brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .summary p { font-size: 15.5px; line-height: 1.6; color: #dcdcea; letter-spacing: -.005em; }
+  .summary em { font-style: normal; color: white; font-weight: 600; }
+
+  .cols { display: grid; grid-template-columns: 1fr 280px; gap: 26px; }
+  .sec-h { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .sec-h h3 { font: 650 14px var(--display); letter-spacing: -.01em; }
+  .count { font: 600 10.5px var(--mono); color: var(--ink-2); background: rgba(255,255,255,.06); border-radius: 6px; padding: 1px 6px; }
+  .action { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.025); margin-bottom: 8px; }
+  .check { width: 18px; height: 18px; border-radius: 6px; border: 1.5px solid rgba(255,255,255,.25); flex: none; margin-top: 1px; }
+  .check.done { background: var(--brand); border-color: transparent; display: grid; place-items: center; }
+  .action b { font-weight: 550; display: block; }
+  .action.done b { color: var(--ink-3); text-decoration: line-through; }
+  .action .who { display: flex; gap: 10px; margin-top: 4px; color: var(--ink-3); font-size: 12px; align-items: center; }
+  .chip-owner { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+  .chip-owner i { width: 16px; height: 16px; border-radius: 50%; font-style: normal; font: 700 8px var(--font); display: grid; place-items: center; }
+  .unassigned { color: var(--warn); }
+  .due { margin-left: auto; font: 11.5px var(--mono); color: var(--ink-3); }
+  .topics { display: flex; flex-wrap: wrap; gap: 8px; }
+  .topic { padding: 6px 11px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid var(--line); color: var(--ink-2); font-weight: 500; }
+  .decision { padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.025); margin-top: 8px; color: var(--ink-2); }
+  .decision b { color: var(--ink); font-weight: 550; display: block; margin-bottom: 2px; }
+
+  /* floating dock */
+  .dock { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; gap: 4px; padding: 6px;
+          border-radius: 18px; background: rgba(22,22,34,.72); border: 1px solid var(--line-2);
+          backdrop-filter: blur(30px) saturate(160%); box-shadow: 0 18px 50px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.07); }
+  .dock a { display: flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 12px; color: var(--ink-2); font-weight: 550; }
+  .dock a.on { background: rgba(255,255,255,.09); color: var(--ink); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+  .dock .rec { background: var(--brand); color: white; box-shadow: 0 6px 22px rgba(123,108,246,.45), inset 0 1px 0 rgba(255,255,255,.25); margin: 0 6px; }
+  .dock .rec .dot { width: 8px; height: 8px; border-radius: 50%; background: white; box-shadow: 0 0 8px white; }
+  .dock kbd { font: 10px var(--mono); opacity: .7; margin-left: 2px; }
+  svg.i { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="window">
+  <div class="titlebar">
+    <div class="lights"><i></i><i></i><i></i></div>
+    <div class="brand"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii05MCAtNjQ4IDcxNSA2NjQiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0iSm90dmEiPgo8ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImYiIHgxPSIxIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNkOGZjZmYiLz48c3RvcCBvZmZzZXQ9Ii40MiIgc3RvcC1jb2xvcj0iIzRlOTBmOCIvPjxzdG9wIG9mZnNldD0iLjc4IiBzdG9wLWNvbG9yPSIjYTk4Y2Y2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZjMmYxIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9Im0iIHgxPSIxIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiM2Zjg4ZmYiLz48c3RvcCBvZmZzZXQ9Ii4zNSIgc3RvcC1jb2xvcj0iIzM0NTJmNiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzExMGQ1NSIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJiIiB4MT0iMSIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYjI3ZGZmIi8+PHN0b3Agb2Zmc2V0PSIuMzUiIHN0b3AtY29sb3I9IiM3YTNkZjYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxYjBiNTIiLz48L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9InJpbSIgeDE9IjEiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIuODUiLz48c3RvcCBvZmZzZXQ9Ii41IiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9Ii4xOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PC9saW5lYXJHcmFkaWVudD4KPGZpbHRlciBpZD0ic2giIHg9Ii0zMCUiIHk9Ii0zMCUiIHdpZHRoPSIxNjAlIiBoZWlnaHQ9IjE2MCUiPjxmZURyb3BTaGFkb3cgZHg9Ii04IiBkeT0iMTAiIHN0ZERldmlhdGlvbj0iMTYiIGZsb29kLWNvbG9yPSIjMDMwMjFhIiBmbG9vZC1vcGFjaXR5PSIwLjc1Ii8+PC9maWx0ZXI+CjxmaWx0ZXIgaWQ9ImJsb29tIiB4PSItNDAlIiB5PSItNDAlIiB3aWR0aD0iMTgwJSIgaGVpZ2h0PSIxODAlIj48ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSIyMiIvPjwvZmlsdGVyPgo8L2RlZnM+PGcgZmlsdGVyPSJ1cmwoI2Jsb29tKSIgb3BhY2l0eT0iLjQ1Ij48cGF0aCBkPSJNMC4wLDAuMCBDLTQwLjAsLTQuMCAtNzAuMCwtMzAuMCAtNzIuMCwtNzIuMCBMLTcyLjAsLTMzMi4wIEMtNzIuMCwtNDAwLjAgLTMwLjAsLTQ1NS4wIDMxLjMsLTQ4MS41IEw1MzcuNiwtNDEwLjMgQzU3OS42LC00MDQuNiA2MTEuNSwtMzgyLjcgNjA4LjIsLTM1Ny40IEw1NzQuNiwtMTA5LjEgQzU2MS4xLC0zNy42IDUwNC4wLC01LjUgMzY3LjIsLTI5LjIgQzIwNS44LC02MC45IDU0LjIsLTY1LjggMC4wLDAuMCBaIiBmaWxsPSIjN2EzZGY2Ii8+PHBhdGggZD0iTTAuMCwwLjAgQy00MC4wLC00LjAgLTcwLjAsLTMwLjAgLTcyLjAsLTcyLjAgTC03Mi4wLC0zMzIuMCBDLTcyLjAsLTQwMC4wIC0zMC4wLC00NTUuMCAzMC43LC00ODIuMyBMNDM4LjQsLTUzNS4xIEM0NzIuNywtNTM5LjIgNDk4LjcsLTUyNC43IDQ5NS45LC00OTguNSBMNDY4LjUsLTI0Mi41IEM0NTcuNiwtMTY3LjkgNDExLjAsLTEyMi41IDMwNC43LC0xMDcuOSBDMTgwLjMsLTkyLjkgNTIuMywtNjguMiAwLjAsMC4wIFoiIGZpbGw9IiMzNDUyZjYiLz48cGF0aCBkPSJNMC4wLDAuMCBDLTQwLjAsLTQuMCAtNzAuMCwtMzAuMCAtNzIuMCwtNzIuMCBMLTcyLjAsLTMzMi4wIEMtNzIuMCwtNDAwLjAgLTMwLjAsLTQ1NS4wIDMwLjAsLTQ4Mi4wIEwzMjAuMCwtNjIyLjAgQzM0NS4wLC02MzQuMCAzNjQuMCwtNjI2LjAgMzYyLjAsLTYwMC4wIEwzNDIuMCwtMzQ1LjAgQzMzNC4wLC0yNzAuMCAzMDAuMCwtMjE1LjAgMjMwLjAsLTE3MC4wIEMxNTAuMCwtMTE4LjAgNTAuMCwtNzAuMCAwLjAsMC4wIFoiIGZpbGw9IiM0ZTkwZjgiLz48L2c+CjxwYXRoIGQ9Ik0wLjAsMC4wIEMtNDAuMCwtNC4wIC03MC4wLC0zMC4wIC03Mi4wLC03Mi4wIEwtNzIuMCwtMzMyLjAgQy03Mi4wLC00MDAuMCAtMzAuMCwtNDU1LjAgMzEuMywtNDgxLjUgTDUzNy42LC00MTAuMyBDNTc5LjYsLTQwNC42IDYxMS41LC0zODIuNyA2MDguMiwtMzU3LjQgTDU3NC42LC0xMDkuMSBDNTYxLjEsLTM3LjYgNTA0LjAsLTUuNSAzNjcuMiwtMjkuMiBDMjA1LjgsLTYwLjkgNTQuMiwtNjUuOCAwLjAsMC4wIFoiIGZpbGw9InVybCgjYikiIHN0cm9rZT0idXJsKCNyaW0pIiBzdHJva2Utd2lkdGg9IjMiIGZpbHRlcj0idXJsKCNzaCkiLz4KPHBhdGggZD0iTTAuMCwwLjAgQy00MC4wLC00LjAgLTcwLjAsLTMwLjAgLTcyLjAsLTcyLjAgTC03Mi4wLC0zMzIuMCBDLTcyLjAsLTQwMC4wIC0zMC4wLC00NTUuMCAzMC43LC00ODIuMyBMNDM4LjQsLTUzNS4xIEM0NzIuNywtNTM5LjIgNDk4LjcsLTUyNC43IDQ5NS45LC00OTguNSBMNDY4LjUsLTI0Mi41IEM0NTcuNiwtMTY3LjkgNDExLjAsLTEyMi41IDMwNC43LC0xMDcuOSBDMTgwLjMsLTkyLjkgNTIuMywtNjguMiAwLjAsMC4wIFoiIGZpbGw9InVybCgjbSkiIHN0cm9rZT0idXJsKCNyaW0pIiBzdHJva2Utd2lkdGg9IjMiIGZpbHRlcj0idXJsKCNzaCkiLz4KPHBhdGggZD0iTTAuMCwwLjAgQy00MC4wLC00LjAgLTcwLjAsLTMwLjAgLTcyLjAsLTcyLjAgTC03Mi4wLC0zMzIuMCBDLTcyLjAsLTQwMC4wIC0zMC4wLC00NTUuMCAzMC4wLC00ODIuMCBMMzIwLjAsLTYyMi4wIEMzNDUuMCwtNjM0LjAgMzY0LjAsLTYyNi4wIDM2Mi4wLC02MDAuMCBMMzQyLjAsLTM0NS4wIEMzMzQuMCwtMjcwLjAgMzAwLjAsLTIxNS4wIDIzMC4wLC0xNzAuMCBDMTUwLjAsLTExOC4wIDUwLjAsLTcwLjAgMC4wLDAuMCBaIiBmaWxsPSJ1cmwoI2YpIiBzdHJva2U9InVybCgjcmltKSIgc3Ryb2tlLXdpZHRoPSIzIiBmaWx0ZXI9InVybCgjc2gpIi8+Cjwvc3ZnPgo=" alt=""> Jotva</div>
+    <div class="search">
+      <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      Search meetings, people, decisions…<kbd>⌘K</kbd>
+    </div>
+    <div class="me"><span class="pro">PRO</span><span class="avatar">LC</span></div>
+  </div>
+
+  <div class="body">
+    <aside class="side glass">
+      <div class="day"><h2>Today</h2><p>Saturday, September 26</p></div>
+      <div class="upnext">
+        <div class="eyebrow">Up next · in 25 min</div>
+        <b>Design review: onboarding v2</b>
+        <span>5:00 PM · Google Meet · auto-record on</span>
+      </div>
+      <div class="group">
+        <div class="eyebrow">Recorded today</div>
+        <div class="mcard active"><b>Q2 Product Planning</b><span>4:13 PM · 32 min</span><span class="tag">3 actions</span></div>
+        <div class="mcard"><b>Weekly sync with design</b><span>11:00 AM · 45 min</span></div>
+      </div>
+      <div class="group">
+        <div class="eyebrow">Yesterday</div>
+        <div class="mcard"><b>Customer call: Northwind</b><span>3:30 PM · 28 min</span></div>
+        <div class="mcard"><b>Hiring loop debrief</b><span>1:00 PM · 20 min</span></div>
+        <div class="mcard"><b>Investor update prep</b><span>9:30 AM · 35 min</span></div>
+      </div>
+    </aside>
+
+    <section class="main glass">
+      <div class="scroll">
+        <div class="head">
+          <div>
+            <h1>Q2 Product Planning</h1>
+            <div class="meta"><span>Today, 4:13 PM</span><span>32 min</span><span>3 attendees</span><span>Google Meet</span></div>
+          </div>
+          <div class="people">
+            <i style="background:#3b5bdb">SC</i><i style="background:#7048e8">MR</i><i style="background:#c2255c">YT</i>
+          </div>
+        </div>
+
+        <div class="tabs"><a class="on">Overview</a><a>Timeline</a><a>Transcript</a><a>Ask Jotva</a></div>
+
+        <div class="alert">
+          <svg class="i" viewBox="0 0 24 24"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>
+          1 action item has no owner. Assign it before it slips.
+          <a>Assign</a>
+        </div>
+
+        <div class="summary">
+          <div class="by"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii05MCAtNjQ4IDcxNSA2NjQiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0iSm90dmEiPgo8ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImYiIHgxPSIxIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNkOGZjZmYiLz48c3RvcCBvZmZzZXQ9Ii40MiIgc3RvcC1jb2xvcj0iIzRlOTBmOCIvPjxzdG9wIG9mZnNldD0iLjc4IiBzdG9wLWNvbG9yPSIjYTk4Y2Y2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZjMmYxIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9Im0iIHgxPSIxIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiM2Zjg4ZmYiLz48c3RvcCBvZmZzZXQ9Ii4zNSIgc3RvcC1jb2xvcj0iIzM0NTJmNiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzExMGQ1NSIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJiIiB4MT0iMSIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYjI3ZGZmIi8+PHN0b3Agb2Zmc2V0PSIuMzUiIHN0b3AtY29sb3I9IiM3YTNkZjYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxYjBiNTIiLz48L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9InJpbSIgeDE9IjEiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIuODUiLz48c3RvcCBvZmZzZXQ9Ii41IiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9Ii4xOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PC9saW5lYXJHcmFkaWVudD4KPGZpbHRlciBpZD0ic2giIHg9Ii0zMCUiIHk9Ii0zMCUiIHdpZHRoPSIxNjAlIiBoZWlnaHQ9IjE2MCUiPjxmZURyb3BTaGFkb3cgZHg9Ii04IiBkeT0iMTAiIHN0ZERldmlhdGlvbj0iMTYiIGZsb29kLWNvbG9yPSIjMDMwMjFhIiBmbG9vZC1vcGFjaXR5PSIwLjc1Ii8+PC9maWx0ZXI+CjxmaWx0ZXIgaWQ9ImJsb29tIiB4PSItNDAlIiB5PSItNDAlIiB3aWR0aD0iMTgwJSIgaGVpZ2h0PSIxODAlIj48ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSIyMiIvPjwvZmlsdGVyPgo8L2RlZnM+PGcgZmlsdGVyPSJ1cmwoI2Jsb29tKSIgb3BhY2l0eT0iLjQ1Ij48cGF0aCBkPSJNMC4wLDAuMCBDLTQwLjAsLTQuMCAtNzAuMCwtMzAuMCAtNzIuMCwtNzIuMCBMLTcyLjAsLTMzMi4wIEMtNzIuMCwtNDAwLjAgLTMwLjAsLTQ1NS4wIDMxLjMsLTQ4MS41IEw1MzcuNiwtNDEwLjMgQzU3OS42LC00MDQuNiA2MTEuNSwtMzgyLjcgNjA4LjIsLTM1Ny40IEw1NzQuNiwtMTA5LjEgQzU2MS4xLC0zNy42IDUwNC4wLC01LjUgMzY3LjIsLTI5LjIgQzIwNS44LC02MC45IDU0LjIsLTY1LjggMC4wLDAuMCBaIiBmaWxsPSIjN2EzZGY2Ii8+PHBhdGggZD0iTTAuMCwwLjAgQy00MC4wLC00LjAgLTcwLjAsLTMwLjAgLTcyLjAsLTcyLjAgTC03Mi4wLC0zMzIuMCBDLTcyLjAsLTQwMC4wIC0zMC4wLC00NTUuMCAzMC43LC00ODIuMyBMNDM4LjQsLTUzNS4xIEM0NzIuNywtNTM5LjIgNDk4LjcsLTUyNC43IDQ5NS45LC00OTguNSBMNDY4LjUsLTI0Mi41IEM0NTcuNiwtMTY3LjkgNDExLjAsLTEyMi41IDMwNC43LC0xMDcuOSBDMTgwLjMsLTkyLjkgNTIuMywtNjguMiAwLjAsMC4wIFoiIGZpbGw9IiMzNDUyZjYiLz48cGF0aCBkPSJNMC4wLDAuMCBDLTQwLjAsLTQuMCAtNzAuMCwtMzAuMCAtNzIuMCwtNzIuMCBMLTcyLjAsLTMzMi4wIEMtNzIuMCwtNDAwLjAgLTMwLjAsLTQ1NS4wIDMwLjAsLTQ4Mi4wIEwzMjAuMCwtNjIyLjAgQzM0NS4wLC02MzQuMCAzNjQuMCwtNjI2LjAgMzYyLjAsLTYwMC4wIEwzNDIuMCwtMzQ1LjAgQzMzNC4wLC0yNzAuMCAzMDAuMCwtMjE1LjAgMjMwLjAsLTE3MC4wIEMxNTAuMCwtMTE4LjAgNTAuMCwtNzAuMCAwLjAsMC4wIFoiIGZpbGw9IiM0ZTkwZjgiLz48L2c+CjxwYXRoIGQ9Ik0wLjAsMC4wIEMtNDAuMCwtNC4wIC03MC4wLC0zMC4wIC03Mi4wLC03Mi4wIEwtNzIuMCwtMzMyLjAgQy03Mi4wLC00MDAuMCAtMzAuMCwtNDU1LjAgMzEuMywtNDgxLjUgTDUzNy42LC00MTAuMyBDNTc5LjYsLTQwNC42IDYxMS41LC0zODIuNyA2MDguMiwtMzU3LjQgTDU3NC42LC0xMDkuMSBDNTYxLjEsLTM3LjYgNTA0LjAsLTUuNSAzNjcuMiwtMjkuMiBDMjA1LjgsLTYwLjkgNTQuMiwtNjUuOCAwLjAsMC4wIFoiIGZpbGw9InVybCgjYikiIHN0cm9rZT0idXJsKCNyaW0pIiBzdHJva2Utd2lkdGg9IjMiIGZpbHRlcj0idXJsKCNzaCkiLz4KPHBhdGggZD0iTTAuMCwwLjAgQy00MC4wLC00LjAgLTcwLjAsLTMwLjAgLTcyLjAsLTcyLjAgTC03Mi4wLC0zMzIuMCBDLTcyLjAsLTQwMC4wIC0zMC4wLC00NTUuMCAzMC43LC00ODIuMyBMNDM4LjQsLTUzNS4xIEM0NzIuNywtNTM5LjIgNDk4LjcsLTUyNC43IDQ5NS45LC00OTguNSBMNDY4LjUsLTI0Mi41IEM0NTcuNiwtMTY3LjkgNDExLjAsLTEyMi41IDMwNC43LC0xMDcuOSBDMTgwLjMsLTkyLjkgNTIuMywtNjguMiAwLjAsMC4wIFoiIGZpbGw9InVybCgjbSkiIHN0cm9rZT0idXJsKCNyaW0pIiBzdHJva2Utd2lkdGg9IjMiIGZpbHRlcj0idXJsKCNzaCkiLz4KPHBhdGggZD0iTTAuMCwwLjAgQy00MC4wLC00LjAgLTcwLjAsLTMwLjAgLTcyLjAsLTcyLjAgTC03Mi4wLC0zMzIuMCBDLTcyLjAsLTQwMC4wIC0zMC4wLC00NTUuMCAzMC4wLC00ODIuMCBMMzIwLjAsLTYyMi4wIEMzNDUuMCwtNjM0LjAgMzY0LjAsLTYyNi4wIDM2Mi4wLC02MDAuMCBMMzQyLjAsLTM0NS4wIEMzMzQuMCwtMjcwLjAgMzAwLjAsLTIxNS4wIDIzMC4wLC0xNzAuMCBDMTUwLjAsLTExOC4wIDUwLjAsLTcwLjAgMC4wLDAuMCBaIiBmaWxsPSJ1cmwoI2YpIiBzdHJva2U9InVybCgjcmltKSIgc3Ryb2tlLXdpZHRoPSIzIiBmaWx0ZXI9InVybCgjc2gpIi8+Cjwvc3ZnPgo=" alt=""><span>Summary by Jotva</span></div>
+          <p>The team aligned on Q2 priorities: <em>ship the mobile app by end of June</em>, open an <em>enterprise tier</em> with custom pricing, and <em>cut onboarding to under three minutes</em>. Beta testers will be recruited from existing Pro users.</p>
+        </div>
+
+        <div class="cols">
+          <div>
+            <div class="sec-h"><h3>Action items</h3><span class="count">03</span></div>
+            <div class="action">
+              <span class="check"></span>
+              <div style="flex:1"><b>Finalize beta tester list</b>
+                <div class="who"><span class="chip-owner"><i style="background:#3b5bdb">SC</i>Sarah Chen</span><span class="due">Jun 20</span></div></div>
+            </div>
+            <div class="action">
+              <span class="check"></span>
+              <div style="flex:1"><b>Enterprise pricing one-pager</b>
+                <div class="who"><span class="chip-owner"><i style="background:#7048e8">MR</i>Marcus Rodriguez</span><span class="due">Jun 18</span></div></div>
+            </div>
+            <div class="action">
+              <span class="check"></span>
+              <div style="flex:1"><b>Reduce onboarding flow to 3 steps</b>
+                <div class="who"><span class="unassigned">No owner</span><span class="due">Jun 25</span></div></div>
+            </div>
+          </div>
+          <div>
+            <div class="sec-h"><h3>Topics</h3></div>
+            <div class="topics"><span class="topic">Enterprise pricing</span><span class="topic">Mobile timeline</span><span class="topic">Onboarding</span><span class="topic">Beta program</span></div>
+            <div class="sec-h" style="margin-top:22px"><h3>Decisions</h3><span class="count">02</span></div>
+            <div class="decision"><b>Mobile ships end of June</b>iOS first; Android follows in Q3.</div>
+            <div class="decision"><b>Enterprise tier approved</b>Custom pricing, SSO required.</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="dock">
+        <a class="on"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Meetings</a>
+        <a><svg class="i" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>Ask</a>
+        <a class="rec"><span class="dot"></span>Record<kbd>⇧⌘R</kbd></a>
+        <a><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2A5 5 0 0 1 21 19"/></svg>Connections</a>
+        <a><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings</a>
+      </nav>
+    </section>
+  </div>
+</div>
+</body>
+</html>
