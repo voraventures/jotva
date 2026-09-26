@@ -4,41 +4,38 @@
 // and processing lock the card (no dismissal, matching the "full-app
 // takeover" product rule); idle and ready allow backdrop/Escape dismissal.
 //
-// The prototype drives its waveform from a synthetic 40-sample rolling
-// amplitude array read at fixed indices [4,10,16,20,24,30,36] into the
-// logo's 7 bars. Here that array is real: it rolls forward on every genuine
-// `recording_level` sample from the backend instead of a random walk.
-import React, { useEffect, useMemo, useRef, useState } from "react";
+// A 40-sample rolling amplitude array rolls forward on every genuine
+// `recording_level` sample from the backend and drives the logo's fan.
+import React, { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStore, useLogo } from "../store.jsx";
+import { BACK, COLORS, VIEWBOX as LOGO_VIEWBOX, sheetPath } from "../logoGeometry.js";
 import { MicIcon, PauseIcon, PlayIcon, RefreshIcon, StopIcon, CheckIcon, XIcon } from "./icons.jsx";
 
-const BASE_H = [42, 74, 104, 120, 104, 74, 42];
-const BAR_X = [52.5, 70.5, 88.5, 106.5, 124.5, 142.5, 160.5];
-const SAMPLE_IDX = [4, 10, 16, 20, 24, 30, 36];
 const AMP_LEN = 40;
 const TYPE_MS = 30; // ms per character, per spec
 
+// The Jotva mark as a live meter: while recording, the back sheets fan open with
+// the speaker's level (quiet = almost stacked, loud = fully fanned).
 function LogoMark({ phase, amp, size = 168 }) {
-  const bars = BASE_H.map((base, i) => {
-    const lvl = phase === "recording" ? amp[SAMPLE_IDX[i]] : phase === "idle" ? 0.32 : 0.44;
-    const h = Math.round(base * (0.42 + lvl * 0.82));
-    return { x: BAR_X[i], y: Math.round(150 - h / 2), h };
-  });
+  const uid = useId().replace(/:/g, "");
+  const recent = amp.slice(-8);
+  const level = recent.reduce((a, b) => a + b, 0) / recent.length;
+  const fan = phase === "recording" ? Math.min(1.1, 0.35 + level * 0.75) : phase === "processing" ? 0.8 : 1;
+  const grad = (id, stops) => (
+    <linearGradient id={`${uid}${id}`} x1="1" y1="0" x2="0" y2="1">
+      {stops.map(([o, c]) => <stop key={o} offset={o} stopColor={c} />)}
+    </linearGradient>
+  );
+  const sheet = (d, id) => (
+    <path d={d} fill={`url(#${uid}${id})`} style={{ d: `path("${d}")`, transition: "d 140ms ease-out" }} />
+  );
   return (
-    <svg width={size} height={(size * 196) / 168} viewBox="0 0 220 256" aria-hidden="true">
-      <path
-        d="M110 24 C 92 24 74 40 66 70 C 56 104 30 130 30 168 C 30 208 66 236 110 236 C 154 236 190 208 190 168 C 190 130 164 104 154 70 C 146 40 128 24 110 24 Z"
-        fill="var(--accent-softer)"
-        stroke="var(--logo-outline)"
-        strokeWidth="10"
-        strokeLinejoin="round"
-      />
-      <g fill="var(--wave)">
-        {bars.map((b, i) => (
-          <rect key={i} x={b.x} y={b.y} width="11" height={b.h} rx="5.5" />
-        ))}
-      </g>
+    <svg width={size} height={(size * 664) / 715} viewBox={LOGO_VIEWBOX} aria-hidden="true">
+      <defs>{grad("f", COLORS.front)}{grad("m", COLORS.mid)}{grad("b", COLORS.back)}</defs>
+      {sheet(sheetPath(BACK[1], fan), "b")}
+      {sheet(sheetPath(BACK[0], fan), "m")}
+      {sheet(sheetPath(undefined, 0), "f")}
     </svg>
   );
 }

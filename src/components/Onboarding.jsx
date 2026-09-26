@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../api.js";
-import { useStore } from "../store.jsx";
+import { useLogo, useStore } from "../store.jsx";
 import { MicIcon, SparkIcon, CheckIcon } from "./icons.jsx";
 
 // First-launch demo meeting — created via POST /api/meetings, which derives
@@ -40,6 +40,7 @@ const CALLOUTS = [
 export default function Onboarding({ onDone }) {
   const { t } = useTranslation();
   const { refreshMeetings, selectMeeting, showToast } = useStore();
+  const logoUrl = useLogo();
   const [loading, setLoading] = useState(false);
 
   const markOnboarded = () => localStorage.setItem("jotva_onboarded", "true");
@@ -68,24 +69,7 @@ export default function Onboarding({ onDone }) {
   return (
     <div className="detail-panel">
       <div className="onboarding">
-        <svg className="onboarding-mark" width="120" height="140" viewBox="0 0 220 256" aria-hidden="true">
-          <path
-            d="M110 24 C 92 24 74 40 66 70 C 56 104 30 130 30 168 C 30 208 66 236 110 236 C 154 236 190 208 190 168 C 190 130 164 104 154 70 C 146 40 128 24 110 24 Z"
-            fill="var(--accent-softer)"
-            stroke="var(--logo-outline)"
-            strokeWidth="10"
-            strokeLinejoin="round"
-          />
-          <g fill="var(--wave)">
-            <rect x="50.5" y="141" width="11" height="38" rx="5.5" />
-            <rect x="68.5" y="130" width="11" height="60" rx="5.5" />
-            <rect x="86.5" y="118" width="11" height="84" rx="5.5" />
-            <rect x="104.5" y="108" width="11" height="104" rx="5.5" />
-            <rect x="122.5" y="118" width="11" height="84" rx="5.5" />
-            <rect x="140.5" y="130" width="11" height="60" rx="5.5" />
-            <rect x="158.5" y="141" width="11" height="38" rx="5.5" />
-          </g>
-        </svg>
+        <img className="onboarding-mark" src={logoUrl} width="132" alt="" aria-hidden="true" />
         <h1 className="onboarding-title">
           {t("onboarding.titlePrefix")} <em>{t("onboarding.titleEmphasis")}</em>{" "}
           {t("onboarding.titleSuffix")}

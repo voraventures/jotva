@@ -260,10 +260,10 @@ function applyContentSecurityPolicy() {
 function buildTrayIcon() {
   // Load the bundled icon, size it for the menu bar, and flag it as a template
   // image so macOS recolors it correctly in both light and dark mode.
+  // tray-icon.png is 16px; nativeImage picks up tray-icon@2x.png on Retina automatically.
   const img = nativeImage.createFromPath(path.join(__dirname, "assets", "tray-icon.png"));
-  const resized = img.resize({ width: 16, height: 16 });
-  resized.setTemplateImage(true);
-  return resized;
+  img.setTemplateImage(true);
+  return img;
 }
 
 function createTray() {
@@ -323,10 +323,10 @@ const ICON_IDLE = () => buildTrayIcon();
 function buildRecordingIcon(dim) {
   // Use the same template image as the idle tray (no programmatic dot); macOS
   // handles light/dark rendering. `dim` is retained for the caller's signature.
+  // tray-icon.png is 16px; nativeImage picks up tray-icon@2x.png on Retina automatically.
   const img = nativeImage.createFromPath(path.join(__dirname, "assets", "tray-icon.png"));
-  const resized = img.resize({ width: 16, height: 16 });
-  resized.setTemplateImage(true);
-  return resized;
+  img.setTemplateImage(true);
+  return img;
 }
 
 function setTrayRecording(recording) {

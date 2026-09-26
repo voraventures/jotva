@@ -11,7 +11,7 @@ flow reveals the meeting name at the Ready phase, not during recording).
 - Calm, mostly white; **green (#7DBE3A / text #6FA83C·#5F9E2B) is the only brand accent**.
 - Editorial serif (Newsreader) for big titles + wordmark; **Hanken Grotesk** for UI sans; JetBrains Mono for timestamps/meta.
 - Icons: one system — 24 grid, 1.75 stroke, round caps + joins (rounded-flat family).
-- The logo = avocado outline with a **black (#111111) waveform** inside (matches uploads/logo-primary.svg). Waveform animates while recording.
+- The logo = three layered blue→violet gradient sheets fanned from a shared bottom-left tip. Geometry lives in `src/logoGeometry.js`; `node scripts/build_logo.mjs` regenerates the SVGs and `python3 scripts/render_icon.py` the app/tray icons. While recording, the back sheets fan with the voice level.
 - Rounded corners, flat, generous whitespace. Avoid heavy tints/gradients.
 
 ## Structure
