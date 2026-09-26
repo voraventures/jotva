@@ -196,8 +196,10 @@ def _complete(system: str, user_content: str, max_tokens: int) -> str:
 
 
 def _meeting_day(meeting_id: str) -> str:
-    """'Saturday, 2026-09-26' in the user's local time, for resolving relative dates."""
-    from datetime import datetime
+    """The meeting date plus the next two weeks spelled out, in the user's local
+    time. Models are unreliable at weekday arithmetic, so "Tuesday" or "by
+    Friday" becomes a lookup instead of a calculation."""
+    from datetime import datetime, timedelta
 
     from ..db import get_db
 
@@ -206,7 +208,10 @@ def _meeting_day(meeting_id: str) -> str:
         started = datetime.fromisoformat(row["started_at"]).astimezone()
     except (TypeError, ValueError):
         return ""
-    return started.strftime("%A, %Y-%m-%d")
+    upcoming = ", ".join(
+        (started + timedelta(days=n)).strftime("%a %Y-%m-%d") for n in range(1, 15)
+    )
+    return f"{started.strftime('%A, %Y-%m-%d')}\nNext 14 days: {upcoming}"
 
 
 def suggest_title(notes_markdown: str) -> str | None:
@@ -265,8 +270,10 @@ def generate_notes(
     )
     date_note = (
         "\n\nResolve relative dates (\"Tuesday\", \"by Friday\", \"end of the week\", "
-        "\"next month\") against the meeting date given with the transcript, and "
-        "write every Due as YYYY-MM-DD. Keep a time of day in the Action text (e.g. "
+        "\"next month\") against the meeting date given with the transcript: look the "
+        "weekday up in the \"Next 14 days\" list rather than calculating it (a bare "
+        "weekday means its next occurrence after the meeting), and write every Due as "
+        "YYYY-MM-DD. Keep a time of day in the Action text (e.g. "
         "\"before 2 p.m.\"). Leave Due empty when no date is stated or implied."
     )
 
