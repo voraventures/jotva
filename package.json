@@ -1,7 +1,7 @@
 {
   "name": "jotva",
   "productName": "Jotva",
-  "version": "2.6.1",
+  "version": "2.6.2",
   "description": "AI meeting notes. No bot. No cloud.",
   "private": true,
   "main": "electron/main.cjs",
