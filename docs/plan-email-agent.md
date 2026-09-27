@@ -9,6 +9,8 @@ Decided with the user on 2026-09-27. Build before the website; ships to users by
 - **Pro.** Email tracking and the agent are Pro features (`email`, `agent`). "Bring your own AI key" also becomes Pro (`own_key`).
 
 ## Phase 1: Email "Waiting on you"
+- **Update (2026-09-27):** Gmail now connects with **Sign in with Google** (`gmail.readonly` + `gmail.compose`) through the existing OAuth broker, with no app password. Until Google verifies Jotva (restricted scopes: verification + yearly security assessment), it works for up to 100 users listed on the Google Cloud consent screen. App passwords remain for iCloud/IMAP.
+- **Replies:** default is **Draft reply** in the user's learned style. The user reviews it, then saves it to Gmail Drafts or presses Send. **Opt-in, off by default:** "Let Jotva send replies for me". It sends only to the person who wrote, in the same conversation (guardrail chosen by the user), and only replies with no placeholder, commitment or sensitive content; everything else becomes a Gmail draft.
 - **Accounts** (Settings → Connections → Email):
   - **Gmail / Google Workspace:** IMAP with a Google app password. Works now for any account with 2-step verification. Google OAuth (`gmail.readonly`) needs Google's app verification and a security assessment first; plan it before a public Gmail push.
   - **iCloud Mail:** IMAP with an Apple app-specific password.
