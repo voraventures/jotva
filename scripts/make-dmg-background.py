@@ -69,23 +69,18 @@ def draw(scale):
         img.alpha_composite(m, (x0, int(y_mid - mark_h / 2)))
     d.text((x0 + mark_w + gap, y_mid), "Jotva", font=title_font, fill=(244, 245, 255), anchor="lm")
 
-    # the arrow: a gradient stroke with a rounded head, between the icons
-    ax0, ax1, ay = (APP[0] + 78) * s, (APPS[0] - 78) * s, ICON_Y * s
-    grad = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    gd = ImageDraw.Draw(grad)
-    steps = 60
-    for i in range(steps):
-        t = i / (steps - 1)
-        k = min(len(BRAND) - 2, int(t * (len(BRAND) - 1)))
-        u = t * (len(BRAND) - 1) - k
-        c = tuple(int(BRAND[k][j] + (BRAND[k + 1][j] - BRAND[k][j]) * u) for j in range(3))
-        x = ax0 + (ax1 - ax0 - 14 * s) * t
-        gd.ellipse((x - 3.2 * s, ay - 3.2 * s, x + 3.2 * s, ay + 3.2 * s), fill=(*c, 255))
-    head = [(ax1, ay), (ax1 - 20 * s, ay - 14 * s), (ax1 - 20 * s, ay + 14 * s)]
-    gd.polygon(head, fill=(*BRAND[-1], 255))
-    soft = grad.filter(ImageFilter.GaussianBlur(6 * s))
-    img.alpha_composite(soft)
-    img.alpha_composite(grad)
+    # the arrow: short, bold and white with rounded ends and a soft glow (like Blender's)
+    cx, ay = W / 2 * s, ICON_Y * s
+    arrow = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    ad = ImageDraw.Draw(arrow)
+    half, t = 30 * s, 7 * s
+    ad.line([(cx - half, ay), (cx + half - 4 * s, ay)], fill=(255, 255, 255, 235), width=int(t))
+    for dy in (-1, 1):  # the head: two rounded strokes
+        ad.line([(cx + half, ay), (cx + half - 18 * s, ay + dy * 18 * s)], fill=(255, 255, 255, 235), width=int(t))
+    for x, y in ((cx - half, ay), (cx + half, ay), (cx + half - 18 * s, ay - 18 * s), (cx + half - 18 * s, ay + 18 * s)):
+        ad.ellipse((x - t / 2, y - t / 2, x + t / 2, y + t / 2), fill=(255, 255, 255, 235))
+    img.alpha_composite(arrow.filter(ImageFilter.GaussianBlur(9 * s)))
+    img.alpha_composite(arrow)
 
     # hint
     hint = inter(13 * s, 500)
