@@ -12,6 +12,35 @@ BOLD_RE = re.compile(r"\*\*(.+?)\*\*")
 TABLE_ROW_RE = re.compile(r"^\s*\|(.+)\|\s*$")
 
 
+_ISO_DAY_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
+_WEEKDAYS = ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")
+
+
+def normalize_due(due: str, action: str) -> tuple[str, str]:
+    """Due cells should be a bare YYYY-MM-DD, but models add notes like
+    "2026-09-30 (by 3 p.m.)". Keep the date, move the note into the action, and
+    if the note names a weekday the date doesn't fall on, snap the date to the
+    nearest such weekday (models are unreliable at weekday arithmetic)."""
+    from datetime import date, timedelta
+
+    m = _ISO_DAY_RE.search(due or "")
+    if not m:
+        return (due or "").strip(), action
+    iso = m.group(1)
+    note = (due[: m.start()] + due[m.end():]).strip(" ()-–,;")
+    try:
+        day = date.fromisoformat(iso)
+    except ValueError:
+        return iso, action
+    named = [i for i, w in enumerate(_WEEKDAYS) if w in note.lower()]
+    if len(named) == 1 and day.weekday() != named[0]:
+        shift = (named[0] - day.weekday()) % 7
+        day += timedelta(days=shift if shift <= 3 else shift - 7)
+    if note and note.lower() not in action.lower():
+        action = f"{action} ({note})"
+    return day.isoformat(), action
+
+
 def index_notes(meeting_id: str, markdown: str) -> dict:
     """Parse notes markdown and (re)build action_items/decisions/topics rows."""
     db = get_db()
@@ -34,7 +63,7 @@ def index_notes(meeting_id: str, markdown: str) -> dict:
             continue  # header / separator rows
         owner = cells[0] or "TBD"
         action = cells[1] if len(cells) > 1 else ""
-        due = cells[2] if len(cells) > 2 else ""
+        due, action = normalize_due(cells[2] if len(cells) > 2 else "", action)
         if not action:
             continue
         aid = new_id()

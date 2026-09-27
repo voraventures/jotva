@@ -40,11 +40,12 @@ SPILL_INTERVAL = 2.0
 
 # Background full-quality transcription during the call, one block at a time,
 # so only a short tail is left to transcribe at stop time (see
-# _incremental_transcribe_loop). A block is only read once it's this far
-# behind the in-memory tail, guaranteeing it's fully flushed to disk.
-INCR_BLOCK_SEC = 60
-INCR_INTERVAL = 20.0
-INCR_SAFETY_MARGIN = TAIL_SECONDS + 10
+# _incremental_transcribe_loop). Audio is read straight from the in-memory
+# chunks every INCR_INTERVAL seconds — well inside TAIL_SECONDS, so nothing is
+# spilled to disk before it's read. 30s matches Whisper's own window and keeps
+# the tail at stop to ~30s (about 2s of work at ~12x real time).
+INCR_BLOCK_SEC = 30
+INCR_INTERVAL = 5.0
 
 # Synthetic device indices >= WASAPI_BASE refer to Windows loopback captures.
 WASAPI_BASE = 1000
@@ -346,6 +347,22 @@ def _resample(audio: np.ndarray, src_sr: int, dst_sr: int) -> np.ndarray:
 
 def _sidecar_path(meeting_id: str) -> Path:
     return RECORDINGS_DIR / f"{meeting_id}.partial.json"
+
+
+def _drain_capture(cap, cursor: dict) -> np.ndarray | None:
+    """New audio (16 kHz mono float32) from one capture since `cursor`, an
+    absolute chunk index that survives spilling. None if some of that audio
+    was already spilled to disk, i.e. the reader fell behind."""
+    with cap.lock:
+        start_abs = cursor.get("chunk_index", 0)
+        if start_abs < cap.base_index:
+            return None
+        chunks = list(cap.chunks[start_abs - cap.base_index:])
+        cursor["chunk_index"] = cap.base_index + len(cap.chunks)
+    if not chunks:
+        return np.zeros(0, dtype=np.float32)
+    audio = np.concatenate([_to_mono(c) for c in chunks], axis=0).astype(np.float32)
+    return _resample(audio, cap.samplerate, TARGET_SR).astype(np.float32)
 
 
 def _load_tracks(track_specs: list[dict]) -> list[dict]:
@@ -656,37 +673,40 @@ class Recorder:
 
     def _incremental_transcribe_loop(self, meeting_id: str) -> None:
         """Transcribes the meeting with the real (accuracy) model in the
-        background, one finalized 60s block at a time, while the meeting is
+        background, one INCR_BLOCK_SEC block at a time, while the meeting is
         still going. At stop time the pipeline only has to transcribe the
-        short remaining tail instead of the whole recording — this is what
-        makes notes appear seconds after stop instead of minutes after.
+        short remaining tail (see pipeline._transcribe_fast) — this is what
+        makes notes appear seconds after stop.
 
-        A block is only read once it's INCR_SAFETY_MARGIN seconds behind the
-        live edge, guaranteeing spill_old_chunks has already flushed it to
-        disk. Runs independently of the live-preview thread above (which uses
-        a fast/low-quality tiny model on a rolling window, not suitable to
-        keep for the final transcript)."""
+        Each pass drains new in-memory chunks from every capture (own cursors,
+        independent of the coach's), resamples to 16 kHz and mixes them the
+        way _mix_window does. If a pass ever falls so far behind that chunks
+        were already spilled to disk, it stops and leaves the rest to the
+        stop-time pipeline rather than risk a gap in the transcript."""
         from . import transcriber as transcriber_svc
 
+        captures = list(self._captures)
+        cursors = [{"chunk_index": 0} for _ in captures]
+        pending = [np.zeros(0, dtype=np.float32) for _ in captures]
+        buf = np.zeros(0, dtype=np.float32)
+        block = INCR_BLOCK_SEC * TARGET_SR
+        with self._live_lock:
+            until = self._live_transcribed_until
         while not self._stop_levels.wait(INCR_INTERVAL):
             try:
-                specs = [
-                    {"path": str(c.spill_path), "samplerate": c.samplerate}
-                    for c in self._captures
-                    if c.spill_path is not None
-                ]
-                if not specs:
-                    continue
-                elapsed = self.audio_elapsed
-                with self._live_lock:
-                    until = self._live_transcribed_until
-                while (
-                    not self._stop_levels.is_set()
-                    and elapsed - (until + INCR_BLOCK_SEC) >= INCR_SAFETY_MARGIN
-                ):
-                    tracks = _load_tracks(specs)
-                    window = _mix_window(tracks, until, until + INCR_BLOCK_SEC)
-                    segs = transcriber_svc.transcribe_array(window, offset=until)
+                for i, cap in enumerate(captures):
+                    new = _drain_capture(cap, cursors[i])
+                    if new is None:
+                        log.warning("Live transcription fell behind; the rest is transcribed at stop")
+                        return
+                    pending[i] = np.concatenate([pending[i], new])
+                n = min(len(p) for p in pending) if pending else 0
+                if n:
+                    buf = np.concatenate([buf, np.sum([p[:n] for p in pending], axis=0)])
+                    pending = [p[n:] for p in pending]
+                while len(buf) >= block and not self._stop_levels.is_set():
+                    segs = transcriber_svc.transcribe_array(buf[:block], offset=until)
+                    buf = buf[block:]
                     until += INCR_BLOCK_SEC
                     with self._live_lock:
                         self._live_segments.extend(segs)

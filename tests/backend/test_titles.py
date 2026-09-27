@@ -68,3 +68,16 @@ def test_prompt_has_meeting_date_owner_and_due_rules(ai):
     assert "owned by Luis Coomer" in call["system"]
     assert "YYYY-MM-DD" in call["system"]
     assert "Do not restate action items" in call["system"]
+
+
+def test_due_cells_are_cleaned_and_weekdays_corrected():
+    from app.services.intelligence import normalize_due
+    assert normalize_due("2026-09-30 (by 3 p.m.)", "Send deck") == ("2026-09-30", "Send deck (by 3 p.m.)")
+    assert normalize_due("2026-09-29 (for Monday meeting)", "List") == ("2026-09-28", "List (for Monday meeting)")
+    assert normalize_due("2026-10-02", "Vendors") == ("2026-10-02", "Vendors")
+    assert normalize_due("", "x") == ("", "x")
+
+
+def test_jotted_todos_become_the_note_takers_actions(ai):
+    notes.generate_notes("m9", "Sync", "Maya: hi.", [], jots="follow up with Sarah")
+    assert "action item owned by the note-taker" in ai[0]["system"]
