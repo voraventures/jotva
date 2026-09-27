@@ -3,7 +3,7 @@
 Decided with the user on 2026-09-27. Build before the website; ships to users by automatic update.
 
 ## Principles
-- **Suggests, never acts alone.** Jotva drafts replies and follow-ups; it never sends email or changes anything outside the app on its own.
+- **Drafts by default.** Jotva drafts replies and follow-ups for the user to review and send. It sends on its own only if the user turns on "Let Jotva send replies for me", and then only replies to the person who wrote, in the same conversation. It never deletes, moves or marks mail.
 - **Local first.** Mail is synced to this Mac only (SQLite, owner-only file permissions). Only short excerpts go to the AI, batched, to decide what needs a reply and which tasks an email contains.
 - **Emails are untrusted.** Email text is data, never instructions: it's fenced in prompts, and the agent has no tools that act on the outside world.
 - **Pro.** Email tracking and the agent are Pro features (`email`, `agent`). "Bring your own AI key" also becomes Pro (`own_key`).
