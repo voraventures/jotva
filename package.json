@@ -56,7 +56,8 @@
         "NSScreenCaptureUsageDescription": "Jotva needs screen recording permission to capture system audio from your meetings."
       },
       "icon": "electron/assets/icon.icns",
-      "artifactName": "Jotva.dmg"
+      "artifactName": "Jotva.dmg",
+      "notarize": true
     },
     "win": {
       "target": [
