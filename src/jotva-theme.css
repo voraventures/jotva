@@ -601,3 +601,7 @@
   .md-heading { margin: 12px 0 4px; font-size: calc(13rem / 14); font-weight: 600; color: var(--text); }
   .section-body > .md-heading:first-child { margin-top: 0; }
 }
+@media screen {
+  .capture-live-status { display: flex; align-items: center; gap: 8px; font-size: calc(12rem / 14); font-weight: 600; color: var(--muted); }
+  .capture-live-hearing p { margin: 8px 0 0; color: var(--faint); font-style: italic; }
+}

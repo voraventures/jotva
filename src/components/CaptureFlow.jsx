@@ -132,6 +132,7 @@ export default function CaptureFlow() {
     settings,
     openSettings,
     meetingLiveNotes,
+    liveTranscriptChunks,
     hasFeature,
     openUpgrade,
   } = useStore();
@@ -442,6 +443,11 @@ export default function CaptureFlow() {
                     <Markdown text={liveForThis.text} />
                     <div className="capture-live-foot">{t("capture.live.updatedAgo", { time: new Date(liveForThis.at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) })}</div>
                   </>
+                ) : liveTranscriptChunks.length ? (
+                  <div className="capture-live-hearing">
+                    <div className="capture-live-status"><span className="live-dot" aria-hidden="true" />{t("capture.live.starting")}</div>
+                    <p>“{liveTranscriptChunks[liveTranscriptChunks.length - 1]}”</p>
+                  </div>
                 ) : (
                   <div className="capture-live-empty">{t("capture.live.empty")}</div>
                 )}

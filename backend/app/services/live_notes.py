@@ -1,9 +1,10 @@
 """Live notes (Pro): while a meeting is recording, the AI keeps a short set of
 running notes (key points, decisions, action items) up to date.
 
-It checks every POLL seconds; the first update comes as soon as the first
-30-second live transcript block has enough speech (~40 s in), later ones at
-most every MIN_GAP seconds. Each takes the transcript written since the last
+It checks every POLL seconds; the first update comes as soon as the recorder's
+first (12-second) live transcript block contains a sentence or two of speech,
+so ~15-20 s after people start talking; later ones at most every MIN_GAP
+seconds. Each takes the transcript written since the last
 update (the recorder's 30-second live blocks) and asks the AI to fold it into
 the current notes. Sending only the new part keeps each call small. The final,
 polished notes are still written from the whole meeting after Stop.
@@ -20,7 +21,7 @@ log = logging.getLogger("jotva.live_notes")
 
 POLL = 5.0             # how often to look for new transcript
 MIN_GAP = 60.0         # at most one update a minute after the first
-MIN_NEW_CHARS = 150    # skip an update when little new was said
+MIN_NEW_CHARS = 60     # a sentence or two: enough for the AI to write something real
 MAX_UPDATES = 90       # hard cap per meeting (~90 min of updates)
 
 

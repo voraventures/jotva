@@ -1013,7 +1013,8 @@
       "tab": "Notas en vivo",
       "updated": "Notas en vivo actualizadas",
       "updatedAgo": "Actualizado a las {{time}}",
-      "empty": "Las notas en vivo aparecerán aquí a medida que avance la conversación. La primera llega tras unos 40 segundos de conversación y luego una vez por minuto."
+      "empty": "Las notas en vivo empiezan en cuanto alguien habla.",
+      "starting": "Te escuchamos: escribiendo las primeras notas…"
     }
   },
   "upcomingToast": {

@@ -45,6 +45,9 @@ SPILL_INTERVAL = 2.0
 # spilled to disk before it's read. 30s matches Whisper's own window and keeps
 # the tail at stop to ~30s (about 2s of work at ~12x real time).
 INCR_BLOCK_SEC = 30
+# The first block is short so live notes (Pro) can start ~15 s after people
+# start talking instead of waiting for a full 30 s block.
+INCR_FIRST_BLOCK_SEC = 12
 INCR_INTERVAL = 5.0
 
 # Synthetic device indices >= WASAPI_BASE refer to Windows loopback captures.
@@ -689,7 +692,6 @@ class Recorder:
         cursors = [{"chunk_index": 0} for _ in captures]
         pending = [np.zeros(0, dtype=np.float32) for _ in captures]
         buf = np.zeros(0, dtype=np.float32)
-        block = INCR_BLOCK_SEC * TARGET_SR
         with self._live_lock:
             until = self._live_transcribed_until
         while not self._stop_levels.wait(INCR_INTERVAL):
@@ -704,10 +706,14 @@ class Recorder:
                 if n:
                     buf = np.concatenate([buf, np.sum([p[:n] for p in pending], axis=0)])
                     pending = [p[n:] for p in pending]
-                while len(buf) >= block and not self._stop_levels.is_set():
+                while not self._stop_levels.is_set():
+                    block_sec = INCR_FIRST_BLOCK_SEC if until == 0 else INCR_BLOCK_SEC
+                    block = block_sec * TARGET_SR
+                    if len(buf) < block:
+                        break
                     segs = transcriber_svc.transcribe_array(buf[:block], offset=until)
                     buf = buf[block:]
-                    until += INCR_BLOCK_SEC
+                    until += block_sec
                     with self._live_lock:
                         self._live_segments.extend(segs)
                         self._live_transcribed_until = until
