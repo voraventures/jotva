@@ -1,4 +1,10 @@
-"""Meeting-local acoustic clustering and conservative platform-name attribution."""
+"""Meeting-local acoustic clustering, then naming the voices without voiceprints.
+
+Names come, strongest first, from: the meeting platform's active-speaker signal
+(Zoom/Meet); which microphone a voice came through (the note-taker speaks into
+this Mac's mic, remote people come through the call audio); and clear clues in
+the conversation matched against the calendar invite's attendees. Nothing about
+anyone's voice is stored, and a voice that can't be named stays "Speaker N"."""
 import json
 import math
 import threading
@@ -110,6 +116,69 @@ def resolve_names(turns, events):
     return resolved
 
 
+def display_name(attendee: str) -> str:
+    """Calendar attendees may be emails: sarah.lee@acme.com -> Sarah Lee."""
+    attendee = (attendee or "").strip()
+    if "@" not in attendee:
+        return attendee
+    local = attendee.split("@", 1)[0]
+    return " ".join(part.capitalize() for part in local.replace("_", ".").replace("-", ".").split(".") if part)
+
+
+def note_taker_speaker(meeting_id, turns):
+    """The voice that mostly came through this Mac's microphone (not the call
+    audio) is the note-taker. Needs both tracks, so online meetings only."""
+    from .recorder import track_loudness_path
+
+    try:
+        data = json.loads(track_loudness_path(meeting_id).read_text())
+    except (OSError, ValueError):
+        return None
+    step, mic, system = data.get("step", 0.25), data.get("mic", []), data.get("system", [])
+    n = min(len(mic), len(system))
+    if not n:
+        return None
+    mic_sec, sys_sec = defaultdict(float), defaultdict(float)
+    for turn in turns:
+        for i in range(int(turn["start"] / step), min(n, int(math.ceil(turn["end"] / step)))):
+            if mic[i] > max(system[i] * 1.5, 0.004):
+                mic_sec[turn["speaker_id"]] += step
+            elif system[i] > max(mic[i] * 1.5, 0.004):
+                sys_sec[turn["speaker_id"]] += step
+    best, share = None, 0.0
+    for sid in set(mic_sec) | set(sys_sec):
+        total = mic_sec[sid] + sys_sec[sid]
+        if total and mic_sec[sid] / total > share:
+            best, share = sid, mic_sec[sid] / total
+    return best if best and share >= 0.75 and mic_sec[best] >= 2.0 else None
+
+
+def context_names(segments, attendees, names):
+    """Ask the AI which attendee each unnamed speaker is, from clear conversational
+    clues only. Answers are checked against the invite; anything else is dropped."""
+    from . import notes
+
+    unnamed = {t["speaker_id"] for t in segments if t.get("speaker_id") and t["speaker_id"] not in names}
+    taken = {n["name"].lower() for n in names.values()}
+    candidates = [a for a in attendees if a and a.lower() not in taken]
+    if not unnamed or not candidates:
+        return {}
+    transcript = "\n".join(f"{s['speaker']}: {s['text']}" for s in segments)
+    try:
+        guesses = notes.identify_speakers(transcript, candidates)
+    except Exception:
+        return {}
+    by_lower = {a.lower(): a for a in candidates}
+    resolved, used = {}, set()
+    for label, name in guesses.items():
+        sid = "speaker_" + label.rsplit(" ", 1)[-1] if label.lower().startswith("speaker ") else None
+        match = by_lower.get((name or "").strip().lower())
+        if sid in unnamed and match and match not in used:
+            resolved[sid] = {"name": match, "source": "context"}
+            used.add(match)
+    return resolved
+
+
 def align_words(segments, turns, names):
     output = []
     for segment in segments:
@@ -148,7 +217,7 @@ def align_words(segments, turns, names):
 
 def analyze(meeting_id, audio_path, result):
     result["speaker_analysis"] = {"status": "disabled", "version": speaker_models.VERSION}
-    if not get_setting("speaker_identification", False):
+    if not get_setting("speaker_identification", True):
         return result
     started = time.monotonic()
     if not speaker_models.ready():
@@ -164,6 +233,15 @@ def analyze(meeting_id, audio_path, result):
             for person in event['participants']:
                 person['name'] = apply_redaction(person['name'])
         names = resolve_names(turns, events)
+        meeting = get_db().execute("SELECT attendees FROM meetings WHERE id=?", (meeting_id,)).fetchone()
+        attendees = [display_name(a) for a in json.loads(meeting["attendees"] or "[]")] if meeting else []
+        user_name = get_setting("user_name", "")
+        me = note_taker_speaker(meeting_id, turns)
+        if me and me not in names and user_name:
+            names[me] = {"name": user_name, "source": "mic"}
+        if attendees and len({t["speaker_id"] for t in turns}) > 1:
+            draft = align_words(result["segments"], turns, names)
+            names.update(context_names(draft, attendees + ([user_name] if user_name else []), names))
         segments = align_words(result["segments"], turns, names)
         if not segments and result.get("text", "").strip():
             raise ValueError("Missing alignment")

@@ -59,7 +59,7 @@ class SpeakerCapture:
     def available(self):
         from .recorder import recorder
         return bool(self.meeting_id and recorder.meeting_id == self.meeting_id and
-                    get_setting("speaker_identification", False) and not recorder.paused and not recorder.muted)
+                    get_setting("speaker_identification", True) and not recorder.paused and not recorder.muted)
 
     def offer(self, source, target, url=None):
         with self.lock:

@@ -76,7 +76,7 @@ def retry(meeting_id: str):
         analysis = json.loads(row["speaker_analysis"] or "{}")
         if row['status'] not in ('ready', 'error') or analysis.get('status') not in ('failed', 'models_missing') or not analysis.get('version'):
             raise HTTPException(409, "Analysis is not recoverable")
-        if not get_setting('speaker_identification', False) or not speaker_models.ready():
+        if not get_setting('speaker_identification', True) or not speaker_models.ready():
             raise HTTPException(409, "Set up speaker identification first")
         if not row['audio_path'] or not is_safe_managed_path(row['audio_path']) or not Path(row['audio_path']).is_file():
             raise HTTPException(409, "Recording audio unavailable")

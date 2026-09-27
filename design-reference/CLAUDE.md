@@ -14,6 +14,12 @@ The other input we invite is the **jot pad**: while recording, the user can jot 
 notes, which steer what the AI emphasizes. It's prominent in the recording card but
 always optional. Don't market any of this as "zero manual labor".
 
+**Speaker names (product decision, 2026-09-26):** never identify people by stored
+voiceprints. Voices are separated per meeting only; names come from the meeting
+platform's active-speaker signal, which mic the voice came through (the note-taker
+is on this Mac's mic), clear conversational clues matched to the calendar invite,
+and the user's click-to-correct. An unclear voice stays "Speaker N".
+
 **Plans:** Free vs Pro ($12/mo) is defined by `PRO_FEATURES` in
 `backend/app/services/license.py`. Whenever a Pro feature is added or moved,
 update `docs/pro-features.md` too, since the website is written from it.

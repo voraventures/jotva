@@ -16,7 +16,7 @@
     "experimental": "平台姓名归属仍处于实验阶段，尚未通过受控通话验证。完成设置并不保证显示姓名。不确定的声音保持匿名。",
     "error": "无法完成设置，请重试。",
     "analysisWarning": "说话人分析不可用。转录已保留。请检查录音设置中的说话人识别，然后重试本地分析。",
-    "displayNames": "姓名是会议平台的显示名称，并非已验证的身份。共享会议室名称代表房间或设备。",
+    "displayNames": "姓名来自会议邀请和对话内容。点击姓名即可更正。",
     "processing": "正在识别说话人",
     "retryAnalysis": "重试说话人分析",
     "retryNote": "仅在本地运行，不会重新生成现有笔记。",
@@ -36,7 +36,11 @@
       "permission_required": "需要辅助功能权限",
       "host_registered": "主机已注册 · 需要扩展程序",
       "setup_required": "需要设置"
-    }
+    },
+    "whoIsThis": "这是谁？",
+    "you": "你",
+    "typeName": "输入姓名…",
+    "renamed": "已在整场会议中标注为 {{name}}"
   },
   "dock": {
     "navigation": "主导航",

@@ -16,7 +16,7 @@
     "experimental": "Los nombres automáticos son experimentales y aún no se han validado en llamadas controladas. La configuración no garantiza nombres. Las voces ambiguas quedan anónimas.",
     "error": "No se pudo completar la configuración. Inténtalo de nuevo.",
     "analysisWarning": "El análisis de hablantes no estuvo disponible. La transcripción se conserva. Revisa Identificación de hablantes en Grabación y reintenta el análisis local.",
-    "displayNames": "Son nombres mostrados por la plataforma, no identidades verificadas. Un nombre de sala identifica la sala o el dispositivo.",
+    "displayNames": "Los nombres vienen de la invitación y de lo que se dijo. Haz clic en un nombre para corregirlo.",
     "processing": "Identificando hablantes",
     "retryAnalysis": "Reintentar análisis de hablantes",
     "retryNote": "Se ejecuta localmente y no regenera las notas existentes.",
@@ -36,7 +36,11 @@
       "permission_required": "Se requiere Accesibilidad",
       "host_registered": "Host registrado · requiere extensión",
       "setup_required": "Requiere configuración"
-    }
+    },
+    "whoIsThis": "¿Quién es?",
+    "you": "tú",
+    "typeName": "Escribe un nombre…",
+    "renamed": "{{name}} identificado en toda la reunión"
   },
   "dock": {
     "navigation": "Navegación principal",

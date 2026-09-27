@@ -225,7 +225,11 @@ export default function TranscriptTab({ meeting, jump }) {
                   </span>
                   <div className="tr-turn-main">
                     <div className="tr-turn-head">
-                      <span className="tr-speaker">{seg.speaker || t("timeline.speakerFallback")}</span>
+                      {seg.speaker_id ? (
+                        <SpeakerName meeting={meeting} seg={seg} onSaved={refreshDetail} showToast={showToast} />
+                      ) : (
+                        <span className="tr-speaker">{seg.speaker || t("timeline.speakerFallback")}</span>
+                      )}
                       <span className="tr-time">
                         {fmtTs(seg.start)}
                         {isCurrent && ` · ${t("transcript.nowPlaying")}`}
@@ -281,5 +285,66 @@ export default function TranscriptTab({ meeting, jump }) {
         </div>
       )}
     </div>
+  );
+}
+
+// Calendar invites may list emails: sarah.lee@acme.com -> Sarah Lee (matches the backend).
+function attendeeName(a) {
+  if (!a || !a.includes("@")) return (a || "").trim();
+  return a.split("@")[0].split(/[._-]/).filter(Boolean).map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
+}
+
+// Click a speaker's name to say who it is: pick someone from the invite (or you),
+// or type a name. Every line of that voice, and the notes, update.
+function SpeakerName({ meeting, seg, onSaved, showToast }) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const [typed, setTyped] = useState("");
+  const [me, setMe] = useState("");
+  const boxRef = useRef(null);
+  useEffect(() => {
+    if (!open) return undefined;
+    api.get("/api/settings/user-name").then((r) => setMe(r.user_name || "")).catch(() => {});
+    const close = (e) => { if (!boxRef.current?.contains(e.target)) setOpen(false); };
+    const esc = (e) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", esc);
+    return () => { document.removeEventListener("mousedown", close); document.removeEventListener("keydown", esc); };
+  }, [open]);
+  const taken = new Set((meeting.transcript?._segments || []).filter((s) => s.speaker_id && s.speaker_id !== seg.speaker_id).map((s) => s.speaker));
+  const people = [...new Set([me, ...(meeting.attendees || []).map(attendeeName)].filter(Boolean))].filter((n) => !taken.has(n));
+  const save = async (name) => {
+    const clean = name.trim();
+    if (!clean) return;
+    setOpen(false);
+    try {
+      await api.post(`/api/meetings/${meeting.id}/speakers/${seg.speaker_id}`, { name: clean });
+      await onSaved();
+      showToast(t("speakers.renamed", { name: clean }));
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+  return (
+    <span className="tr-speaker-wrap" ref={boxRef} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+      <button type="button" className="tr-speaker tr-speaker-btn" aria-haspopup="menu" aria-expanded={open}
+        title={t("speakers.whoIsThis")} onClick={() => { setTyped(""); setOpen((v) => !v); }}>
+        {seg.speaker}
+      </button>
+      {open && (
+        <div className="speaker-picker" role="menu">
+          <div className="speaker-picker-title">{t("speakers.whoIsThis")}</div>
+          {people.map((n) => (
+            <button key={n} type="button" role="menuitem" className="menu-item" onClick={() => save(n)}>
+              {n}{n === me ? ` · ${t("speakers.you")}` : ""}
+            </button>
+          ))}
+          <form onSubmit={(e) => { e.preventDefault(); save(typed); }}>
+            <input autoFocus={!people.length} className="text-input" value={typed} maxLength={100}
+              placeholder={t("speakers.typeName")} onChange={(e) => setTyped(e.target.value)} />
+          </form>
+        </div>
+      )}
+    </span>
   );
 }

@@ -16,7 +16,7 @@
     "experimental": "A atribuição de nomes é experimental e ainda não foi validada em chamadas controladas. A configuração não garante nomes. Vozes ambíguas permanecem anônimas.",
     "error": "Não foi possível concluir a configuração. Tente novamente.",
     "analysisWarning": "A análise de falantes estava indisponível. Sua transcrição foi preservada. Confira Identificação de falantes em Gravação e tente a análise local novamente.",
-    "displayNames": "Os nomes vêm da plataforma, não são identidades verificadas. Um nome de sala identifica a sala ou o dispositivo.",
+    "displayNames": "Os nomes vêm do convite e do que foi dito. Clique em um nome para corrigi-lo.",
     "processing": "Identificando falantes",
     "retryAnalysis": "Repetir análise de falantes",
     "retryNote": "A análise é local e não regenera as notas existentes.",
@@ -36,7 +36,11 @@
       "permission_required": "Acessibilidade necessária",
       "host_registered": "Host registrado · extensão necessária",
       "setup_required": "Configuração necessária"
-    }
+    },
+    "whoIsThis": "Quem é?",
+    "you": "você",
+    "typeName": "Digite um nome…",
+    "renamed": "{{name}} identificado em toda a reunião"
   },
   "dock": {
     "navigation": "Navegação principal",

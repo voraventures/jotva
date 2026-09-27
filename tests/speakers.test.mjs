@@ -54,7 +54,7 @@ for(const state of ['speakers','speakers-failed']) test(`named transcript, timel
   assert.equal(document.querySelector('.tr-speaker').textContent,state==='speakers'?'Maya Chen':'Speaker 1');
   assert.equal(document.querySelectorAll('.tr-turn').length,24);
   assert.equal(document.querySelectorAll('.transcript-actions button').length,2);
-  assert.ok(document.querySelector('.speaker-notice').textContent.includes(state==='speakers'?'not verified identities':'transcript is preserved'));
+  assert.ok(document.querySelector('.speaker-notice').textContent.includes(state==='speakers'?'Click a name to correct it':'transcript is preserved'));
   await click('Timeline');assert.equal(document.querySelectorAll('.tl-speaker').length,24);
   assert.equal(document.querySelector('.tl-speaker').textContent,state==='speakers'?'Maya Chen':'Speaker 1');
   await click('Record');await click('Recording settings');

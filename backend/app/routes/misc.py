@@ -205,7 +205,7 @@ def remove_secret(name: str):
 @router.get("/settings")
 def get_settings():
     return {
-        "speaker_identification": get_setting("speaker_identification", False),
+        "speaker_identification": get_setting("speaker_identification", True),
         "theme": get_setting("theme", "default"),
         "recording_mode": get_setting("recording_mode", "confirm_30s"),
         "mic_device": get_setting("mic_device"),

@@ -16,7 +16,7 @@
     "experimental": "L’attribution des noms est expérimentale et n’a pas encore été validée lors d’appels contrôlés. La configuration ne garantit pas les noms. Les voix ambiguës restent anonymes.",
     "error": "Configuration impossible. Veuillez réessayer.",
     "analysisWarning": "L’analyse des voix était indisponible. Votre transcription est conservée. Vérifiez Identification des voix dans Enregistrement, puis relancez l’analyse locale.",
-    "displayNames": "Ces noms sont affichés par la plateforme, pas des identités vérifiées. Un nom de salle désigne la salle ou l’appareil.",
+    "displayNames": "Les noms viennent de l'invitation et de ce qui a été dit. Cliquez sur un nom pour le corriger.",
     "processing": "Identification des voix",
     "retryAnalysis": "Relancer l’analyse des voix",
     "retryNote": "Cette analyse locale ne régénère pas les notes existantes.",
@@ -36,7 +36,11 @@
       "permission_required": "Accessibilité requise",
       "host_registered": "Hôte enregistré · extension requise",
       "setup_required": "Configuration requise"
-    }
+    },
+    "whoIsThis": "Qui est-ce ?",
+    "you": "vous",
+    "typeName": "Saisissez un nom…",
+    "renamed": "{{name}} identifié dans toute la réunion"
   },
   "dock": {
     "navigation": "Navigation principale",

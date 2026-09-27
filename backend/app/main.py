@@ -124,4 +124,16 @@ def create_app() -> FastAPI:
         except Exception:
             log.exception("Interrupted-meeting recovery failed")
 
+        # Speaker separation is on by default; fetch its pinned local models
+        # (~46 MB, checksum-verified) in the background the first time.
+        from .db import get_setting
+        from .services import speaker_models
+
+        try:
+            if get_setting("speaker_identification", True) and not speaker_models.ready() \
+                    and speaker_models.status()["runtime_available"]:
+                speaker_models.install()
+        except Exception:
+            log.exception("Speaker model download could not start")
+
     return app

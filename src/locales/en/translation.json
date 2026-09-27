@@ -16,7 +16,7 @@
     "experimental": "Platform naming is experimental and not yet validated in controlled calls. Setup does not guarantee names. Ambiguous voices stay anonymous.",
     "error": "Unable to complete setup. Please try again.",
     "analysisWarning": "Speaker analysis was unavailable. Your transcript is preserved. Check Speaker identification in Recording settings, then retry local analysis.",
-    "displayNames": "Names are meeting-platform display names, not verified identities. A shared-room name identifies the room or device.",
+    "displayNames": "Names come from the meeting invite and what was said. Click a name to correct it.",
     "processing": "Identifying speakers",
     "retryAnalysis": "Retry speaker analysis",
     "retryNote": "This runs locally and does not regenerate existing notes.",
@@ -36,7 +36,11 @@
       "permission_required": "Accessibility required",
       "host_registered": "Host registered · extension required",
       "setup_required": "Setup required"
-    }
+    },
+    "whoIsThis": "Who is this?",
+    "you": "you",
+    "typeName": "Type a name…",
+    "renamed": "Named {{name}} throughout this meeting"
   },
   "dock": {
     "navigation": "Main navigation",

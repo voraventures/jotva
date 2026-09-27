@@ -266,6 +266,42 @@ def _delete_meeting_files(meeting_id: str, row) -> None:
             pass
 
 
+class SpeakerNameBody(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+
+
+@router.post("/{meeting_id}/speakers/{speaker_id}")
+def name_speaker(meeting_id: str, speaker_id: str, body: SpeakerNameBody):
+    """Click-to-correct: give one of the meeting's voices a name. Every line of
+    that voice is relabeled, and the notes' generic "Speaker N" mentions and
+    action-item owners follow."""
+    name = body.name.strip()
+    db = get_db()
+    row = db.execute("SELECT segments FROM transcripts WHERE meeting_id=?", (meeting_id,)).fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Meeting not found")
+    segments = json.loads(row["segments"] or "[]")
+    old_labels = {s.get("speaker") for s in segments if s.get("speaker_id") == speaker_id}
+    if not old_labels:
+        raise HTTPException(status_code=404, detail="Speaker not found")
+    for seg in segments:
+        if seg.get("speaker_id") == speaker_id:
+            seg.update(speaker=name, speaker_name=name, speaker_source="user")
+    text = "\n".join(f"{s['speaker']}: {s['text']}" for s in segments if s.get("speaker"))
+    db.execute("UPDATE transcripts SET segments=?, text=? WHERE meeting_id=?", (json.dumps(segments), text, meeting_id))
+    generic = f"Speaker {speaker_id.rsplit('_', 1)[-1]}"
+    note = db.execute("SELECT content FROM notes WHERE meeting_id=?", (meeting_id,)).fetchone()
+    if note and generic in note["content"]:
+        import re as _re
+
+        content = _re.sub(rf"\b{_re.escape(generic)}\b", name, note["content"])
+        db.execute("UPDATE notes SET content=? WHERE meeting_id=?", (content, meeting_id))
+    db.execute("UPDATE action_items SET owner=? WHERE meeting_id=? AND owner IN (%s)" % ",".join("?" * len(old_labels | {generic})),
+               (name, meeting_id, *(old_labels | {generic})))
+    db.commit()
+    return {"ok": True}
+
+
 @router.post("/{meeting_id}/share")
 def create_share(meeting_id: str):
     """Mint a read-only share token (30-day expiry) for this meeting."""
