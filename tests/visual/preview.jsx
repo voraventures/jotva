@@ -83,6 +83,12 @@ api.get = async path => {
   if (path.includes('/speakers/status')) return {models: {state: 'ready', runtime_available: true, progress: 1}, platforms_qualified: false};
   if (path.includes("user-name")) return { user_name: "Alex Rivera" };
   if (path.includes("integrations/status")) return { secrets: {} };
+  if (path.includes("email/accounts")) return { accounts: [{ id: "a1", provider: "gmail", address: "luis@vora.co", last_sync: "2026-09-27T10:00:00Z", last_error: null }] };
+  if (path.includes("email/waiting")) return { threads: [
+    { id: "a1:t1", account: "luis@vora.co", provider: "gmail", counterpart_name: "Sarah Lee", counterpart_email: "sarah@acme.com", subject: "Q4 budget — need your sign-off", reason: "Asks you to approve the Q4 budget by Tuesday", urgency: "high", last_at: new Date(Date.now() - 26 * 36e5).toISOString(), last_message_id: "q1@acme", tasks: [] },
+    { id: "a1:t2", account: "luis@vora.co", provider: "gmail", counterpart_name: "Marcus Diaz", counterpart_email: "marcus@vora.co", subject: "Vendor shortlist", reason: "Wants your pick of the three vendors", urgency: "normal", last_at: new Date(Date.now() - 5 * 36e5).toISOString(), last_message_id: "v1@vora", tasks: [] },
+    { id: "a1:t3", account: "luis@vora.co", provider: "gmail", counterpart_name: "Emily Chen", counterpart_email: "emily@partner.io", subject: "Intro: Dana from Northwind", reason: "Introduction waiting for your reply", urgency: "low", last_at: new Date(Date.now() - 3 * 864e5).toISOString(), last_message_id: "i1@partner", tasks: [] },
+  ] };
   if (path.includes("recording/devices")) return { devices: [{ index: 0, name: "MacBook Pro Microphone" }], default_input: { name: "MacBook Pro Microphone", is_loopback_like: false } };
   if (path.includes("mobile/sessions")) return [];
   if (path.includes("intelligence/digest")) return state === "empty" ? {} : { meetings, meeting_count: 3, total_minutes: 96, range_start: date.toISOString(), range_end: date.toISOString(), recurring_topics: [{ name: "Product experience", count: 3 }], open_actions: meeting.intelligence.actions, decisions: meeting.intelligence.decisions };
@@ -94,7 +100,7 @@ api.post = api.patch = api.delete = async () => { throw new Error("Writes disabl
 function Preview() {
   const [theme, setTheme] = useState(params.get("theme") || "default");
   const [settings, setSettings] = useState({ font_size: params.get("size") || "medium", reduce_motion: params.get("motion") !== "on", ai_provider: "anthropic", claude_model: "claude-haiku-4-5", whisper_model: "base", auto_record_mode: "ask", retention_days: 0 });
-  const [nav, setNav] = useState("meetings");
+  const [nav, setNav] = useState(state === "agent" ? "agent" : "meetings");
   const [selectedId, selectMeeting] = useState(visibleMeetings[0]?.id || null);
   const [deletedIds, setDeletedIds] = useState([]);
   const [settingsOpen, setOpen] = useState(!!params.get("section"));
@@ -137,6 +143,7 @@ function Preview() {
       if (id === selectedId) selectMeeting(null);
       setToasts([{ id: "fixture-delete", kind: "info", message: "Meeting deleted", action: { label: "Undo", onAction: () => setDeletedIds(ids => ids.filter(deleted => deleted !== id)) } }]);
     }, setSelectedTemplate: noop, dismissActiveCall: noop, setCoachOpen: noop, startProUpgradePolling: noop,
+    emailVersion: 0, updateReady: null, installUpdate: noop,
     upgradeFeature, openUpgrade: (f = "unlimited_notes") => setUpgradeFeature(f), closeUpgrade: () => setUpgradeFeature(null), hasFeature: () => params.get("pro") === "1",
     proGuard: (_f, fn) => fn, handleError: noop, startCheckout: noop,
   };

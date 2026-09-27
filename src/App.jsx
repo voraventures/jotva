@@ -17,6 +17,7 @@ import Dock from "./components/Dock.jsx";
 import Titlebar from "./components/Titlebar.jsx";
 import UpcomingToast from "./components/UpcomingToast.jsx";
 import UpgradeModal from "./components/UpgradeModal.jsx";
+import AgentView from "./components/AgentView.jsx";
 import { DigestView, MeetingZeroView, SearchView, TodayView } from "./components/Views.jsx";
 
 const platform = window.jotva?.platform || "darwin";
@@ -164,6 +165,7 @@ export default function App() {
         {nav === "search" && <SearchView />}
         {nav === "zero" && <MeetingZeroView />}
         {nav === "digest" && <DigestView />}
+        {nav === "agent" && <AgentView />}
         <Settings />
         <Dock />
         <RecordPrompt />

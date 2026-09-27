@@ -633,3 +633,52 @@
   .header-update:hover { filter: brightness(1.08); }
   .header-update:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 }
+
+/* ---- Jotva Agent: Waiting on you ---- */
+@media screen {
+  .agent-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .agent-head .btn { display: inline-flex; align-items: center; gap: 6px; }
+  .agent-count {
+    display: inline-flex; min-width: 20px; justify-content: center; margin-left: 6px; padding: 0 7px; border-radius: 999px;
+    font-size: calc(12rem / 14); color: #fff; background: var(--brand-solid);
+  }
+  .agent-empty {
+    display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 28px; padding: 36px 24px;
+    text-align: center; border-radius: 18px; border: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--accent-softer), transparent 140%), var(--panel-glass);
+  }
+  .agent-empty svg { color: var(--accent); }
+  .agent-clear { display: flex; align-items: center; gap: 8px; margin-top: 8px; color: var(--muted); }
+  .agent-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 10px; }
+  .agent-item {
+    display: flex; gap: 12px; padding: 14px 16px; border-radius: 16px;
+    background: var(--panel-glass); border: 1px solid var(--border);
+  }
+  .agent-item.urgency-high { border-color: color-mix(in srgb, var(--warning) 55%, var(--border)); }
+  .agent-avatar {
+    flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
+    font-weight: 600; color: #fff; background: var(--brand-solid);
+  }
+  .agent-main { min-width: 0; flex: 1; }
+  .agent-line { display: flex; align-items: center; gap: 8px; }
+  .agent-line strong { font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .agent-age { margin-left: auto; flex: none; font-size: calc(12rem / 14); color: var(--faint); }
+  .agent-urgent { padding: 1px 7px; border-radius: 999px; font-size: calc(11rem / 14); font-weight: 600; color: #fff; background: var(--warning); }
+  .agent-subject { margin-top: 2px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .agent-reason { margin-top: 3px; font-size: calc(13rem / 14); color: var(--muted); }
+  .agent-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .agent-error { display: flex; align-items: center; gap: 10px; margin-top: 16px; font-size: calc(13rem / 14); color: var(--warning); }
+
+  .email-card { flex-wrap: wrap; }
+  .email-account-row { flex-basis: 100%; display: flex; align-items: center; gap: 12px; font-size: calc(13rem / 14); }
+  .email-account-row > span:first-child { flex: 1; color: var(--text); }
+  .email-account-ok { color: var(--muted); }
+  .email-account-error { color: var(--warning); }
+  .email-providers { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
+  .email-form { flex-basis: 100%; display: flex; flex-direction: column; gap: 8px; }
+  .email-form-title { font-weight: 600; color: var(--text); }
+  .email-form-row { display: flex; gap: 8px; justify-content: flex-end; }
+  .email-form-row .text-input { flex: 1; }
+  .link-btn { all: unset; cursor: pointer; color: var(--accent); font-weight: 600; }
+  .link-btn:hover { text-decoration: underline; }
+}

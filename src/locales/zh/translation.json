@@ -65,7 +65,9 @@
       "Appearance": "外观",
       "Privacy": "隐私",
       "Export & backup": "导出与备份",
-      "Subscription": "订阅"
+      "Subscription": "订阅",
+      "Agent": "助理",
+      "Waiting on you": "等你回复"
     }
   },
   "sidebar": {
@@ -544,6 +546,34 @@
       "added": "已添加。重启 Claude Desktop 即可连接 Jotva。",
       "addFailed": "无法更新 Claude Desktop 的设置，请改用“复制其他应用的配置”。",
       "copied": "配置已复制，请粘贴到应用的 MCP 设置中。"
+    },
+    "email": {
+      "title": "邮件——等你回复",
+      "desc": "Jotva 每 5 分钟检查一次收件箱，列出仍需要你回复的邮件。只读取：从不发送、删除或标记任何邮件。",
+      "connected": "邮箱已连接，正在检查收件箱…",
+      "error": "无法连接",
+      "synced": "已是最新",
+      "syncing": "检查中…",
+      "remove": "断开连接",
+      "providers": {
+        "gmail": "Gmail / Google Workspace",
+        "icloud": "iCloud 邮件",
+        "imap": "其他（IMAP）",
+        "microsoft": "Outlook / Microsoft 365"
+      },
+      "howto": {
+        "gmail": "请使用 Google 应用专用密码（普通密码无法使用），需要开启两步验证。",
+        "icloud": "请在 Apple 账户 → 登录与安全中创建 App 专用密码。",
+        "imap": "请输入邮件服务商的 IMAP 服务器和应用专用密码。"
+      },
+      "createPassword": "创建一个 →",
+      "address": "邮箱地址",
+      "appPassword": "应用专用密码",
+      "server": "IMAP 服务器（例如 imap.example.com）",
+      "privacy": "数据保存在这台 Mac 上。只有可能需要你处理的邮件的简短片段会发送给 AI 判断。密码保存在 macOS 钥匙串中。",
+      "checking": "检查中…",
+      "connect": "连接",
+      "soon": "即将推出"
     }
   },
   "notes": {
@@ -1077,6 +1107,14 @@
       "live_notes": {
         "title": "边说边生成的笔记",
         "body": "Pro 会在会议进行中实时记录要点、决定和待办事项。"
+      },
+      "email": {
+        "title": "不再错过需要你的邮件",
+        "body": "Pro 直接从收件箱列出所有仍在等你回复的邮件。"
+      },
+      "own_key": {
+        "title": "选择你的 AI",
+        "body": "接入你自己的 Claude、GPT 或 Gemini 密钥，使用任意模型。"
       }
     },
     "perk": {
@@ -1086,7 +1124,9 @@
       "higher_quality": "更高质量的 AI 笔记",
       "followup": "跟进邮件与模板",
       "mcp": "可从 Claude 等 AI 助手访问",
-      "live_notes": "会议进行中的实时笔记"
+      "live_notes": "会议进行中的实时笔记",
+      "email": "等你回复的邮件",
+      "own_key": "使用自己的 AI 密钥和任意模型"
     }
   },
   "notesPaused": {
@@ -1104,5 +1144,29 @@
     "ready": "Jotva {{version}} 已准备好安装。",
     "restart": "重启以更新",
     "afterRecording": "录音结束后将安装更新。"
+  },
+  "agent": {
+    "title": "助理",
+    "sub": "邮件里需要你处理的事——很快也会包括会议和任务。",
+    "checkNow": "立即检查",
+    "checkingShort": "检查中…",
+    "checking": "正在检查你的邮件…",
+    "upsellTitle": "不再错过需要你回复的邮件",
+    "upsellBody": "Jotva Pro 在这台 Mac 上读取收件箱，列出所有仍在等你回复的邮件，无需翻找。",
+    "connectTitle": "连接你的邮箱",
+    "connectBody": "Jotva 会查看最近两周的收件箱，只显示仍需要你的邮件。邮件只保存在这台 Mac 上。",
+    "connect": "连接邮箱",
+    "waiting": "等你回复",
+    "allClear": "都处理完了，没有等你的邮件。",
+    "urgent": "紧急",
+    "noSubject": "（无主题）",
+    "open": "打开",
+    "done": "完成",
+    "snooze": "明天",
+    "notNeeded": "不需要",
+    "syncError": "有一个邮箱账户无法检查。",
+    "fix": "修复",
+    "notifyTitle_one": "有 {{count}} 封紧急邮件在等你",
+    "notifyTitle_other": "有 {{count}} 封紧急邮件在等你"
   }
 }

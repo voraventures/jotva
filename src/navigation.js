@@ -7,6 +7,9 @@ export const DOCK_GROUPS = [
   { id: "record", label: "Record", items: [
     { label: "Start recording", action: "record" }, { label: "Recording settings", section: "recording" },
   ] },
+  { id: "agent", label: "Agent", items: [
+    { label: "Waiting on you", nav: "agent" },
+  ] },
   { id: "ai", label: "AI", items: [
     { label: "Provider & model", section: "ai" }, { label: "Templates", section: "templates" },
   ] },

@@ -65,7 +65,9 @@
       "Appearance": "Apparence",
       "Privacy": "Confidentialité",
       "Export & backup": "Export et sauvegarde",
-      "Subscription": "Abonnement"
+      "Subscription": "Abonnement",
+      "Agent": "Agent",
+      "Waiting on you": "En attente de vous"
     }
   },
   "sidebar": {
@@ -544,6 +546,34 @@
       "added": "Ajouté. Redémarrez Claude Desktop pour connecter Jotva.",
       "addFailed": "Impossible de modifier les réglages de Claude Desktop. Utilisez « Copier la configuration pour d'autres apps ».",
       "copied": "Configuration copiée. Collez-la dans les réglages MCP de votre app."
+    },
+    "email": {
+      "title": "E-mail — En attente de vous",
+      "desc": "Jotva vérifie votre boîte toutes les 5 minutes et liste les e-mails qui attendent encore votre réponse. Lecture seule : rien n'est envoyé, supprimé ni marqué.",
+      "connected": "Messagerie connectée. Vérification…",
+      "error": "Connexion impossible",
+      "synced": "À jour",
+      "syncing": "Vérification…",
+      "remove": "Déconnecter",
+      "providers": {
+        "gmail": "Gmail / Google Workspace",
+        "icloud": "Mail iCloud",
+        "imap": "Autre (IMAP)",
+        "microsoft": "Outlook / Microsoft 365"
+      },
+      "howto": {
+        "gmail": "Utilisez un mot de passe d'application Google (votre mot de passe habituel ne fonctionnera pas). La validation en deux étapes doit être activée.",
+        "icloud": "Utilisez un mot de passe pour app depuis votre compte Apple → Connexion et sécurité.",
+        "imap": "Saisissez le serveur IMAP de votre fournisseur et un mot de passe d'application."
+      },
+      "createPassword": "En créer un →",
+      "address": "Adresse e-mail",
+      "appPassword": "Mot de passe d'application",
+      "server": "Serveur IMAP (ex. imap.exemple.com)",
+      "privacy": "Reste sur ce Mac. Seuls de courts extraits des e-mails susceptibles de vous concerner sont envoyés à l'IA. Le mot de passe est conservé dans votre trousseau macOS.",
+      "checking": "Vérification…",
+      "connect": "Connecter",
+      "soon": "Bientôt"
     }
   },
   "notes": {
@@ -1090,6 +1120,14 @@
       "live_notes": {
         "title": "Des notes qui s'écrivent pendant que vous parlez",
         "body": "Pro tient des notes en direct pendant la réunion : points clés, décisions et actions au fil de l'eau."
+      },
+      "email": {
+        "title": "Ne perdez plus un e-mail qui vous attend",
+        "body": "Pro liste chaque e-mail qui attend encore votre réponse, directement depuis votre boîte."
+      },
+      "own_key": {
+        "title": "Choisissez votre IA",
+        "body": "Branchez votre propre clé Claude, GPT ou Gemini et utilisez le modèle de votre choix."
       }
     },
     "perk": {
@@ -1099,7 +1137,9 @@
       "higher_quality": "Notes IA de meilleure qualité",
       "followup": "E-mails de suivi et modèles",
       "mcp": "Accès depuis Claude et d'autres assistants IA",
-      "live_notes": "Notes en direct pendant la réunion"
+      "live_notes": "Notes en direct pendant la réunion",
+      "email": "E-mails qui vous attendent",
+      "own_key": "Votre propre clé IA et tout modèle"
     }
   },
   "notesPaused": {
@@ -1117,5 +1157,29 @@
     "ready": "Jotva {{version}} est prête à être installée.",
     "restart": "Redémarrer pour mettre à jour",
     "afterRecording": "La mise à jour s'installera à la fin de l'enregistrement."
+  },
+  "agent": {
+    "title": "Agent",
+    "sub": "Ce qui a besoin de vous, depuis vos e-mails — et bientôt vos réunions et tâches.",
+    "checkNow": "Vérifier",
+    "checkingShort": "Vérification…",
+    "checking": "Vérification de vos e-mails…",
+    "upsellTitle": "Ne perdez plus jamais un e-mail qui vous attend",
+    "upsellBody": "Jotva Pro lit votre boîte de réception sur ce Mac et liste chaque e-mail qui attend encore votre réponse, sans fouiller.",
+    "connectTitle": "Connectez votre messagerie",
+    "connectBody": "Jotva parcourt les deux dernières semaines de votre boîte et n'affiche que les e-mails qui ont encore besoin de vous. Vos e-mails restent sur ce Mac.",
+    "connect": "Connecter la messagerie",
+    "waiting": "En attente de vous",
+    "allClear": "Vous êtes à jour : rien ne vous attend.",
+    "urgent": "Urgent",
+    "noSubject": "(sans objet)",
+    "open": "Ouvrir",
+    "done": "Fait",
+    "snooze": "Demain",
+    "notNeeded": "Pas nécessaire",
+    "syncError": "Un compte e-mail n'a pas pu être vérifié.",
+    "fix": "Corriger",
+    "notifyTitle_one": "{{count}} e-mail urgent vous attend",
+    "notifyTitle_other": "{{count}} e-mails urgents vous attendent"
   }
 }

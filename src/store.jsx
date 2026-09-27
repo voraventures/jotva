@@ -83,6 +83,8 @@ export function StoreProvider({ children }) {
   const [meetingLiveNotes, setMeetingLiveNotes] = useState(null);
   // Automatic updates: { version } once a new version has downloaded.
   const [updateReady, setUpdateReady] = useState(null);
+  // Bumped when the email sync finishes, so the Agent view refetches.
+  const [emailVersion, setEmailVersion] = useState(0);
   const [markerCount, setMarkerCount] = useState(0);
   const [liveTranscriptChunks, setLiveTranscriptChunks] = useState([]);
   const [activeCall, setActiveCall] = useState(null); // { app, process, detected_at }
@@ -340,6 +342,16 @@ export function StoreProvider({ children }) {
             setRecordingLevel(0);
             setPaused(false);
             setLiveTranscriptChunks([]);
+            break;
+          case "email_updated":
+            setEmailVersion((v) => v + 1);
+            break;
+          case "email_urgent":
+            notify(
+              i18n.t("agent.notifyTitle", { count: data.count }),
+              data.first?.counterpart_name ? `${data.first.counterpart_name}: ${data.first.subject || ""}` : ""
+            );
+            setEmailVersion((v) => v + 1);
             break;
           case "live_notes":
             setMeetingLiveNotes({ meetingId: data.meeting_id, text: data.text, at: data.at * 1000 });
@@ -744,6 +756,7 @@ export function StoreProvider({ children }) {
     meetingLiveNotes,
     updateReady,
     installUpdate,
+    emailVersion,
     markerCount,
     dropMarker,
     liveTranscriptChunks,

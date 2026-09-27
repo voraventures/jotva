@@ -3,9 +3,9 @@ import { useGlassLens } from "../glassLens.js";
 import { useTranslation } from "react-i18next";
 import { useStore } from "../store.jsx";
 import { DOCK_GROUPS } from "../navigation.js";
-import { GridIcon, MicIcon, GearIcon, UsersIcon, SlidersIcon, CheckIcon } from "./icons.jsx";
+import { GridIcon, MicIcon, GearIcon, UsersIcon, SlidersIcon, CheckIcon, SparkIcon } from "./icons.jsx";
 
-const ICONS = { meetings: GridIcon, record: MicIcon, ai: SlidersIcon, connections: UsersIcon, settings: GearIcon };
+const ICONS = { meetings: GridIcon, record: MicIcon, agent: SparkIcon, ai: SlidersIcon, connections: UsersIcon, settings: GearIcon };
 
 export default function Dock() {
   const { t } = useTranslation();

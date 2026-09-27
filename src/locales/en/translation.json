@@ -65,7 +65,9 @@
       "Appearance": "Appearance",
       "Privacy": "Privacy",
       "Export & backup": "Export & backup",
-      "Subscription": "Subscription"
+      "Subscription": "Subscription",
+      "Agent": "Agent",
+      "Waiting on you": "Waiting on you"
     }
   },
   "sidebar": {
@@ -544,6 +546,34 @@
       "added": "Added. Restart Claude Desktop to connect Jotva.",
       "addFailed": "Couldn't update Claude Desktop's settings. Use “Copy setup for other apps” instead.",
       "copied": "Setup copied. Paste it into your app's MCP settings."
+    },
+    "email": {
+      "title": "Email — Waiting on you",
+      "desc": "Jotva checks your inbox every 5 minutes and lists emails that still need your reply. It only reads — it never sends, deletes or marks anything.",
+      "connected": "Email connected. Checking your inbox…",
+      "error": "Can't connect",
+      "synced": "Up to date",
+      "syncing": "Checking…",
+      "remove": "Disconnect",
+      "providers": {
+        "gmail": "Gmail / Google Workspace",
+        "icloud": "iCloud Mail",
+        "imap": "Other (IMAP)",
+        "microsoft": "Outlook / Microsoft 365"
+      },
+      "howto": {
+        "gmail": "Use a Google app password (your normal password won't work). Google Account → Security → 2-Step Verification must be on.",
+        "icloud": "Use an app-specific password from your Apple Account → Sign-In and Security.",
+        "imap": "Enter your provider's IMAP server and an app password."
+      },
+      "createPassword": "Create one →",
+      "address": "Email address",
+      "appPassword": "App password",
+      "server": "IMAP server (e.g. imap.example.com)",
+      "privacy": "Stays on this Mac. Only short excerpts of emails that might need you are sent to the AI to judge them. The app password is kept in your macOS Keychain.",
+      "checking": "Checking…",
+      "connect": "Connect",
+      "soon": "Coming soon"
     }
   },
   "notes": {
@@ -1090,6 +1120,14 @@
       "live_notes": {
         "title": "Notes that build as you talk",
         "body": "Pro keeps live notes during the meeting — key points, decisions and action items as they happen."
+      },
+      "email": {
+        "title": "Never lose an email that needs you",
+        "body": "Pro lists every email still waiting on your reply — straight from your inbox, without the digging."
+      },
+      "own_key": {
+        "title": "Choose your AI",
+        "body": "Plug in your own Claude, GPT or Gemini key and use any model you like."
       }
     },
     "perk": {
@@ -1099,7 +1137,9 @@
       "higher_quality": "Higher-quality AI notes",
       "followup": "Follow-up emails and templates",
       "mcp": "Access from Claude and other AI assistants",
-      "live_notes": "Live notes during the meeting"
+      "live_notes": "Live notes during the meeting",
+      "email": "Emails waiting on you",
+      "own_key": "Use your own AI key and any model"
     }
   },
   "notesPaused": {
@@ -1117,5 +1157,29 @@
     "ready": "Jotva {{version}} is ready to install.",
     "restart": "Restart to update",
     "afterRecording": "The update will install when you finish recording."
+  },
+  "agent": {
+    "title": "Agent",
+    "sub": "What needs you, from your email — and soon your meetings and tasks too.",
+    "checkNow": "Check now",
+    "checkingShort": "Checking…",
+    "checking": "Checking your email…",
+    "upsellTitle": "Never lose an email that needs you",
+    "upsellBody": "Jotva Pro reads your inbox on this Mac and lists every email still waiting on your reply — no digging required.",
+    "connectTitle": "Connect your email",
+    "connectBody": "Jotva looks at the last two weeks of your inbox and shows only the emails that still need you. Your mail stays on this Mac.",
+    "connect": "Connect email",
+    "waiting": "Waiting on you",
+    "allClear": "You're all caught up — nothing is waiting on you.",
+    "urgent": "Urgent",
+    "noSubject": "(no subject)",
+    "open": "Open",
+    "done": "Done",
+    "snooze": "Tomorrow",
+    "notNeeded": "Not needed",
+    "syncError": "One email account couldn't be checked.",
+    "fix": "Fix",
+    "notifyTitle_one": "{{count}} urgent email is waiting on you",
+    "notifyTitle_other": "{{count}} urgent emails are waiting on you"
   }
 }

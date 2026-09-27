@@ -48,7 +48,7 @@ for (const fixtureState of ["cards", "no-today", "empty", "boot-loading", "boot-
       return;
     }
     assert.equal(document.querySelector('.app-brand .brand-wordmark').textContent, 'Jotva');
-    assert.equal(document.querySelectorAll(".dock-button").length, 5);
+    assert.equal(document.querySelectorAll(".dock-button").length, 6); // Meetings, Record, Agent, AI, Connections, Settings
     assert.equal(document.querySelector('.meeting-day-header h2').textContent, "Today");
     assert.equal(document.querySelectorAll('.date-badge').length, 0);
     assert.equal(document.querySelectorAll('.meeting-card button button').length, 0);

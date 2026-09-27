@@ -413,7 +413,8 @@ ipcMain.handle("jotva:get-backend", async () => {
   return { port: info.port, token: info.token };
 });
 
-const SAFE_EXTERNAL = /^(https:|http:|mailto:)/i;
+// message://%3C<Message-ID>%3E opens one email in Apple Mail (Agent → Open).
+const SAFE_EXTERNAL = /^(https:|http:|mailto:|message:\/\/%3C[^/?#\s]+%3E$)/i;
 ipcMain.handle("jotva:open-external", async (_event, url) => {
   if (typeof url !== "string" || url.length > 2048 || !SAFE_EXTERNAL.test(url)) {
     return { ok: false, error: "Blocked URL" };

@@ -163,7 +163,7 @@ def waiting() -> list[dict]:
     """Conversations waiting on the user, most urgent and oldest first."""
     now = now_iso()
     rows = get_db().execute(
-        "SELECT t.*, a.address AS account FROM email_threads t JOIN email_accounts a ON a.id = t.account_id "
+        "SELECT t.*, a.address AS account, a.provider AS provider FROM email_threads t JOIN email_accounts a ON a.id = t.account_id "
         "WHERE t.needs_reply=1 AND t.last_from_me=0 AND (t.status='open' OR (t.status='snoozed' AND t.snooze_until <= ?)) "
         "ORDER BY CASE t.urgency WHEN 'high' THEN 0 WHEN 'normal' THEN 1 ELSE 2 END, t.last_at", (now,)).fetchall()
     return [{**dict(r), "tasks": json.loads(r["tasks"] or "[]")} for r in rows]

@@ -22,7 +22,6 @@ run on the user's Mac. For comparison, Granola Business is $14/month.
 - **Notes that write themselves in seconds after Stop**, filling in live on the meeting page.
 - **Your meetings, always yours.** Search, transcripts, audio and all past notes stay readable and exportable. Nothing is ever locked away.
 - **Calendar reminders.** Jotva asks to record when a calendar meeting starts, and calendar meetings are named automatically.
-- **Bring your own AI key** (Anthropic, OpenAI or Google) for unlimited notes with any model.
 
 ## Pro — $12/month
 
@@ -36,7 +35,10 @@ run on the user's Mac. For comparison, Granola Business is $14/month.
 | **Follow-up emails** | A ready-to-send follow-up email from any meeting, in one click. | Meeting → ⋯ → Follow-up | `followup` |
 | **Custom templates** | Notes shaped exactly how you like them. | Settings → Templates → New template | `templates` |
 | **Share to Slack, Notion and your team** | Send notes where your team already works. | Meeting → Send to / Share with team | `integrations` |
-| **Access from Claude and other AI assistants** | Let Claude, Cursor and other assistants read your meeting notes (MCP), with your permission. | Settings → Integrations → AI assistants | `mcp` |
+| **Waiting on you (email)** | Every email still waiting on your reply, straight from your inbox, without digging. Read-only and kept on your Mac. | Dock → Agent; connect in Settings → Integrations → Email | `email` |
+| **Jotva Agent** *(in progress)* | One task list across meetings, live notes and email: what you owe and what others owe you, plus a morning briefing. | Dock → Agent | `agent` |
+| **Choose your AI** | Plug in your own Claude, GPT or Gemini key and use any model. | Settings → AI | `own_key` |
+| *Access from AI assistants (MCP)* | In the app, but **not headlined** on the website (too technical). | Settings → Integrations → AI assistants | `mcp` |
 
 ## Messaging notes
 

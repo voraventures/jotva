@@ -65,7 +65,9 @@
       "Appearance": "Apariencia",
       "Privacy": "Privacidad",
       "Export & backup": "Exportar y respaldar",
-      "Subscription": "Suscripción"
+      "Subscription": "Suscripción",
+      "Agent": "Agente",
+      "Waiting on you": "Esperándote"
     }
   },
   "sidebar": {
@@ -544,6 +546,34 @@
       "added": "Añadido. Reinicia Claude Desktop para conectar Jotva.",
       "addFailed": "No se pudo actualizar la configuración de Claude Desktop. Usa “Copiar configuración para otras apps”.",
       "copied": "Configuración copiada. Pégala en los ajustes MCP de tu app."
+    },
+    "email": {
+      "title": "Correo — Esperándote",
+      "desc": "Jotva revisa tu bandeja cada 5 minutos y muestra los correos que aún necesitan tu respuesta. Solo lee: nunca envía, borra ni marca nada.",
+      "connected": "Correo conectado. Revisando tu bandeja…",
+      "error": "No se puede conectar",
+      "synced": "Al día",
+      "syncing": "Revisando…",
+      "remove": "Desconectar",
+      "providers": {
+        "gmail": "Gmail / Google Workspace",
+        "icloud": "Correo de iCloud",
+        "imap": "Otro (IMAP)",
+        "microsoft": "Outlook / Microsoft 365"
+      },
+      "howto": {
+        "gmail": "Usa una contraseña de aplicación de Google (tu contraseña normal no sirve). Necesitas la verificación en 2 pasos activada.",
+        "icloud": "Usa una contraseña específica de app de tu Cuenta de Apple → Inicio de sesión y seguridad.",
+        "imap": "Indica el servidor IMAP de tu proveedor y una contraseña de aplicación."
+      },
+      "createPassword": "Crear una →",
+      "address": "Correo electrónico",
+      "appPassword": "Contraseña de aplicación",
+      "server": "Servidor IMAP (p. ej. imap.ejemplo.com)",
+      "privacy": "Se queda en este Mac. Solo se envían a la IA fragmentos breves de los correos que podrían necesitarte. La contraseña se guarda en tu Llavero de macOS.",
+      "checking": "Comprobando…",
+      "connect": "Conectar",
+      "soon": "Próximamente"
     }
   },
   "notes": {
@@ -1090,6 +1120,14 @@
       "live_notes": {
         "title": "Notas que se escriben mientras hablas",
         "body": "Pro crea notas en vivo durante la reunión: puntos clave, decisiones y tareas en el momento."
+      },
+      "email": {
+        "title": "No pierdas un correo que te necesita",
+        "body": "Pro te muestra cada correo que aún espera tu respuesta, directamente desde tu bandeja."
+      },
+      "own_key": {
+        "title": "Elige tu IA",
+        "body": "Conecta tu propia clave de Claude, GPT o Gemini y usa el modelo que quieras."
       }
     },
     "perk": {
@@ -1099,7 +1137,9 @@
       "higher_quality": "Notas con IA de mayor calidad",
       "followup": "Correos de seguimiento y plantillas",
       "mcp": "Acceso desde Claude y otros asistentes de IA",
-      "live_notes": "Notas en vivo durante la reunión"
+      "live_notes": "Notas en vivo durante la reunión",
+      "email": "Correos que te esperan",
+      "own_key": "Tu propia clave de IA y cualquier modelo"
     }
   },
   "notesPaused": {
@@ -1117,5 +1157,29 @@
     "ready": "Jotva {{version}} está lista para instalarse.",
     "restart": "Reiniciar para actualizar",
     "afterRecording": "La actualización se instalará cuando termines de grabar."
+  },
+  "agent": {
+    "title": "Agente",
+    "sub": "Lo que te necesita, desde tu correo — y pronto también tus reuniones y tareas.",
+    "checkNow": "Revisar ahora",
+    "checkingShort": "Revisando…",
+    "checking": "Revisando tu correo…",
+    "upsellTitle": "No vuelvas a perder un correo que te necesita",
+    "upsellBody": "Jotva Pro lee tu bandeja de entrada en este Mac y te muestra cada correo que aún espera tu respuesta, sin buscar.",
+    "connectTitle": "Conecta tu correo",
+    "connectBody": "Jotva revisa las últimas dos semanas de tu bandeja y muestra solo los correos que aún te necesitan. Tu correo se queda en este Mac.",
+    "connect": "Conectar correo",
+    "waiting": "Esperándote",
+    "allClear": "Estás al día: nada te está esperando.",
+    "urgent": "Urgente",
+    "noSubject": "(sin asunto)",
+    "open": "Abrir",
+    "done": "Hecho",
+    "snooze": "Mañana",
+    "notNeeded": "No hace falta",
+    "syncError": "No se pudo revisar una cuenta de correo.",
+    "fix": "Arreglar",
+    "notifyTitle_one": "{{count}} correo urgente te espera",
+    "notifyTitle_other": "{{count}} correos urgentes te esperan"
   }
 }

@@ -65,7 +65,9 @@
       "Appearance": "화면",
       "Privacy": "개인정보 보호",
       "Export & backup": "내보내기 및 백업",
-      "Subscription": "구독"
+      "Subscription": "구독",
+      "Agent": "에이전트",
+      "Waiting on you": "나를 기다리는 이메일"
     }
   },
   "sidebar": {
@@ -544,6 +546,34 @@
       "added": "추가했어요. Claude Desktop을 다시 시작하면 Jotva가 연결돼요.",
       "addFailed": "Claude Desktop 설정을 업데이트하지 못했어요. ‘다른 앱용 설정 복사’를 사용하세요.",
       "copied": "설정을 복사했어요. 앱의 MCP 설정에 붙여 넣으세요."
+    },
+    "email": {
+      "title": "이메일 — 나를 기다리는 이메일",
+      "desc": "Jotva는 5분마다 받은편지함을 확인하고 아직 답장이 필요한 이메일을 보여줘요. 읽기만 하며 보내거나 삭제하거나 표시하지 않아요.",
+      "connected": "이메일이 연결됐어요. 받은편지함을 확인하는 중…",
+      "error": "연결할 수 없음",
+      "synced": "최신 상태",
+      "syncing": "확인 중…",
+      "remove": "연결 해제",
+      "providers": {
+        "gmail": "Gmail / Google Workspace",
+        "icloud": "iCloud 메일",
+        "imap": "기타 (IMAP)",
+        "microsoft": "Outlook / Microsoft 365"
+      },
+      "howto": {
+        "gmail": "Google 앱 비밀번호를 사용하세요(일반 비밀번호는 안 돼요). 2단계 인증이 켜져 있어야 해요.",
+        "icloud": "Apple 계정 → 로그인 및 보안에서 앱 암호를 만들어 사용하세요.",
+        "imap": "제공업체의 IMAP 서버와 앱 비밀번호를 입력하세요."
+      },
+      "createPassword": "만들기 →",
+      "address": "이메일 주소",
+      "appPassword": "앱 비밀번호",
+      "server": "IMAP 서버 (예: imap.example.com)",
+      "privacy": "이 Mac에만 저장돼요. 나를 기다릴 수 있는 이메일의 짧은 일부만 AI가 판단하도록 보내요. 비밀번호는 macOS 키체인에 보관돼요.",
+      "checking": "확인 중…",
+      "connect": "연결",
+      "soon": "곧 지원"
     }
   },
   "notes": {
@@ -1077,6 +1107,14 @@
       "live_notes": {
         "title": "말하는 동안 쌓이는 노트",
         "body": "Pro는 회의 중에 핵심 내용, 결정 사항, 할 일을 실시간으로 정리해요."
+      },
+      "email": {
+        "title": "답장이 필요한 이메일을 놓치지 마세요",
+        "body": "Pro는 아직 답장을 기다리는 이메일을 받은편지함에서 바로 보여줘요."
+      },
+      "own_key": {
+        "title": "원하는 AI 선택",
+        "body": "내 Claude, GPT, Gemini 키를 연결해 원하는 모델을 사용하세요."
       }
     },
     "perk": {
@@ -1086,7 +1124,9 @@
       "higher_quality": "더 높은 품질의 AI 노트",
       "followup": "후속 메일과 템플릿",
       "mcp": "Claude 등 AI 어시스턴트에서 접근",
-      "live_notes": "회의 중 실시간 노트"
+      "live_notes": "회의 중 실시간 노트",
+      "email": "나를 기다리는 이메일",
+      "own_key": "내 AI 키로 모든 모델 사용"
     }
   },
   "notesPaused": {
@@ -1104,5 +1144,29 @@
     "ready": "Jotva {{version}}을(를) 설치할 준비가 됐어요.",
     "restart": "다시 시작해 업데이트",
     "afterRecording": "녹음이 끝나면 업데이트가 설치돼요."
+  },
+  "agent": {
+    "title": "에이전트",
+    "sub": "이메일에서 나를 기다리는 일 — 곧 회의와 할 일까지.",
+    "checkNow": "지금 확인",
+    "checkingShort": "확인 중…",
+    "checking": "이메일을 확인하는 중…",
+    "upsellTitle": "답장이 필요한 이메일을 놓치지 마세요",
+    "upsellBody": "Jotva Pro는 이 Mac에서 받은편지함을 읽고, 아직 내 답장을 기다리는 이메일만 보여줘요.",
+    "connectTitle": "이메일 연결",
+    "connectBody": "Jotva는 최근 2주간의 받은편지함을 살펴보고 아직 나를 기다리는 이메일만 보여줘요. 메일은 이 Mac에만 저장돼요.",
+    "connect": "이메일 연결",
+    "waiting": "나를 기다리는 이메일",
+    "allClear": "모두 처리했어요. 기다리는 이메일이 없어요.",
+    "urgent": "긴급",
+    "noSubject": "(제목 없음)",
+    "open": "열기",
+    "done": "완료",
+    "snooze": "내일",
+    "notNeeded": "필요 없음",
+    "syncError": "이메일 계정 하나를 확인하지 못했어요.",
+    "fix": "해결",
+    "notifyTitle_one": "긴급 이메일 {{count}}개가 기다리고 있어요",
+    "notifyTitle_other": "긴급 이메일 {{count}}개가 기다리고 있어요"
   }
 }

@@ -365,7 +365,7 @@ const FIELD_KEYS = {
 function SecretField({ name, label, isSet, onSaved }) {
   const [value, setValue] = useState("");
   const [busy, setBusy] = useState(false);
-  const { showToast } = useStore();
+  const { showToast, handleError } = useStore();
   const { t } = useTranslation();
 
   const save = () => {
@@ -378,7 +378,7 @@ function SecretField({ name, label, isSet, onSaved }) {
         showToast(t('settings.toast.savedKeychain', { name: label }));
         onSaved();
       })
-      .catch((e) => showToast(e.message, "error"))
+      .catch(handleError) // an own AI key on Free opens the Pro prompt
       .finally(() => setBusy(false));
   };
 
@@ -471,6 +471,99 @@ function IntegrationConfig({ ig, secrets, onSaved }) {
   );
 }
 
+// Email accounts for "Waiting on you" (Pro). App passwords go to the Keychain via
+// the backend and are never shown again; the mailbox is only ever read.
+const EMAIL_PROVIDERS = {
+  gmail: { help: "https://myaccount.google.com/apppasswords" },
+  icloud: { help: "https://account.apple.com/account/manage" },
+  imap: { help: null },
+};
+
+function EmailAccountsCard({ hasFeature, openUpgrade, showToast, handleError }) {
+  const { t } = useTranslation();
+  const [accounts, setAccounts] = useState([]);
+  const [form, setForm] = useState(null); // { provider, address, password, host, port }
+  const [busy, setBusy] = useState(false);
+  const load = () => api.get("/api/email/accounts").then((r) => setAccounts(r.accounts)).catch(() => {});
+  useEffect(() => { load(); }, []);
+  const start = (provider) => (hasFeature("email") ? setForm({ provider, address: "", password: "", host: "", port: 993 }) : openUpgrade("email"));
+  const save = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const body = { provider: form.provider, address: form.address, password: form.password };
+      if (form.provider === "imap") Object.assign(body, { host: form.host, port: Number(form.port) || 993 });
+      await api.post("/api/email/accounts", body);
+      setForm(null);
+      showToast(t("settings.email.connected"));
+      load();
+    } catch (err) {
+      handleError(err);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const remove = (id) => api.delete(`/api/email/accounts/${id}`).then(load).catch(handleError);
+  return (
+    <div className="set-card stack email-card">
+      <div className="set-card-icon"><SparkIcon size={17} /></div>
+      <div className="set-card-main">
+        <div className="set-card-name">
+          {t("settings.email.title")}
+          {!hasFeature("email") && <span className="pro-badge">{t("upgrade.badge")}</span>}
+        </div>
+        <div className="set-card-desc">{t("settings.email.desc")}</div>
+      </div>
+      {accounts.map((a) => (
+        <div key={a.id} className="email-account-row">
+          <span>{a.address}</span>
+          <span className={a.last_error ? "email-account-error" : "email-account-ok"}>
+            {a.last_error ? t("settings.email.error") : a.last_sync ? t("settings.email.synced") : t("settings.email.syncing")}
+          </span>
+          <button className="btn compact secondary" onClick={() => remove(a.id)}>{t("settings.email.remove")}</button>
+        </div>
+      ))}
+      {form ? (
+        <form className="email-form" onSubmit={save}>
+          <div className="email-form-title">{t(`settings.email.providers.${form.provider}`)}</div>
+          <p className="set-card-desc">
+            {t(`settings.email.howto.${form.provider}`)}{" "}
+            {EMAIL_PROVIDERS[form.provider].help && (
+              <button type="button" className="link-btn" onClick={() => openExternal(EMAIL_PROVIDERS[form.provider].help)}>
+                {t("settings.email.createPassword")}
+              </button>
+            )}
+          </p>
+          <input className="text-input" type="email" required autoFocus placeholder={t("settings.email.address")}
+            value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+          <input className="text-input" type="password" required placeholder={t("settings.email.appPassword")}
+            autoComplete="off" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+          {form.provider === "imap" && (
+            <div className="email-form-row">
+              <input className="text-input" required placeholder={t("settings.email.server")}
+                value={form.host} onChange={(e) => setForm({ ...form, host: e.target.value })} />
+              <input className="text-input" type="number" required min={1} max={65535} style={{ width: 90 }}
+                value={form.port} onChange={(e) => setForm({ ...form, port: e.target.value })} />
+            </div>
+          )}
+          <p className="set-card-desc">{t("settings.email.privacy")}</p>
+          <div className="email-form-row">
+            <button type="button" className="btn secondary" onClick={() => setForm(null)}>{t("common.cancel")}</button>
+            <button className="btn" disabled={busy}>{busy ? t("settings.email.checking") : t("settings.email.connect")}</button>
+          </div>
+        </form>
+      ) : (
+        <div className="email-providers">
+          {["gmail", "icloud", "imap"].map((p) => (
+            <button key={p} className="btn secondary" onClick={() => start(p)}>{t(`settings.email.providers.${p}`)}</button>
+          ))}
+          <button className="btn secondary" disabled title={t("settings.email.soon")}>{t("settings.email.providers.microsoft")}</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Free plan: this month's bundled-AI notes (hidden when unlimited: Pro or own key).
 function AiAllowance({ license }) {
   const { t, i18n } = useTranslation();
@@ -497,6 +590,8 @@ const PRO_SETTING_VALUES = {
   "mcp_enabled:true": "mcp",
   "recording_mode:all": "auto_record",
   "ai_quality:pro": "higher_quality",
+  "ai_provider:openai": "own_key",
+  "ai_provider:google": "own_key",
 };
 
 export default function Settings() {
@@ -1036,6 +1131,11 @@ export default function Settings() {
 
                 <div className="set-card stack">
                   <div className="set-card-icon"><KeyIcon size={14} /></div>
+                  {!hasFeature("own_key") && (
+                    <div className="set-card-desc own-key-pro">
+                      <span className="pro-badge">{t('upgrade.badge')}</span> {t('upgrade.feature.own_key.body')}
+                    </div>
+                  )}
                   <SecretField
                     name={active.keyName}
                     label={t('settings.ai.keyLabel.' + active.id)}
@@ -1245,6 +1345,9 @@ export default function Settings() {
             </>
           )}
 
+          {tab === "integrations" && (
+            <EmailAccountsCard hasFeature={hasFeature} openUpgrade={openUpgrade} showToast={showToast} handleError={handleError} />
+          )}
           {tab === "integrations" && (
             <McpAccessCard enabled={settings.mcp_enabled === true} showToast={showToast}
               locked={!hasFeature("mcp")} onToggle={(on) => saveSetting("mcp_enabled", on)} />
