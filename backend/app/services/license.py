@@ -186,14 +186,12 @@ def _sync_install_id_key() -> None:
 
 def status() -> dict:
     _sync_install_id_key()  # on app start: ensure license_key == install_id
-    cached = get_setting("license_status", {})
-    is_dev = bool(cached.get("dev"))  # DEV ONLY: no expiry, no grace window
     pro = is_pro()
     used = ai_notes_used()
     bundled = uses_bundled_ai()
     return {
         "tier": "pro" if pro else "free",
-        "plan_name": "Pro (Developer)" if is_dev else ("Pro" if pro else "Free"),
+        "plan_name": "Pro" if pro else "Free",
         "meetings_used": meetings_used(),
         "can_record": True,  # recording + transcription are free forever
         # Free plan's monthly AI-notes allowance (None = unlimited: Pro or own key).
