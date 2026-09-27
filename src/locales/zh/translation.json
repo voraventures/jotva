@@ -573,7 +573,12 @@
       "privacy": "数据保存在这台 Mac 上。只有可能需要你处理的邮件的简短片段会发送给 AI 判断。密码保存在 macOS 钥匙串中。",
       "checking": "检查中…",
       "connect": "连接",
-      "soon": "即将推出"
+      "soon": "即将推出",
+      "google": "使用 Google 登录（Gmail / Workspace）",
+      "gmailPassword": "或使用应用专用密码连接 Gmail",
+      "autosend": "让 Jotva 替我回复",
+      "autosendDesc": "默认关闭。开启后，Jotva 会按你的风格自动发送简单回复——只回复写信的人，且在同一对话中。凡是需要决定、日期、金额或它不知道的信息的回复，都会留作草稿给你。",
+      "autosendConfirm": "让 Jotva 代你发送简单回复吗？\n\n它只回复写信的人、在同一对话中，并且只在不涉及决定或缺失信息时发送。其余的都会留作草稿供你检查。"
     }
   },
   "notes": {
@@ -1167,6 +1172,16 @@
     "syncError": "有一个邮箱账户无法检查。",
     "fix": "修复",
     "notifyTitle_one": "有 {{count}} 封紧急邮件在等你",
-    "notifyTitle_other": "有 {{count}} 封紧急邮件在等你"
+    "notifyTitle_other": "有 {{count}} 封紧急邮件在等你",
+    "draft": "起草回复",
+    "writing": "正在按你的风格写回复…",
+    "draftLabel": "你的回复",
+    "saveDraft": "存到 Gmail 草稿",
+    "send": "发送",
+    "copyOpen": "复制并在邮件中打开",
+    "draftNote": "请先检查。除非你点击发送，否则 Jotva 不会发送任何内容。",
+    "copied": "已复制回复，请粘贴到邮件中。",
+    "sent": "回复已发送。",
+    "savedDraft": "已存到你的 Gmail 草稿。"
   }
 }

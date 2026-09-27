@@ -682,3 +682,16 @@
   .link-btn { all: unset; cursor: pointer; color: var(--accent); font-weight: 600; }
   .link-btn:hover { text-decoration: underline; }
 }
+@media screen {
+  .agent-draft { margin-top: 10px; }
+  .agent-draft textarea {
+    width: 100%; box-sizing: border-box; resize: vertical; padding: 10px 12px; border-radius: 12px; font: inherit; line-height: 1.5;
+    color: var(--text); background: var(--surface); border: 1px solid var(--border-strong);
+  }
+  .agent-draft textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .agent-draft-busy { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: calc(13rem / 14); }
+  .agent-draft-note { margin-top: 6px; font-size: calc(12rem / 14); color: var(--faint); }
+  .email-alt { flex-basis: 100%; font-size: calc(12rem / 14); }
+  .email-autosend { flex-basis: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding-top: 12px; border-top: 1px solid var(--border); }
+}

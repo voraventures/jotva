@@ -573,7 +573,12 @@
       "privacy": "Reste sur ce Mac. Seuls de courts extraits des e-mails susceptibles de vous concerner sont envoyés à l'IA. Le mot de passe est conservé dans votre trousseau macOS.",
       "checking": "Vérification…",
       "connect": "Connecter",
-      "soon": "Bientôt"
+      "soon": "Bientôt",
+      "google": "Se connecter avec Google (Gmail / Workspace)",
+      "gmailPassword": "Ou connecter Gmail avec un mot de passe d'application",
+      "autosend": "Laisser Jotva répondre pour moi",
+      "autosendDesc": "Désactivé par défaut. Activé, Jotva envoie seul des réponses simples dans votre style — uniquement à l'expéditeur, dans la même conversation. Tout ce qui demande une décision, une date, de l'argent ou une information qu'il n'a pas devient un brouillon pour vous.",
+      "autosendConfirm": "Laisser Jotva envoyer des réponses simples en votre nom ?\n\nIl ne répond qu'à l'expéditeur, dans la même conversation, et seulement sans décision ni information manquante. Tout le reste reste un brouillon à relire."
     }
   },
   "notes": {
@@ -1180,6 +1185,16 @@
     "syncError": "Un compte e-mail n'a pas pu être vérifié.",
     "fix": "Corriger",
     "notifyTitle_one": "{{count}} e-mail urgent vous attend",
-    "notifyTitle_other": "{{count}} e-mails urgents vous attendent"
+    "notifyTitle_other": "{{count}} e-mails urgents vous attendent",
+    "draft": "Rédiger une réponse",
+    "writing": "Rédaction d'une réponse dans votre style…",
+    "draftLabel": "Votre réponse",
+    "saveDraft": "Enregistrer dans les brouillons Gmail",
+    "send": "Envoyer",
+    "copyOpen": "Copier et ouvrir dans Mail",
+    "draftNote": "Relisez-la d'abord. Jotva n'envoie rien tant que vous n'appuyez pas sur Envoyer.",
+    "copied": "Réponse copiée. Collez-la dans votre e-mail.",
+    "sent": "Réponse envoyée.",
+    "savedDraft": "Enregistrée dans vos brouillons Gmail."
   }
 }

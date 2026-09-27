@@ -209,6 +209,10 @@ _MIGRATIONS = {
         ("warned_5min", "INTEGER NOT NULL DEFAULT 0"),
     ],
     "action_items": [("completed_at", "TEXT")],
+    "email_messages": [("provider_id", "TEXT NOT NULL DEFAULT ''")],  # Gmail API message id
+    "email_threads": [("provider_thread", "TEXT NOT NULL DEFAULT ''"),
+                      ("reply_draft", "TEXT NOT NULL DEFAULT ''"),     # last draft Jotva wrote
+                      ("replied_by_jotva_at", "TEXT")],
 }
 
 

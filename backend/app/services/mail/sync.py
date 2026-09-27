@@ -63,10 +63,11 @@ def _save_messages(account: dict, parsed: list[dict]) -> set[str]:
     for m in parsed:
         db.execute(
             "INSERT OR IGNORE INTO email_messages(id,account_id,thread_key,subject,from_email,from_name,"
-            "to_emails,cc_emails,sent_at,snippet,is_from_me,is_bulk,message_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "to_emails,cc_emails,sent_at,snippet,is_from_me,is_bulk,message_id,provider_id) "
+            "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             (f"{account['id']}:{m['message_id']}", account["id"], m["thread_key"], m["subject"], m["from_email"],
              m["from_name"], json.dumps(m["to"]), json.dumps(m["cc"]), m["sent_at"], m["snippet"],
-             int(m["is_from_me"]), int(m["is_bulk"]), m["message_id"]))
+             int(m["is_from_me"]), int(m["is_bulk"]), m["message_id"], m.get("provider_id", "")))
         touched.add(m["thread_key"])
     db.commit()
     return touched
@@ -93,8 +94,8 @@ def rebuild_thread(account: dict, key: str) -> None:
         is_bulk=int(any(m["is_bulk"] for m in msgs if not m["is_from_me"])))
     if not existing:
         db.execute("INSERT INTO email_threads(id,account_id,subject,counterpart_name,counterpart_email,last_at,"
-                   "last_from_me,last_message_id,me_direct,is_bulk) VALUES(?,?,?,?,?,?,?,?,?,?)",
-                   (thread_id, account["id"], *values.values()))
+                   "last_from_me,last_message_id,me_direct,is_bulk,provider_thread) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                   (thread_id, account["id"], *values.values(), key if account["provider"] == "google" else ""))
     elif changed:
         # A new message: a reply from the user settles it; a new one from them reopens it.
         status = "done" if values["last_from_me"] else "open"
@@ -105,6 +106,18 @@ def rebuild_thread(account: dict, key: str) -> None:
 
 
 def sync_account(account: dict) -> None:
+    if account["provider"] == "google":  # Gmail via Google sign-in
+        from . import gmail
+
+        state = json.loads(account["state"] or "{}")
+        records = gmail.fetch_new(account, state)
+        for key in _save_messages(account, records):
+            rebuild_thread(account, key)
+        db = get_db()
+        db.execute("UPDATE email_accounts SET state=?, last_sync=?, last_error=NULL WHERE id=?",
+                   (json.dumps(state), now_iso(), account["id"]))
+        db.commit()
+        return
     password = get_secret(_password_key(account["id"]))
     if not password:
         raise RuntimeError("Password missing from the Keychain; reconnect this account.")
@@ -152,7 +165,10 @@ def sync_all() -> None:
                 db.commit()
         _prune()
         new_urgent = triage.run()
-        hub.emit("email_updated", {"waiting": len(waiting())})
+        from . import replies
+
+        auto_sent = replies.autosend_pass()  # opt-in only; a no-op by default
+        hub.emit("email_updated", {"waiting": len(waiting()), "auto_sent": len(auto_sent)})
         if new_urgent:
             hub.emit("email_urgent", {"count": len(new_urgent), "first": new_urgent[0]})
     finally:

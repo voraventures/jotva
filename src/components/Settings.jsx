@@ -481,6 +481,16 @@ const EMAIL_PROVIDERS = {
 
 function EmailAccountsCard({ hasFeature, openUpgrade, showToast, handleError }) {
   const { t } = useTranslation();
+  const { settings, setSettings } = useStore();
+  const signInWithGoogle = () => {
+    if (!hasFeature("email")) return openUpgrade("email");
+    api.post("/api/email/google/connect").then(({ auth_url }) => openExternal(auth_url)).catch(handleError);
+  };
+  const setAutosend = (on) => {
+    if (on && !window.confirm(t("settings.email.autosendConfirm"))) return;
+    setSettings((s) => ({ ...s, email_autosend: on }));
+    api.post("/api/settings", { key: "email_autosend", value: on }).catch(handleError);
+  };
   const [accounts, setAccounts] = useState([]);
   const [form, setForm] = useState(null); // { provider, address, password, host, port }
   const [busy, setBusy] = useState(false);
@@ -554,10 +564,21 @@ function EmailAccountsCard({ hasFeature, openUpgrade, showToast, handleError }) 
         </form>
       ) : (
         <div className="email-providers">
-          {["gmail", "icloud", "imap"].map((p) => (
+          <button className="btn" onClick={signInWithGoogle}>{t("settings.email.google")}</button>
+          {["icloud", "imap"].map((p) => (
             <button key={p} className="btn secondary" onClick={() => start(p)}>{t(`settings.email.providers.${p}`)}</button>
           ))}
           <button className="btn secondary" disabled title={t("settings.email.soon")}>{t("settings.email.providers.microsoft")}</button>
+          <button type="button" className="link-btn email-alt" onClick={() => start("gmail")}>{t("settings.email.gmailPassword")}</button>
+        </div>
+      )}
+      {accounts.length > 0 && (
+        <div className="email-autosend">
+          <div>
+            <div className="set-card-name">{t("settings.email.autosend")}</div>
+            <div className="set-card-desc">{t("settings.email.autosendDesc")}</div>
+          </div>
+          <ToggleSwitch checked={settings.email_autosend === true} onChange={setAutosend} label={t("settings.email.autosend")} />
         </div>
       )}
     </div>

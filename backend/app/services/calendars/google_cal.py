@@ -75,7 +75,9 @@ def is_connected() -> bool:
     return _load_tokens() is not None
 
 
-def build_auth_url(redirect_uri: str) -> str:
+def build_auth_url(redirect_uri: str, scopes: str = SCOPES, purpose: str = "calendar") -> str:
+    """Google sign-in URL. `purpose` travels with the CSRF state so the shared
+    callback knows whether this was the calendar or Gmail being connected."""
     cid = client_id()
     if not cid:
         raise RuntimeError(
@@ -93,12 +95,13 @@ def build_auth_url(redirect_uri: str) -> str:
         "verifier": verifier,
         "redirect_uri": redirect_uri,
         "created": time.time(),
+        "purpose": purpose,
     }
     params = {
         "client_id": cid,
         "redirect_uri": redirect_uri,
         "response_type": "code",
-        "scope": SCOPES,
+        "scope": scopes,
         "state": state,
         "code_challenge": challenge,
         "code_challenge_method": "S256",
@@ -108,7 +111,9 @@ def build_auth_url(redirect_uri: str) -> str:
     return f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
 
 
-def exchange_code(state: str, code: str) -> None:
+def exchange_code(state: str, code: str) -> tuple[str, dict]:
+    """Trade the code for tokens via the broker. Calendar tokens are stored here;
+    other purposes (Gmail) get them back to store with their account."""
     _cleanup_states()
     pending = _pending.pop(state, None)
     if pending is None:
@@ -125,7 +130,29 @@ def exchange_code(state: str, code: str) -> None:
     resp.raise_for_status()
     tokens = resp.json()
     tokens["expires_at"] = time.time() + tokens.get("expires_in", 3600) - 60
-    _save_tokens(tokens)
+    purpose = pending.get("purpose", "calendar")
+    if purpose == "calendar":
+        _save_tokens(tokens)
+    return purpose, tokens
+
+
+def refresh_tokens(tokens: dict) -> dict | None:
+    """A fresh access token for any Google token set (via the broker, which
+    holds the client secret). Returns the updated tokens, or None."""
+    if time.time() < tokens.get("expires_at", 0):
+        return tokens
+    refresh = tokens.get("refresh_token")
+    if not refresh:
+        return None
+    try:
+        resp = httpx.post(f"{OAUTH_BROKER}/refresh", json={"refresh_token": refresh}, timeout=15)
+        resp.raise_for_status()
+        fresh = resp.json()
+    except httpx.HTTPError as exc:
+        log.warning("Google token refresh failed: %s", exc)
+        return None
+    return {**tokens, "access_token": fresh["access_token"],
+            "expires_at": time.time() + fresh.get("expires_in", 3600) - 60}
 
 
 def get_access_token() -> str | None:

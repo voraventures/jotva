@@ -573,7 +573,12 @@
       "privacy": "이 Mac에만 저장돼요. 나를 기다릴 수 있는 이메일의 짧은 일부만 AI가 판단하도록 보내요. 비밀번호는 macOS 키체인에 보관돼요.",
       "checking": "확인 중…",
       "connect": "연결",
-      "soon": "곧 지원"
+      "soon": "곧 지원",
+      "google": "Google로 로그인 (Gmail / Workspace)",
+      "gmailPassword": "또는 앱 비밀번호로 Gmail 연결",
+      "autosend": "Jotva가 대신 답장 보내기",
+      "autosendDesc": "기본값은 꺼짐이에요. 켜면 Jotva가 내 스타일로 간단한 답장을 직접 보내요 — 보낸 사람에게만, 같은 대화 안에서만요. 결정, 날짜, 금액이나 모르는 정보가 필요한 답장은 초안으로 남겨요.",
+      "autosendConfirm": "Jotva가 간단한 답장을 대신 보내도록 할까요?\n\n보낸 사람에게만 같은 대화 안에서, 결정이나 부족한 정보가 없을 때만 답해요. 나머지는 확인할 수 있게 초안으로 남아요."
     }
   },
   "notes": {
@@ -1167,6 +1172,16 @@
     "syncError": "이메일 계정 하나를 확인하지 못했어요.",
     "fix": "해결",
     "notifyTitle_one": "긴급 이메일 {{count}}개가 기다리고 있어요",
-    "notifyTitle_other": "긴급 이메일 {{count}}개가 기다리고 있어요"
+    "notifyTitle_other": "긴급 이메일 {{count}}개가 기다리고 있어요",
+    "draft": "답장 초안",
+    "writing": "내 스타일로 답장을 쓰는 중…",
+    "draftLabel": "내 답장",
+    "saveDraft": "Gmail 임시보관함에 저장",
+    "send": "보내기",
+    "copyOpen": "복사 후 메일에서 열기",
+    "draftNote": "먼저 확인하세요. 보내기를 누르지 않으면 Jotva는 아무것도 보내지 않아요.",
+    "copied": "답장을 복사했어요. 이메일에 붙여넣으세요.",
+    "sent": "답장을 보냈어요.",
+    "savedDraft": "Gmail 임시보관함에 저장했어요."
   }
 }

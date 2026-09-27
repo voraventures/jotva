@@ -573,7 +573,12 @@
       "privacy": "Fica neste Mac. Só trechos curtos dos e-mails que podem precisar de você vão para a IA. A senha fica nas Chaves do macOS.",
       "checking": "Verificando…",
       "connect": "Conectar",
-      "soon": "Em breve"
+      "soon": "Em breve",
+      "google": "Entrar com o Google (Gmail / Workspace)",
+      "gmailPassword": "Ou conecte o Gmail com uma senha de app",
+      "autosend": "Deixar o Jotva responder por mim",
+      "autosendDesc": "Desativado por padrão. Ativado, o Jotva envia respostas simples no seu estilo — só para quem escreveu, na mesma conversa. O que precisar de decisão, data, dinheiro ou informação que ele não tem vira um rascunho para você.",
+      "autosendConfirm": "Deixar o Jotva enviar respostas simples em seu nome?\n\nEle só responde a quem escreveu, na mesma conversa, e só quando não há decisão nem informação faltando. O resto fica como rascunho para você revisar."
     }
   },
   "notes": {
@@ -1180,6 +1185,16 @@
     "syncError": "Não foi possível verificar uma conta de e-mail.",
     "fix": "Corrigir",
     "notifyTitle_one": "{{count}} e-mail urgente está esperando você",
-    "notifyTitle_other": "{{count}} e-mails urgentes estão esperando você"
+    "notifyTitle_other": "{{count}} e-mails urgentes estão esperando você",
+    "draft": "Rascunhar resposta",
+    "writing": "Escrevendo uma resposta no seu estilo…",
+    "draftLabel": "Sua resposta",
+    "saveDraft": "Salvar nos rascunhos do Gmail",
+    "send": "Enviar",
+    "copyOpen": "Copiar e abrir no Mail",
+    "draftNote": "Revise antes. O Jotva nunca envia nada a menos que você toque em Enviar.",
+    "copied": "Resposta copiada. Cole no seu e-mail.",
+    "sent": "Resposta enviada.",
+    "savedDraft": "Salva nos seus rascunhos do Gmail."
   }
 }

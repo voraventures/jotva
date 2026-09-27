@@ -146,13 +146,29 @@ def google_callback(
         )
         return HTMLResponse(html, status_code=400)
     try:
-        google_cal.exchange_code(state, code)
+        purpose, tokens = google_cal.exchange_code(state, code)
     except Exception:
         html = _CALLBACK_HTML.replace("{title}", "Connection failed").replace(
             "{message}", "The sign-in link expired. Try again from Settings."
         )
         return HTMLResponse(html, status_code=400)
     from ..events import hub
+
+    if purpose == "gmail":
+        from ..services.mail import gmail
+
+        try:
+            account = gmail.finish_connect(tokens)
+        except Exception:
+            html = _CALLBACK_HTML.replace("{title}", "Gmail not connected").replace(
+                "{message}", "Google didn't grant access to Gmail. Try again from Jotva → Settings."
+            )
+            return HTMLResponse(html, status_code=400)
+        hub.emit("email_updated", {"connected": account["address"]})
+        html = _CALLBACK_HTML.replace("{title}", "Gmail connected").replace(
+            "{message}", "Jotva will now show the emails waiting on you. You can close this tab."
+        )
+        return HTMLResponse(html)
 
     hub.emit("google_connected", {})
     sync.sync_now()

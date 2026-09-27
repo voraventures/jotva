@@ -573,7 +573,12 @@
       "privacy": "Se queda en este Mac. Solo se envían a la IA fragmentos breves de los correos que podrían necesitarte. La contraseña se guarda en tu Llavero de macOS.",
       "checking": "Comprobando…",
       "connect": "Conectar",
-      "soon": "Próximamente"
+      "soon": "Próximamente",
+      "google": "Iniciar sesión con Google (Gmail / Workspace)",
+      "gmailPassword": "O conecta Gmail con una contraseña de aplicación",
+      "autosend": "Dejar que Jotva responda por mí",
+      "autosendDesc": "Desactivado por defecto. Si lo activas, Jotva envía respuestas sencillas con tu estilo, solo a quien te escribió y en la misma conversación. Lo que requiera una decisión, una fecha, dinero o información que no tiene queda como borrador para ti.",
+      "autosendConfirm": "¿Dejar que Jotva envíe respuestas sencillas en tu nombre?\n\nSolo responde a quien te escribió, en la misma conversación, y solo cuando no hace falta una decisión ni información que falte. Todo lo demás queda como borrador para que lo revises."
     }
   },
   "notes": {
@@ -1180,6 +1185,16 @@
     "syncError": "No se pudo revisar una cuenta de correo.",
     "fix": "Arreglar",
     "notifyTitle_one": "{{count}} correo urgente te espera",
-    "notifyTitle_other": "{{count}} correos urgentes te esperan"
+    "notifyTitle_other": "{{count}} correos urgentes te esperan",
+    "draft": "Redactar respuesta",
+    "writing": "Escribiendo una respuesta con tu estilo…",
+    "draftLabel": "Tu respuesta",
+    "saveDraft": "Guardar en borradores de Gmail",
+    "send": "Enviar",
+    "copyOpen": "Copiar y abrir en Mail",
+    "draftNote": "Revísala primero. Jotva nunca envía nada a menos que pulses Enviar.",
+    "copied": "Respuesta copiada. Pégala en tu correo.",
+    "sent": "Respuesta enviada.",
+    "savedDraft": "Guardada en tus borradores de Gmail."
   }
 }

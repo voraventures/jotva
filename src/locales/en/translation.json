@@ -573,7 +573,12 @@
       "privacy": "Stays on this Mac. Only short excerpts of emails that might need you are sent to the AI to judge them. The app password is kept in your macOS Keychain.",
       "checking": "Checking…",
       "connect": "Connect",
-      "soon": "Coming soon"
+      "soon": "Coming soon",
+      "google": "Sign in with Google (Gmail / Workspace)",
+      "gmailPassword": "Or connect Gmail with an app password",
+      "autosend": "Let Jotva send replies for me",
+      "autosendDesc": "Off by default. When on, Jotva sends simple replies in your style on its own — only to the person who wrote, in the same conversation. Anything that needs a decision, a date, money or information it doesn't have becomes a draft for you instead.",
+      "autosendConfirm": "Let Jotva send simple replies on your behalf?\n\nIt only replies to the person who wrote, in the same conversation, and only when no decision or missing information is involved. Everything else stays a draft for you to review."
     }
   },
   "notes": {
@@ -1180,6 +1185,16 @@
     "syncError": "One email account couldn't be checked.",
     "fix": "Fix",
     "notifyTitle_one": "{{count}} urgent email is waiting on you",
-    "notifyTitle_other": "{{count}} urgent emails are waiting on you"
+    "notifyTitle_other": "{{count}} urgent emails are waiting on you",
+    "draft": "Draft reply",
+    "writing": "Writing a reply in your style…",
+    "draftLabel": "Your reply",
+    "saveDraft": "Save to Gmail drafts",
+    "send": "Send",
+    "copyOpen": "Copy & open in Mail",
+    "draftNote": "Review it first. Jotva never sends anything unless you press Send.",
+    "copied": "Reply copied. Paste it into your email.",
+    "sent": "Reply sent.",
+    "savedDraft": "Saved to your Gmail drafts."
   }
 }
