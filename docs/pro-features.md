@@ -35,7 +35,7 @@ run on the user's Mac. For comparison, Granola Business is $14/month.
 | **Follow-up emails** | A ready-to-send follow-up email from any meeting, in one click. | Meeting → ⋯ → Follow-up | `followup` |
 | **Custom templates** | Notes shaped exactly how you like them. | Settings → Templates → New template | `templates` |
 | **Share to Slack, Notion and your team** | Send notes where your team already works. | Meeting → Send to / Share with team | `integrations` |
-| **Waiting on you (email)** | Every email still waiting on your reply, straight from your inbox, without digging. Read-only and kept on your Mac. | Dock → Agent; connect in Settings → Integrations → Email | `email` |
+| **Waiting on you (email), with Wisely** | Every email still waiting on your reply, straight from your inbox, without digging. Wisely, the Agent's avatar (the quill with glasses), drafts replies in your style. Kept on your Mac. | Dock → Agent; connect in Settings → Integrations → Email | `email` |
 | **Jotva Agent** *(in progress)* | One task list across meetings, live notes and email: what you owe and what others owe you, plus a morning briefing. | Dock → Agent | `agent` |
 | **Choose your AI** | Plug in your own Claude, GPT or Gemini key and use any model. | Settings → AI | `own_key` |
 | *Access from AI assistants (MCP)* | In the app, but **not headlined** on the website (too technical). | Settings → Integrations → AI assistants | `mcp` |
