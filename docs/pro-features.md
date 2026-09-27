@@ -44,4 +44,4 @@ run on the user's Mac. For comparison, Granola Business is $14/month.
 
 - Lead with privacy and speed: on-device transcription, notes seconds after the meeting.
 - Don't advertise "zero manual labor". The jot pad is the one input we invite, and it's optional.
-- Name: just "Jotva". Domain: getjotva.com (to be purchased).
+- Name: just "Jotva". Domain: getjotva.com (bought 2026-09-27; DNS on Vercel).
