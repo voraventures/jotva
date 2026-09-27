@@ -1,7 +1,7 @@
 {
   "name": "jotva",
   "productName": "Jotva",
-  "version": "2.5.1",
+  "version": "2.6.0",
   "description": "AI meeting notes. No bot. No cloud.",
   "private": true,
   "main": "electron/main.cjs",
@@ -39,6 +39,9 @@
   },
   "build": {
     "appId": "app.jotva.desktop",
+    "dmg": {
+      "title": "Jotva app"
+    },
     "productName": "Jotva",
     "directories": {
       "output": "release"
@@ -57,7 +60,7 @@
         "NSScreenCaptureUsageDescription": "Jotva needs screen recording permission to capture system audio from your meetings."
       },
       "icon": "electron/assets/icon.icns",
-      "artifactName": "Jotva.dmg",
+      "artifactName": "Jotva-app.dmg",
       "notarize": true
     },
     "win": {
