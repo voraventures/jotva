@@ -93,14 +93,17 @@ def test_regenerate_route_offers_upgrade_at_the_limit(monkeypatch):
     assert client.post("/api/meetings/m0/regenerate").status_code == 200
 
 
-def test_pro_and_own_key_are_unlimited(isolated):
+def test_pro_is_unlimited_and_own_key_is_a_pro_feature(isolated):
     set_setting("license_status", {"valid": True, "dev": True})
     for i in range(LIMIT + 2):
         assert write_notes(f"p{i}") == 0
     assert license.status()["ai_notes_limit"] is None
-    set_setting("license_status", {"valid": False})
     isolated["anthropic_api_key"] = "user-key"
-    assert write_notes("byok") == 0 and license.ai_notes_used() == 0
+    assert license.uses_bundled_ai() is False  # Pro + own key: the user's own account
+    set_setting("license_status", {"valid": False})
+    assert license.uses_bundled_ai() is True  # Free: an own key is ignored
+    write_notes("byok")
+    assert license.ai_notes_used() == 1  # so it counts against the free allowance
 
 
 def test_pro_features_answer_402_on_free():

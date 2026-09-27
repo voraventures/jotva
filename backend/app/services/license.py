@@ -33,6 +33,9 @@ PRO_FEATURES = (
     "unlimited_notes",   # no monthly cap on bundled-AI notes
     "higher_quality",    # the Pro AI tier (Sonnet-class)
     "live_notes",        # AI notes that build up during the meeting
+    "email",             # "Waiting on you": emails that still need a reply
+    "agent",             # one task list across meetings, live notes and email
+    "own_key",           # bring your own AI key (Anthropic / OpenAI / Google)
     "ask_all",           # Ask across every meeting
     "auto_record",       # calendar auto-start ("all" recording mode)
     "mcp",               # AI-assistant access over MCP
@@ -114,6 +117,8 @@ def ai_notes_used(month: str | None = None) -> int:
 
 def uses_bundled_ai() -> bool:
     """True when notes go through Vora's bundled AI rather than the user's own key."""
+    if not is_pro():  # own keys are a Pro feature: Free always uses the included AI
+        return True
     return get_setting("ai_provider", "anthropic") == "anthropic" and not get_secret("anthropic_api_key")
 
 

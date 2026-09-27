@@ -49,8 +49,13 @@ def get_secret(name: str) -> str | None:
     return os.environ.get(name.upper())
 
 
+def _allowed(name: str) -> bool:
+    # Per-account email app passwords: email_password:<account id>
+    return name in KNOWN_SECRETS or (name.startswith("email_password:") and len(name) < 80)
+
+
 def set_secret(name: str, value: str) -> None:
-    if name not in KNOWN_SECRETS:
+    if not _allowed(name):
         raise ValueError("Unknown secret name")
     if not KEYRING_AVAILABLE:
         raise RuntimeError("OS keychain unavailable; cannot store secret safely")

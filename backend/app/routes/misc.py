@@ -186,6 +186,8 @@ def send_to_integration(provider: str, meeting_id: str):
 def save_secret(body: SecretBody):
     if body.name not in KNOWN_SECRETS:
         raise HTTPException(status_code=422, detail="Unknown secret name")
+    if body.name in ("anthropic_api_key", "openai_api_key", "google_api_key"):
+        license_svc.require_pro("own_key")
     try:
         set_secret(body.name, body.value)
     except RuntimeError as exc:
@@ -256,6 +258,8 @@ _PRO_SETTING_VALUES = {
     ("recording_mode", "all"): "auto_record",
     ("ai_quality", "pro"): "higher_quality",
     ("live_notes_enabled", True): "live_notes",
+    ("ai_provider", "openai"): "own_key",
+    ("ai_provider", "google"): "own_key",
 }
 
 

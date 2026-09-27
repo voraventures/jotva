@@ -24,15 +24,31 @@ _PROVIDER_KEYS = {
 }
 
 
+def own_key_allowed() -> bool:
+    """Bring-your-own AI key is a Pro feature; on Free, Jotva's included AI is used."""
+    from . import license
+
+    return license.has_feature("own_key")
+
+
+def user_key(name: str) -> str | None:
+    return get_secret(name) if own_key_allowed() else None
+
+
+def active_provider() -> str:
+    provider = get_setting("ai_provider", DEFAULT_AI_PROVIDER)
+    return provider if provider == "anthropic" or own_key_allowed() else "anthropic"
+
+
 def is_configured(provider: str | None = None) -> bool:
     """True if AI is usable for the given provider (or the active provider).
     Anthropic is always usable: with no user key, calls route through the
     bundled-inference proxy (subscription-covered)."""
     if provider is None:
-        provider = get_setting("ai_provider", DEFAULT_AI_PROVIDER)
+        provider = active_provider()
     if provider == "anthropic":
         return True
-    return bool(get_secret(_PROVIDER_KEYS.get(provider, "anthropic_api_key")))
+    return bool(user_key(_PROVIDER_KEYS.get(provider, "anthropic_api_key")))
 
 
 def get_client():
@@ -42,7 +58,7 @@ def get_client():
     never ships in the app."""
     import anthropic
 
-    api_key = get_secret("anthropic_api_key")
+    api_key = user_key("anthropic_api_key")
     if api_key:
         return anthropic.Anthropic(api_key=api_key)
     from ..routes.workspace import _install_id
@@ -80,7 +96,7 @@ class _ProxyClient:
 
 
 def get_openai_client():
-    api_key = get_secret("openai_api_key")
+    api_key = user_key("openai_api_key")
     if not api_key:
         raise RuntimeError("OpenAI API key not configured. Add it in Settings → AI.")
     try:
@@ -91,7 +107,7 @@ def get_openai_client():
 
 
 def get_gemini_client():
-    api_key = get_secret("google_api_key")
+    api_key = user_key("google_api_key")
     if not api_key:
         raise RuntimeError("Google API key not configured. Add it in Settings → AI.")
     try:
@@ -154,7 +170,7 @@ def _own_key_model(provider: str) -> str:
 def current_model() -> str:
     # Anthropic model only — shared by ai.py / conflicts.py, which call the Anthropic
     # client. Per-provider note generation resolves its model via _model_for().
-    if get_secret("anthropic_api_key"):
+    if user_key("anthropic_api_key"):
         return _own_key_model("anthropic")
     return bundled_tier()
 
@@ -169,7 +185,7 @@ def _complete(system: str, user_content: str, max_tokens: int, on_text=None, pur
     """One completion on the active provider; only the SDK call differs.
     With `on_text`, Anthropic and OpenAI stream and call it with the text so far
     as it is written (live notes); anything else calls it once at the end."""
-    provider = get_setting("ai_provider", DEFAULT_AI_PROVIDER)
+    provider = active_provider()
     model = _model_for(provider)
     if provider == "anthropic":
         import anthropic

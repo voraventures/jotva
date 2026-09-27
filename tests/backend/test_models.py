@@ -179,7 +179,8 @@ def test_legacy_sonnet_choice_maps_to_pro_tier(monkeypatch):
     assert client.get("/api/settings").json()["ai_quality"] == "pro"
 
 
-def test_own_key_sends_concrete_model(isolated, fake_claude):
+def test_own_key_sends_concrete_model(isolated, fake_claude, monkeypatch):
+    monkeypatch.setattr(license_svc, "is_pro", lambda: True)  # own keys are Pro
     isolated.keys["anthropic_api_key"] = "test-key"
     set_setting("claude_model", "claude-sonnet-5")
     notes.generate_notes("m1", "Sync", "Maya: hello.", [])
@@ -187,7 +188,8 @@ def test_own_key_sends_concrete_model(isolated, fake_claude):
     assert get_setting("model_notice") is None
 
 
-def test_retired_own_key_model_falls_back_with_one_time_notice(isolated, fake_claude):
+def test_retired_own_key_model_falls_back_with_one_time_notice(isolated, fake_claude, monkeypatch):
+    monkeypatch.setattr(license_svc, "is_pro", lambda: True)  # own keys are Pro
     isolated.keys["anthropic_api_key"] = "test-key"
     set_setting("claude_model", "claude-opus-4-1")
     notes.generate_notes("m1", "Sync", "Maya: hello.", [])

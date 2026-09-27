@@ -132,6 +132,49 @@ CREATE TABLE IF NOT EXISTS ai_note_usage (
     month TEXT NOT NULL,              -- YYYY-MM the bundled-AI notes were first written
     created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS email_accounts (
+    id TEXT PRIMARY KEY,
+    provider TEXT NOT NULL,            -- gmail | icloud | imap | microsoft
+    address TEXT NOT NULL,
+    host TEXT, port INTEGER, username TEXT,
+    created_at TEXT NOT NULL,
+    last_sync TEXT, last_error TEXT,
+    state TEXT NOT NULL DEFAULT '{}'   -- per-folder sync cursors (JSON)
+);
+CREATE TABLE IF NOT EXISTS email_messages (
+    id TEXT PRIMARY KEY,               -- account_id + ':' + Message-ID
+    account_id TEXT NOT NULL,
+    thread_key TEXT NOT NULL,
+    subject TEXT NOT NULL DEFAULT '',
+    from_email TEXT NOT NULL DEFAULT '', from_name TEXT NOT NULL DEFAULT '',
+    to_emails TEXT NOT NULL DEFAULT '[]', cc_emails TEXT NOT NULL DEFAULT '[]',
+    sent_at TEXT NOT NULL,
+    snippet TEXT NOT NULL DEFAULT '',  -- first ~1500 chars of the text, local only
+    is_from_me INTEGER NOT NULL DEFAULT 0,
+    is_bulk INTEGER NOT NULL DEFAULT 0,
+    message_id TEXT NOT NULL DEFAULT ''
+);
+CREATE TABLE IF NOT EXISTS email_threads (
+    id TEXT PRIMARY KEY,               -- account_id + ':' + thread key
+    account_id TEXT NOT NULL,
+    subject TEXT NOT NULL DEFAULT '',
+    counterpart_name TEXT NOT NULL DEFAULT '', counterpart_email TEXT NOT NULL DEFAULT '',
+    last_at TEXT NOT NULL,
+    last_from_me INTEGER NOT NULL DEFAULT 0,
+    last_message_id TEXT NOT NULL DEFAULT '',
+    me_direct INTEGER NOT NULL DEFAULT 0,  -- you're in To (not just CC) on the latest message
+    is_bulk INTEGER NOT NULL DEFAULT 0,
+    needs_reply INTEGER,               -- AI verdict: 1 / 0 / NULL = not triaged
+    reason TEXT NOT NULL DEFAULT '',
+    urgency TEXT NOT NULL DEFAULT 'normal',
+    tasks TEXT NOT NULL DEFAULT '[]',
+    triaged_at TEXT,
+    status TEXT NOT NULL DEFAULT 'open',    -- open | done | snoozed | dismissed
+    snooze_until TEXT,
+    notified INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_email_messages_thread ON email_messages(account_id, thread_key);
+CREATE INDEX IF NOT EXISTS idx_email_threads_open ON email_threads(status, needs_reply);
 CREATE INDEX IF NOT EXISTS idx_actions_meeting ON action_items(meeting_id);
 CREATE INDEX IF NOT EXISTS idx_topics_meeting ON topics(meeting_id);
 CREATE INDEX IF NOT EXISTS idx_topics_name ON topics(name);
