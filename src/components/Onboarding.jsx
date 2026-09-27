@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import wiselyHello from "../assets/wisely/hello.webm";
 import wiselyIdle from "../assets/wisely/idle.webm";
-import wiselyStill from "../assets/wisely/still.jpg";
+import wiselyStill from "../assets/wisely/still.png";
 import { useTranslation } from "react-i18next";
 import { api } from "../api.js";
 import { useStore } from "../store.jsx";
@@ -41,7 +41,8 @@ const CALLOUTS = [
 ];
 
 // Wisely, the Agent, greets new users: he waves once, then settles into his idle loop.
-// A still image when the Mac asks for reduced motion.
+// The clips have a transparent background, so he stands freely on the page. A still
+// image when the Mac asks for reduced motion.
 function WiselyHello() {
   const { t } = useTranslation();
   const [clip, setClip] = useState("hello");

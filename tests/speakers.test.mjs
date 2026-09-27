@@ -45,7 +45,7 @@ for(const state of ['speakers','speakers-failed']) test(`named transcript, timel
  Object.defineProperty(globalThis,'navigator',{configurable:true,value:dom.window.navigator});
  dom.window.HTMLElement.prototype.scrollTo=()=>{};dom.window.HTMLElement.prototype.scrollIntoView=()=>{};
  const output=join(await mkdtemp(join(tmpdir(),'jotva-speaker-dom-')),'preview.cjs');
- await build({entryPoints:[resolve('tests/visual/preview.jsx')],outfile:output,bundle:true,platform:'node',format:'cjs',loader:{'.css':'empty','.svg':'text','.woff2':'empty','.webm':'empty','.jpg':'empty'},define:{'import.meta.env.DEV':'true'},logLevel:'silent'});
+ await build({entryPoints:[resolve('tests/visual/preview.jsx')],outfile:output,bundle:true,platform:'node',format:'cjs',loader:{'.css':'empty','.svg':'text','.woff2':'empty','.webm':'empty','.jpg':'empty','.png':'empty'},define:{'import.meta.env.DEV':'true'},logLevel:'silent'});
  globalThis.IS_REACT_ACT_ENVIRONMENT=false;
  const {act,previewRoot}=require(output);await new Promise(r=>setTimeout(r,80));globalThis.IS_REACT_ACT_ENVIRONMENT=true;
  const click=async label=>{const button=[...document.querySelectorAll('button')].find(b=>b.textContent.trim()===label);assert.ok(button,label);await act(async()=>button.click());};

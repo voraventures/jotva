@@ -33,7 +33,7 @@ for (const fixtureState of ["cards", "no-today", "empty", "boot-loading", "boot-
   };
   const output = join(await mkdtemp(join(tmpdir(), "jotva-dom-")), "preview.cjs");
   globalThis.IS_REACT_ACT_ENVIRONMENT = false;
-  await build({ entryPoints: [resolve("tests/visual/preview.jsx")], outfile: output, bundle: true, platform: "node", format: "cjs", loader: { ".css": "empty", ".svg": "text", ".woff2": "empty", ".webm": "empty", ".jpg": "empty" }, define: { "import.meta.env.DEV": "true" }, logLevel: "silent" });
+  await build({ entryPoints: [resolve("tests/visual/preview.jsx")], outfile: output, bundle: true, platform: "node", format: "cjs", loader: { ".css": "empty", ".svg": "text", ".woff2": "empty", ".webm": "empty", ".jpg": "empty", ".png": "empty" }, define: { "import.meta.env.DEV": "true" }, logLevel: "silent" });
   const { act, previewRoot } = require(output);
   await new Promise(r => setTimeout(r, 70));
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
