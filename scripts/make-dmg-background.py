@@ -4,7 +4,7 @@
   python3 scripts/make-dmg-background.py   → build/background.tiff (+ the 1x/2x PNGs)
 
 Dark like the website, with the glass notepad and "Jotva" at the top and soft light
-pools under the two icons, and Wisely between them pointing the way. Icon positions must match
+pools under the two icons, and Wisely drawing a dotted ink trail from Jotva to Applications. Icon positions must match
 build.dmg.contents in package.json (app at x=160, Applications at x=440, y=205).
 """
 import math
@@ -18,6 +18,7 @@ W, H = 600, 400
 APP, APPS, ICON_Y = (160, 205), (440, 205), 205
 BG = (5, 5, 7)
 BRAND = [(90, 130, 240), (107, 88, 230), (150, 96, 238)]
+TRAIL = [(110, 160, 255), (123, 108, 246), (177, 125, 248), (255, 170, 230)]  # ink: blue → violet → pink
 FONTS = ["/Applications/Blender.app/Contents/Resources/5.2/datafiles/fonts/Inter.woff2",
          os.path.join(ROOT, "design-reference/redesign/fonts/inter-0.woff2")]
 MARK = os.path.join(ROOT, "electron/assets/logo-mark-render.png")  # the Blender-rendered notepad
@@ -50,7 +51,7 @@ def draw(scale):
     # soft light pools under the two icons, and a faint wash behind the title
     glow(img, APP[0] * s, (ICON_Y + 8) * s, 120 * s, (122, 61, 246), 120)
     glow(img, APPS[0] * s, (ICON_Y + 8) * s, 120 * s, (52, 82, 246), 110)
-    glow(img, W / 2 * s, 64 * s, 170 * s, (78, 144, 248), 40)
+    glow(img, W / 2 * s, 50 * s, 170 * s, (78, 144, 248), 40)
 
     d = ImageDraw.Draw(img)
     # title: the rendered notepad mark + "Jotva"
@@ -65,18 +66,38 @@ def draw(scale):
         m = m.resize((mark_w, mark_h), Image.LANCZOS)
     gap = 12 * s
     x0 = int((W * s - (mark_w + gap + tw)) / 2)
-    y_mid = 62 * s
+    y_mid = 46 * s
     if mark_w:
         img.alpha_composite(m, (x0, int(y_mid - mark_h / 2)))
     d.text((x0 + mark_w + gap, y_mid), "Jotva", font=title_font, fill=(244, 245, 255), anchor="lm")
 
-    # Wisely between the icons, his nib pointing the way to Applications
+    # Wisely draws the way: a dotted ink trail arcs from Jotva over to Applications and
+    # ends at the tip of his nib, right at the folder's corner.
     if os.path.exists(WISELY):
         wz = Image.open(WISELY).convert("RGBA")
-        wh = 126 * s
+        wh = 86 * s
         wz = wz.resize((int(wz.width * wh / wz.height), wh), Image.LANCZOS)
-        glow(img, W / 2 * s, (ICON_Y - 2) * s, 70 * s, (150, 110, 255), 70)
-        img.alpha_composite(wz, (int(W / 2 * s - wz.width / 2), int((ICON_Y - 6) * s - wh / 2)))
+        wx, wy = 370 * s - wz.width / 2, 116 * s - wh / 2              # top-left of Wisely
+        nib = (wx + wz.width * 0.9, wy + wh * 0.985)                   # his nib (bottom-right after mirroring)
+        start, ctrl = (APP[0] + 52) * s, ICON_Y - 48
+        x0, y0, x2, y2 = start, ctrl * s, nib[0] - 4 * s, nib[1] - 4 * s
+        cx, cy = (x0 + x2) / 2, min(y0, y2) - 62 * s
+        trail = Image.new("RGBA", img.size, (0, 0, 0, 0))
+        td = ImageDraw.Draw(trail)
+        n = 24
+        for i in range(n):
+            t = i / (n - 1)
+            x = (1 - t) ** 2 * x0 + 2 * (1 - t) * t * cx + t * t * x2
+            y = (1 - t) ** 2 * y0 + 2 * (1 - t) * t * cy + t * t * y2
+            k = min(len(TRAIL) - 2, int(t * (len(TRAIL) - 1)))
+            u = t * (len(TRAIL) - 1) - k
+            c = tuple(int(TRAIL[k][j] + (TRAIL[k + 1][j] - TRAIL[k][j]) * u) for j in range(3))
+            r = (1.5 + 2.1 * t) * s
+            td.ellipse((x - r, y - r, x + r, y + r), fill=(*c, 255))
+        img.alpha_composite(trail.filter(ImageFilter.GaussianBlur(6 * s)))
+        img.alpha_composite(trail)
+        glow(img, 370 * s, 118 * s, 52 * s, (150, 110, 255), 60)
+        img.alpha_composite(wz, (int(wx), int(wy)))
 
     # hint
     hint = inter(13 * s, 500)
