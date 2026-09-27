@@ -3,8 +3,8 @@
 
   python3 scripts/make-dmg-background.py   → build/background.tiff (+ the 1x/2x PNGs)
 
-Dark like the website, with the glass notepad and "Jotva" at the top, soft light pools
-under the two icons, and a brand-gradient arrow between them. Icon positions must match
+Dark like the website, with the glass notepad and "Jotva" at the top and soft light
+pools under the two icons (no arrow). Icon positions must match
 build.dmg.contents in package.json (app at x=160, Applications at x=440, y=205).
 """
 import math
@@ -68,19 +68,6 @@ def draw(scale):
     if mark_w:
         img.alpha_composite(m, (x0, int(y_mid - mark_h / 2)))
     d.text((x0 + mark_w + gap, y_mid), "Jotva", font=title_font, fill=(244, 245, 255), anchor="lm")
-
-    # the arrow: short, bold and white with rounded ends and a soft glow (like Blender's)
-    cx, ay = W / 2 * s, ICON_Y * s
-    arrow = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    ad = ImageDraw.Draw(arrow)
-    half, t = 30 * s, 7 * s
-    ad.line([(cx - half, ay), (cx + half - 4 * s, ay)], fill=(255, 255, 255, 235), width=int(t))
-    for dy in (-1, 1):  # the head: two rounded strokes
-        ad.line([(cx + half, ay), (cx + half - 18 * s, ay + dy * 18 * s)], fill=(255, 255, 255, 235), width=int(t))
-    for x, y in ((cx - half, ay), (cx + half, ay), (cx + half - 18 * s, ay - 18 * s), (cx + half - 18 * s, ay + 18 * s)):
-        ad.ellipse((x - t / 2, y - t / 2, x + t / 2, y + t / 2), fill=(255, 255, 255, 235))
-    img.alpha_composite(arrow.filter(ImageFilter.GaussianBlur(9 * s)))
-    img.alpha_composite(arrow)
 
     # hint
     hint = inter(13 * s, 500)
