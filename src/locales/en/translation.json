@@ -1013,7 +1013,7 @@
       "tab": "Live notes",
       "updated": "Live notes updated",
       "updatedAgo": "Updated {{time}}",
-      "empty": "Live notes will appear here as the conversation goes. The first update comes after about a minute and a half of talking."
+      "empty": "Live notes will appear here as the conversation goes. The first update comes after about 40 seconds of talking, then about once a minute."
     }
   },
   "upcomingToast": {

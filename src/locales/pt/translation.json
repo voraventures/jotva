@@ -1013,7 +1013,7 @@
       "tab": "Notas ao vivo",
       "updated": "Notas ao vivo atualizadas",
       "updatedAgo": "Atualizado às {{time}}",
-      "empty": "As notas ao vivo aparecem aqui conforme a conversa avança. A primeira chega após cerca de um minuto e meio."
+      "empty": "As notas ao vivo aparecem aqui conforme a conversa avança. A primeira chega após cerca de 40 segundos e depois cerca de uma vez por minuto."
     }
   },
   "upcomingToast": {

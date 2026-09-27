@@ -28,7 +28,8 @@ def setup(monkeypatch):
 
     monkeypatch.setattr(notes, "get_client", lambda: NS(messages=NS(create=create)))
     monkeypatch.setattr(ln.hub, "emit", lambda name, data: emitted.append((name, data)))
-    monkeypatch.setattr(ln, "INTERVAL", 0.01)
+    monkeypatch.setattr(ln, "POLL", 0.01)
+    monkeypatch.setattr(ln, "MIN_GAP", 0.0)
     fake = NS(_live_lock=threading.Lock(), _live_segments=[])
     monkeypatch.setattr(ln, "recorder", fake)
     set_setting("ai_provider", "anthropic")

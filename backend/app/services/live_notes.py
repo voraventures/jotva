@@ -1,9 +1,11 @@
 """Live notes (Pro): while a meeting is recording, the AI keeps a short set of
 running notes (key points, decisions, action items) up to date.
 
-Every INTERVAL seconds it takes the transcript written since the last update
-(the recorder's 30-second live blocks) and asks the AI to fold it into the
-current notes. Sending only the new part keeps each call small. The final,
+It checks every POLL seconds; the first update comes as soon as the first
+30-second live transcript block has enough speech (~40 s in), later ones at
+most every MIN_GAP seconds. Each takes the transcript written since the last
+update (the recorder's 30-second live blocks) and asks the AI to fold it into
+the current notes. Sending only the new part keeps each call small. The final,
 polished notes are still written from the whole meeting after Stop.
 """
 import logging
@@ -16,9 +18,10 @@ from .recorder import recorder
 
 log = logging.getLogger("jotva.live_notes")
 
-INTERVAL = 90.0        # seconds between updates
-MIN_NEW_CHARS = 250    # skip an update when little new was said
-MAX_UPDATES = 60       # hard cap per meeting (~90 min of updates)
+POLL = 5.0             # how often to look for new transcript
+MIN_GAP = 60.0         # at most one update a minute after the first
+MIN_NEW_CHARS = 150    # skip an update when little new was said
+MAX_UPDATES = 90       # hard cap per meeting (~90 min of updates)
 
 
 class LiveNotes:
@@ -54,11 +57,14 @@ class LiveNotes:
 
     def _run(self, meeting_id: str) -> None:
         seen = updates = 0
-        started = time.monotonic()
-        while not self._stop.wait(INTERVAL) and updates < MAX_UPDATES:
+        started = last = time.monotonic()
+        while not self._stop.wait(POLL) and updates < MAX_UPDATES:
+            if updates and time.monotonic() - last < MIN_GAP:
+                continue
             new, count = self._new_transcript(seen)
             if len(new) < MIN_NEW_CHARS:
                 continue
+            last = time.monotonic()
             try:
                 text = notes.live_update(self.text, new, minutes_in=int((time.monotonic() - started) / 60))
             except Exception as exc:  # never disturb the recording
