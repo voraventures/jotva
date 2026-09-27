@@ -1,0 +1,12 @@
+#!/bin/sh
+# Sign, notarize and staple release/Jotva.dmg (electron-builder only notarizes the
+# .app inside it). Uses the Developer ID certificate in the login keychain and the
+# "jotva-notary" notarytool profile (xcrun notarytool store-credentials).
+set -eu
+DMG="release/Jotva.dmg"
+IDENTITY="${JOTVA_SIGN_IDENTITY:-Developer ID Application}"
+PROFILE="${APPLE_KEYCHAIN_PROFILE:-jotva-notary}"
+codesign --force --sign "$IDENTITY" --timestamp "$DMG"
+xcrun notarytool submit "$DMG" --keychain-profile "$PROFILE" --wait
+xcrun stapler staple "$DMG"
+spctl -a -t open --context context:primary-signature -v "$DMG"
