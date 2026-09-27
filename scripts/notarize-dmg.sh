@@ -7,6 +7,9 @@ DMG="release/Jotva-app.dmg"
 IDENTITY="${JOTVA_SIGN_IDENTITY:-Developer ID Application}"
 PROFILE="${APPLE_KEYCHAIN_PROFILE:-jotva-notary}"
 codesign --force --sign "$IDENTITY" --timestamp "$DMG"
-xcrun notarytool submit "$DMG" --keychain-profile "$PROFILE" --wait
+# notarytool exits 0 even when Apple rejects the file, so check the verdict.
+RESULT=$(xcrun notarytool submit "$DMG" --keychain-profile "$PROFILE" --wait)
+echo "$RESULT"
+echo "$RESULT" | grep -q "status: Accepted" || { echo "Apple did not accept $DMG" >&2; exit 1; }
 xcrun stapler staple "$DMG"
 spctl -a -t open --context context:primary-signature -v "$DMG"

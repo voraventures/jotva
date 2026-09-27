@@ -41,7 +41,8 @@
   "build": {
     "appId": "app.jotva.desktop",
     "dmg": {
-      "title": "Jotva app"
+      "title": "Jotva app",
+      "artifactName": "Jotva-app.dmg"
     },
     "publish": [
       {
@@ -71,7 +72,6 @@
         "NSScreenCaptureUsageDescription": "Jotva needs screen recording permission to capture system audio from your meetings."
       },
       "icon": "electron/assets/icon.icns",
-      "artifactName": "Jotva-app.dmg",
       "notarize": true
     },
     "win": {
