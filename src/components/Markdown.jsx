@@ -71,6 +71,9 @@ export default function Markdown({ text, className = "" }) {
       );
     } else if (line.startsWith("- ") || line.startsWith("* ")) {
       listBuf.push(line.slice(2));
+    } else if (line.startsWith("## ")) {
+      flushList();
+      blocks.push(<h4 key={`h${key++}`} className="md-heading">{renderInline(line.slice(3), `h${key}`)}</h4>);
     } else if (line.startsWith("### ")) {
       flushList();
       blocks.push(

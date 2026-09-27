@@ -111,6 +111,9 @@ def start(body: StartBody):
 
     if get_setting("coach_enabled", True):
         coach.start(meeting_id, templates_svc.section_names(template))
+    from ..services.live_notes import live_notes
+
+    live_notes.start(meeting_id)  # Pro only; a no-op otherwise
 
     from ..services.speaker_capture import capture
     capture.start(meeting_id, ev["join_url"] if body.calendar_event_id and ev else None)
@@ -129,6 +132,9 @@ def stop():
     meeting_id = recorder.meeting_id
     markers = list(recorder.markers)
     coach_summary = coach.stop()
+    from ..services.live_notes import live_notes
+
+    live_notes.stop()
     audio_path = recorder.stop()
 
     db = get_db()

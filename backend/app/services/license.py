@@ -32,6 +32,7 @@ FREE_AI_NOTES_PER_MONTH = 10
 PRO_FEATURES = (
     "unlimited_notes",   # no monthly cap on bundled-AI notes
     "higher_quality",    # the Pro AI tier (Sonnet-class)
+    "live_notes",        # AI notes that build up during the meeting
     "ask_all",           # Ask across every meeting
     "auto_record",       # calendar auto-start ("all" recording mode)
     "mcp",               # AI-assistant access over MCP

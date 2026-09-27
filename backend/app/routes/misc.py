@@ -73,6 +73,7 @@ SETTING_VALIDATORS = {
     "claude_model": lambda v: _is_model_id(v),
     "ai_provider": lambda v: v in ("anthropic", "openai", "google"),
     "ai_quality": lambda v: v in ("standard", "pro"),
+    "live_notes_enabled": lambda v: isinstance(v, bool),
     "openai_model": lambda v: _is_model_id(v),
     "gemini_model": lambda v: _is_model_id(v),
     "apple_calendar_enabled": lambda v: isinstance(v, bool),
@@ -213,6 +214,7 @@ def get_settings():
         "claude_model": get_setting("claude_model", CLAUDE_MODEL),
         "ai_provider": get_setting("ai_provider", DEFAULT_AI_PROVIDER),
         "ai_quality": "pro" if notes_svc.bundled_tier() == notes_svc.TIER_PRO else "standard",
+        "live_notes_enabled": get_setting("live_notes_enabled", True),
         # Set when a saved model disappeared and generation switched to the
         # recommended one; the UI shows it once, then clears it.
         "model_notice": get_setting("model_notice"),
@@ -253,6 +255,7 @@ _PRO_SETTING_VALUES = {
     ("mcp_enabled", True): "mcp",
     ("recording_mode", "all"): "auto_record",
     ("ai_quality", "pro"): "higher_quality",
+    ("live_notes_enabled", True): "live_notes",
 }
 
 

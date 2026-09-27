@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useLogo, useStore } from "../store.jsx";
 import { CheckIcon } from "./icons.jsx";
 
-const PERKS = ["unlimited_notes", "ask_all", "auto_record", "higher_quality", "followup", "mcp"];
+const PERKS = ["unlimited_notes", "live_notes", "ask_all", "auto_record", "higher_quality", "followup", "mcp"];
 
 export default function UpgradeModal() {
   const { t, i18n } = useTranslation();

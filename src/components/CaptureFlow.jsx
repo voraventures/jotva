@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useStore, useLogo } from "../store.jsx";
 import { api } from "../api.js";
 import { BACK, COLORS, VIEWBOX as LOGO_VIEWBOX, sheetPath } from "../logoGeometry.js";
+import Markdown from "./Markdown.jsx";
 import { MicIcon, PauseIcon, PlayIcon, RefreshIcon, StopIcon, CheckIcon, XIcon } from "./icons.jsx";
 
 const AMP_LEN = 40;
@@ -130,6 +131,9 @@ export default function CaptureFlow() {
     progress,
     settings,
     openSettings,
+    meetingLiveNotes,
+    hasFeature,
+    openUpgrade,
   } = useStore();
   const logoUrl = useLogo();
   const [systemReducedMotion, setSystemReducedMotion] = useState(false);
@@ -171,6 +175,19 @@ export default function CaptureFlow() {
     if (phase === "idle") setMeetingName("");
   }, [phase]);
   const start = () => startRecording({ title: meetingName.trim() });
+
+  // Recording card tabs: the jot pad (default) and Pro live notes.
+  const [recTab, setRecTab] = useState("jots");
+  const [seenLiveAt, setSeenLiveAt] = useState(0);
+  useEffect(() => {
+    if (phase === "recording") setRecTab("jots");
+  }, [phase]);
+  const liveForThis = meetingLiveNotes && meetingLiveNotes.meetingId === recording.meetingId ? meetingLiveNotes : null;
+  useEffect(() => {
+    if (recTab === "live" && liveForThis) setSeenLiveAt(liveForThis.at);
+  }, [recTab, liveForThis]);
+  const liveUnseen = !!liveForThis && liveForThis.at > seenLiveAt && recTab !== "live";
+  const showLiveTab = () => (hasFeature("live_notes") ? setRecTab("live") : openUpgrade("live_notes"));
 
   // Which microphone "Start recording" will use, so a wrong or missing input is
   // visible (and fixable) before the meeting, not after.
@@ -404,12 +421,32 @@ export default function CaptureFlow() {
 
         {phase === "recording" && (
           <div className="capture-jot">
-            <label htmlFor="capture-jot-input" className="capture-jot-label">
-              <span>{t("capture.jot.label")}</span>
-              {jot && <span className={`capture-jot-status ${jotStatus}`}>{t(`capture.jot.${jotStatus}`)}</span>}
-            </label>
-            <textarea id="capture-jot-input" autoFocus value={jot} maxLength={20000} spellCheck
-              placeholder={t("capture.jot.placeholder")} onChange={(e) => onJot(e.target.value)} />
+            <div className="capture-tabs" role="tablist">
+              <button type="button" role="tab" aria-selected={recTab === "jots"} className={recTab === "jots" ? "on" : ""}
+                onClick={() => setRecTab("jots")}>{t("capture.jot.label")}</button>
+              <button type="button" role="tab" aria-selected={recTab === "live"} className={recTab === "live" ? "on" : ""}
+                onClick={showLiveTab}>
+                {t("capture.live.tab")}
+                {!hasFeature("live_notes") && <span className="pro-badge">{t("upgrade.badge")}</span>}
+                {liveUnseen && <span className="capture-tab-dot" aria-label={t("capture.live.updated")} />}
+              </button>
+              {recTab === "jots" && jot && <span className={`capture-jot-status ${jotStatus}`}>{t(`capture.jot.${jotStatus}`)}</span>}
+            </div>
+            {recTab === "jots" ? (
+              <textarea id="capture-jot-input" aria-label={t("capture.jot.label")} autoFocus value={jot} maxLength={20000} spellCheck
+                placeholder={t("capture.jot.placeholder")} onChange={(e) => onJot(e.target.value)} />
+            ) : (
+              <div className="capture-live" aria-live="polite">
+                {liveForThis ? (
+                  <>
+                    <Markdown text={liveForThis.text} />
+                    <div className="capture-live-foot">{t("capture.live.updatedAgo", { time: new Date(liveForThis.at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) })}</div>
+                  </>
+                ) : (
+                  <div className="capture-live-empty">{t("capture.live.empty")}</div>
+                )}
+              </div>
+            )}
           </div>
         )}
 

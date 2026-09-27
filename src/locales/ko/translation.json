@@ -321,7 +321,9 @@
       "modelTiny": "tiny — 가장 빠름",
       "modelBase": "base — 균형",
       "modelSmall": "small — 더 나은 정확도",
-      "modelMedium": "medium — 높은 정확도, 느림"
+      "modelMedium": "medium — 높은 정확도, 느림",
+      "liveNotes": "실시간 노트",
+      "liveNotesDesc": "말하는 동안 녹음 창에 핵심 내용, 결정 사항, 할 일이 정리돼요. 최종 노트는 녹음을 멈춘 뒤 작성돼요."
     },
     "ai": {
       "title": "AI 제공자 및 모델",
@@ -994,6 +996,12 @@
       "using": "{{name}} 사용 중",
       "none": "마이크를 찾을 수 없어요",
       "change": "변경"
+    },
+    "live": {
+      "tab": "실시간 노트",
+      "updated": "실시간 노트 업데이트됨",
+      "updatedAgo": "{{time}} 업데이트",
+      "empty": "대화가 진행되면 실시간 노트가 여기에 표시돼요. 첫 업데이트는 약 1분 30초 후에 나와요."
     }
   },
   "upcomingToast": {
@@ -1060,6 +1068,10 @@
       "higher_quality": {
         "title": "가장 정교한 노트",
         "body": "Pro에서는 가장 뛰어난 AI로 더 깊이 있고 정확한 회의 노트를 만들어요."
+      },
+      "live_notes": {
+        "title": "말하는 동안 쌓이는 노트",
+        "body": "Pro는 회의 중에 핵심 내용, 결정 사항, 할 일을 실시간으로 정리해요."
       }
     },
     "perk": {
@@ -1068,7 +1080,8 @@
       "auto_record": "캘린더 회의 자동 녹음",
       "higher_quality": "더 높은 품질의 AI 노트",
       "followup": "후속 메일과 템플릿",
-      "mcp": "Claude 등 AI 어시스턴트에서 접근"
+      "mcp": "Claude 등 AI 어시스턴트에서 접근",
+      "live_notes": "회의 중 실시간 노트"
     }
   },
   "notesPaused": {

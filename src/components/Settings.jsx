@@ -887,6 +887,23 @@ export default function Settings() {
                   />
                 </div>
               </div>
+              <div className="set-card">
+                <div className="set-card-icon"><SparkIcon size={14} /></div>
+                <div className="set-card-main">
+                  <div className="set-card-name">
+                    {t('settings.recording.liveNotes')}
+                    {!hasFeature("live_notes") && <span className="pro-badge">{t('upgrade.badge')}</span>}
+                  </div>
+                  <div className="set-card-desc">{t('settings.recording.liveNotesDesc')}</div>
+                </div>
+                <div className="set-card-control">
+                  <ToggleSwitch
+                    checked={hasFeature("live_notes") && settings.live_notes_enabled !== false}
+                    onChange={(on) => saveSetting("live_notes_enabled", on)}
+                    label={t('settings.recording.liveNotes')}
+                  />
+                </div>
+              </div>
               <div className="set-card stack">
                 <div className="set-card-icon"><MicrophoneIcon size={14} /></div>
                 <div className="set-card-main">

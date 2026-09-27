@@ -321,7 +321,9 @@
       "modelTiny": "tiny — el más rápido",
       "modelBase": "base — equilibrado",
       "modelSmall": "small — mejor precisión",
-      "modelMedium": "medium — alta precisión, más lento"
+      "modelMedium": "medium — alta precisión, más lento",
+      "liveNotes": "Notas en vivo",
+      "liveNotesDesc": "Puntos clave, decisiones y tareas se van creando en la ventana de grabación mientras hablas. Las notas finales se escriben al terminar."
     },
     "ai": {
       "title": "Proveedor y modelo de IA",
@@ -1006,6 +1008,12 @@
       "using": "Usando {{name}}",
       "none": "No se encontró ningún micrófono",
       "change": "Cambiar"
+    },
+    "live": {
+      "tab": "Notas en vivo",
+      "updated": "Notas en vivo actualizadas",
+      "updatedAgo": "Actualizado a las {{time}}",
+      "empty": "Las notas en vivo aparecerán aquí a medida que avance la conversación. La primera llega tras un minuto y medio de conversación."
     }
   },
   "upcomingToast": {
@@ -1073,6 +1081,10 @@
       "higher_quality": {
         "title": "Nuestras notas más precisas",
         "body": "Pro desbloquea nuestra IA más capaz para notas más profundas y precisas."
+      },
+      "live_notes": {
+        "title": "Notas que se escriben mientras hablas",
+        "body": "Pro crea notas en vivo durante la reunión: puntos clave, decisiones y tareas en el momento."
       }
     },
     "perk": {
@@ -1081,7 +1093,8 @@
       "auto_record": "Grabación automática del calendario",
       "higher_quality": "Notas con IA de mayor calidad",
       "followup": "Correos de seguimiento y plantillas",
-      "mcp": "Acceso desde Claude y otros asistentes de IA"
+      "mcp": "Acceso desde Claude y otros asistentes de IA",
+      "live_notes": "Notas en vivo durante la reunión"
     }
   },
   "notesPaused": {

@@ -321,7 +321,9 @@
       "modelTiny": "tiny — 最快",
       "modelBase": "base — 平衡",
       "modelSmall": "small — 更高准确度",
-      "modelMedium": "medium — 高准确度，较慢"
+      "modelMedium": "medium — 高准确度，较慢",
+      "liveNotes": "实时笔记",
+      "liveNotesDesc": "你说话时，要点、决定和待办事项会在录音窗口中逐步生成。最终笔记仍在停止后撰写。"
     },
     "ai": {
       "title": "AI 提供商和模型",
@@ -994,6 +996,12 @@
       "using": "使用 {{name}}",
       "none": "未找到麦克风",
       "change": "更改"
+    },
+    "live": {
+      "tab": "实时笔记",
+      "updated": "实时笔记已更新",
+      "updatedAgo": "{{time}} 更新",
+      "empty": "对话进行时，实时笔记会显示在这里。大约一分半钟后出现第一次更新。"
     }
   },
   "upcomingToast": {
@@ -1060,6 +1068,10 @@
       "higher_quality": {
         "title": "最精准的笔记",
         "body": "Pro 解锁我们最强的 AI，生成更深入、更精准的会议笔记。"
+      },
+      "live_notes": {
+        "title": "边说边生成的笔记",
+        "body": "Pro 会在会议进行中实时记录要点、决定和待办事项。"
       }
     },
     "perk": {
@@ -1068,7 +1080,8 @@
       "auto_record": "自动录制日历会议",
       "higher_quality": "更高质量的 AI 笔记",
       "followup": "跟进邮件与模板",
-      "mcp": "可从 Claude 等 AI 助手访问"
+      "mcp": "可从 Claude 等 AI 助手访问",
+      "live_notes": "会议进行中的实时笔记"
     }
   },
   "notesPaused": {

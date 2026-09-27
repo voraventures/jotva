@@ -14,6 +14,10 @@ The other input we invite is the **jot pad**: while recording, the user can jot 
 notes, which steer what the AI emphasizes. It's prominent in the recording card but
 always optional. Don't market any of this as "zero manual labor".
 
+**Plans:** Free vs Pro ($12/mo) is defined by `PRO_FEATURES` in
+`backend/app/services/license.py`. Whenever a Pro feature is added or moved,
+update `docs/pro-features.md` too, since the website is written from it.
+
 ## Design language (current — see design-reference/redesign/ and src/jotva-theme.css)
 - Dark-first, glassy: ink background with soft blue/violet ambient light, frosted glass panels; a matching light theme.
 - The logo gradient (blue → violet) is the only accent; no green (that was the old avocado brand).

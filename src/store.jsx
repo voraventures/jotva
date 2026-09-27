@@ -79,6 +79,8 @@ export function StoreProvider({ children }) {
   const [captureOpen, setCaptureOpen] = useState(false);
   // Notes as the AI writes them, by meeting id (the meeting page shows them live).
   const [liveNotes, setLiveNotes] = useState({});
+  // Pro live notes during a recording: { meetingId, text, at } (latest update).
+  const [meetingLiveNotes, setMeetingLiveNotes] = useState(null);
   const [markerCount, setMarkerCount] = useState(0);
   const [liveTranscriptChunks, setLiveTranscriptChunks] = useState([]);
   const [activeCall, setActiveCall] = useState(null); // { app, process, detected_at }
@@ -336,6 +338,9 @@ export function StoreProvider({ children }) {
             setRecordingLevel(0);
             setPaused(false);
             setLiveTranscriptChunks([]);
+            break;
+          case "live_notes":
+            setMeetingLiveNotes({ meetingId: data.meeting_id, text: data.text, at: data.at * 1000 });
             break;
           case "notes_delta":
             setLiveNotes((prev) => ({ ...prev, [data.meeting_id]: data.text }));
@@ -717,6 +722,7 @@ export function StoreProvider({ children }) {
     captureOpen,
     setCaptureOpen,
     liveNotes,
+    meetingLiveNotes,
     markerCount,
     dropMarker,
     liveTranscriptChunks,

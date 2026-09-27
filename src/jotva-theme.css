@@ -576,3 +576,28 @@
   .live-notes-section > .section-body:nth-last-child(2), .live-notes-section > .section-body:nth-last-child(2) > p:last-child { display: inline; }
   .live-notes-head { gap: 12px; flex-wrap: wrap; }
 }
+
+/* ---- recording card tabs: jot pad / live notes (Pro) ---- */
+@media screen {
+  .capture-tabs { display: flex; align-items: center; gap: 4px; }
+  .capture-tabs [role="tab"] {
+    all: unset; cursor: pointer; position: relative; display: inline-flex; align-items: center; gap: 4px;
+    padding: 5px 10px; border-radius: 999px; font-size: calc(13rem / 14); font-weight: 600; color: var(--muted);
+  }
+  .capture-tabs [role="tab"].on { color: var(--text); background: var(--panel-glass); box-shadow: inset 0 0 0 1px var(--border); }
+  .capture-tabs [role="tab"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .capture-tabs .capture-jot-status { margin-left: auto; }
+  .capture-tab-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brand-solid); }
+  .capture-live {
+    flex: 1; min-height: 110px; overflow-y: auto; padding: 12px 14px; border-radius: 12px; font-size: calc(13rem / 14); line-height: 1.55;
+    background: var(--surface); border: 1px solid var(--border-strong);
+  }
+  .capture-live h2 { margin: 10px 0 4px; font-size: calc(13rem / 14); font-weight: 600; }
+  .capture-live h2:first-child { margin-top: 0; }
+  .capture-live-foot { margin-top: 10px; font-size: calc(11rem / 14); color: var(--faint); }
+  .capture-live-empty { color: var(--faint); }
+}
+@media screen {
+  .md-heading { margin: 12px 0 4px; font-size: calc(13rem / 14); font-weight: 600; color: var(--text); }
+  .section-body > .md-heading:first-child { margin-top: 0; }
+}

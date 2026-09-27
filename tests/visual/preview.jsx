@@ -117,6 +117,7 @@ function Preview() {
     meetingDetail: state === "loading" ? null : { ...(visibleMeetings.find(m => m.id === selectedId) || meeting), status: state === "error" ? "error" : "ready" },
     progress: state === "processing" ? { [meeting.id]: { stage: "transcribing", pct: .45 } }
       : state === "live-notes" ? { [meeting.id]: { stage: "generating", pct: null } } : {},
+    meetingLiveNotes: state === "recording" && params.get("live") ? { meetingId: meeting.id, text: "## Key points\n- Sarah finalizes the client deck by Wed 3 p.m.\n- Vendor pricing blocks the cost comparison\n## Action items\n- **Marcus** — subscription review (Thu morning)", at: Date.now() } : null,
     liveNotes: state === "live-notes" ? { [meeting.id]: "## Executive Summary\nLuis assigned weekly responsibilities across five team members with clear deadlines. A critical dependency exists: Emily's vendor pricing must land before Sarah can finalize the\n" } : {},
     recording, recordingLevel: .3, captureOpen, setCaptureOpen, processingId, setProcessingId, readyMeetingId, setReadyMeetingId, paused, muted: false,
     startRecording: async () => { setCaptureOpen(false); setRecording({ active: true, meetingId: meeting.id }); },
@@ -136,7 +137,7 @@ function Preview() {
       if (id === selectedId) selectMeeting(null);
       setToasts([{ id: "fixture-delete", kind: "info", message: "Meeting deleted", action: { label: "Undo", onAction: () => setDeletedIds(ids => ids.filter(deleted => deleted !== id)) } }]);
     }, setSelectedTemplate: noop, dismissActiveCall: noop, setCoachOpen: noop, startProUpgradePolling: noop,
-    upgradeFeature, openUpgrade: (f = "unlimited_notes") => setUpgradeFeature(f), closeUpgrade: () => setUpgradeFeature(null), hasFeature: () => false,
+    upgradeFeature, openUpgrade: (f = "unlimited_notes") => setUpgradeFeature(f), closeUpgrade: () => setUpgradeFeature(null), hasFeature: () => params.get("pro") === "1",
     proGuard: (_f, fn) => fn, handleError: noop, startCheckout: noop,
   };
   return <StoreContext.Provider value={value}><App /></StoreContext.Provider>;

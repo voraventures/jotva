@@ -321,7 +321,9 @@
       "modelTiny": "tiny — fastest",
       "modelBase": "base — balanced",
       "modelSmall": "small — better accuracy",
-      "modelMedium": "medium — high accuracy, slower"
+      "modelMedium": "medium — high accuracy, slower",
+      "liveNotes": "Live notes",
+      "liveNotesDesc": "Key points, decisions and action items build up in the recording window while you talk. Final notes are still written after you stop."
     },
     "ai": {
       "title": "AI Provider & Model",
@@ -1006,6 +1008,12 @@
       "using": "Using {{name}}",
       "none": "No microphone found",
       "change": "Change"
+    },
+    "live": {
+      "tab": "Live notes",
+      "updated": "Live notes updated",
+      "updatedAgo": "Updated {{time}}",
+      "empty": "Live notes will appear here as the conversation goes. The first update comes after about a minute and a half of talking."
     }
   },
   "upcomingToast": {
@@ -1073,6 +1081,10 @@
       "higher_quality": {
         "title": "Our sharpest notes",
         "body": "Pro unlocks our most capable AI for deeper, more precise meeting notes."
+      },
+      "live_notes": {
+        "title": "Notes that build as you talk",
+        "body": "Pro keeps live notes during the meeting — key points, decisions and action items as they happen."
       }
     },
     "perk": {
@@ -1081,7 +1093,8 @@
       "auto_record": "Automatic calendar recording",
       "higher_quality": "Higher-quality AI notes",
       "followup": "Follow-up emails and templates",
-      "mcp": "Access from Claude and other AI assistants"
+      "mcp": "Access from Claude and other AI assistants",
+      "live_notes": "Live notes during the meeting"
     }
   },
   "notesPaused": {
