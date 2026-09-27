@@ -4,7 +4,7 @@
   python3 scripts/make-dmg-background.py   → build/background.tiff (+ the 1x/2x PNGs)
 
 Dark like the website, with the glass notepad and "Jotva" at the top and soft light
-pools under the two icons (no arrow). Icon positions must match
+pools under the two icons, and Wisely between them pointing the way. Icon positions must match
 build.dmg.contents in package.json (app at x=160, Applications at x=440, y=205).
 """
 import math
@@ -21,6 +21,7 @@ BRAND = [(90, 130, 240), (107, 88, 230), (150, 96, 238)]
 FONTS = ["/Applications/Blender.app/Contents/Resources/5.2/datafiles/fonts/Inter.woff2",
          os.path.join(ROOT, "design-reference/redesign/fonts/inter-0.woff2")]
 MARK = os.path.join(ROOT, "electron/assets/logo-mark-render.png")  # the Blender-rendered notepad
+WISELY = os.path.join(ROOT, "electron/assets/wisely-cutout.png")  # Wisely, nib pointing to Applications
 
 
 def inter(size, weight):
@@ -68,6 +69,14 @@ def draw(scale):
     if mark_w:
         img.alpha_composite(m, (x0, int(y_mid - mark_h / 2)))
     d.text((x0 + mark_w + gap, y_mid), "Jotva", font=title_font, fill=(244, 245, 255), anchor="lm")
+
+    # Wisely between the icons, his nib pointing the way to Applications
+    if os.path.exists(WISELY):
+        wz = Image.open(WISELY).convert("RGBA")
+        wh = 126 * s
+        wz = wz.resize((int(wz.width * wh / wz.height), wh), Image.LANCZOS)
+        glow(img, W / 2 * s, (ICON_Y - 2) * s, 70 * s, (150, 110, 255), 70)
+        img.alpha_composite(wz, (int(W / 2 * s - wz.width / 2), int((ICON_Y - 6) * s - wh / 2)))
 
     # hint
     hint = inter(13 * s, 500)
