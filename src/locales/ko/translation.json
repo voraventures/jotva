@@ -1099,5 +1099,10 @@
     "left": "이번 달 무료 AI 노트 {{limit}}개 중 {{remaining}}개 남음",
     "resets": "{{date}}에 초기화",
     "unlimited": "무제한 AI 노트"
+  },
+  "update": {
+    "ready": "Jotva {{version}}을(를) 설치할 준비가 됐어요.",
+    "restart": "다시 시작해 업데이트",
+    "afterRecording": "녹음이 끝나면 업데이트가 설치돼요."
   }
 }

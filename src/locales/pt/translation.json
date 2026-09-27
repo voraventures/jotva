@@ -1112,5 +1112,10 @@
     "left": "Restam {{remaining}} de {{limit}} notas com IA grátis este mês",
     "resets": "Renova em {{date}}",
     "unlimited": "Notas com IA ilimitadas"
+  },
+  "update": {
+    "ready": "O Jotva {{version}} está pronto para instalar.",
+    "restart": "Reiniciar para atualizar",
+    "afterRecording": "A atualização será instalada quando você terminar de gravar."
   }
 }

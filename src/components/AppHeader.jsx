@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLogo, useStore } from "../store.jsx";
 import { api } from "../api.js";
-import { CalendarIcon, ChevronDownIcon } from "./icons.jsx";
+import { CalendarIcon, ChevronDownIcon, RefreshIcon } from "./icons.jsx";
 
 export default function AppHeader() {
   const { t } = useTranslation();
-  const { upcoming, activeCall, recording, startRecording, dismissActiveCall, openSettings, license, avatar } = useStore();
+  const { upcoming, activeCall, recording, startRecording, dismissActiveCall, openSettings, license, avatar, updateReady, installUpdate } = useStore();
   const logo = useLogo();
   const [name, setName] = useState("");
   const [now, setNow] = useState(Date.now());
@@ -30,6 +30,9 @@ export default function AppHeader() {
         <CalendarIcon size={16} aria-hidden="true" /><span>{next.title}</span><strong>{next.minutes} {t("sidebar.autoRecord.min")}</strong>
       </span> : null}
     </div>
+    {updateReady && <button className="header-update" onClick={installUpdate} title={t("update.ready", { version: updateReady.version })}>
+      <RefreshIcon size={14} aria-hidden="true" /><span>{t("update.restart")}</span>
+    </button>}
     <button className="header-account" onClick={() => openSettings("license")} aria-label={t("dock.account", { defaultValue: "Account and subscription" })}>
       <span className="avatar">{avatar ? <img src={avatar} alt="" /> : initials}</span><span>{license?.tier === "pro" ? "Pro" : t("sidebar.account.upgrade")}</span><ChevronDownIcon size={14} aria-hidden="true" />
     </button>

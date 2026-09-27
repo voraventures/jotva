@@ -622,3 +622,14 @@
   .speaker-picker form { margin-top: 6px; }
   .speaker-picker .text-input { width: 100%; box-sizing: border-box; }
 }
+
+/* ---- "Restart to update" (automatic updates) ---- */
+@media screen {
+  .header-update {
+    display: inline-flex; align-items: center; gap: 6px; margin-right: 8px; padding: 5px 12px; border-radius: 999px;
+    font: inherit; font-size: calc(12rem / 14); font-weight: 600; color: #fff; cursor: pointer; border: none;
+    background: var(--brand-solid); box-shadow: var(--brand-glow);
+  }
+  .header-update:hover { filter: brightness(1.08); }
+  .header-update:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+}

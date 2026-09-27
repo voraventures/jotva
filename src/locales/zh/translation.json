@@ -1099,5 +1099,10 @@
     "left": "本月免费 AI 笔记剩余 {{remaining}}/{{limit}} 次",
     "resets": "{{date}} 重置",
     "unlimited": "无限次 AI 笔记"
+  },
+  "update": {
+    "ready": "Jotva {{version}} 已准备好安装。",
+    "restart": "重启以更新",
+    "afterRecording": "录音结束后将安装更新。"
   }
 }

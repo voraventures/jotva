@@ -81,6 +81,8 @@ export function StoreProvider({ children }) {
   const [liveNotes, setLiveNotes] = useState({});
   // Pro live notes during a recording: { meetingId, text, at } (latest update).
   const [meetingLiveNotes, setMeetingLiveNotes] = useState(null);
+  // Automatic updates: { version } once a new version has downloaded.
+  const [updateReady, setUpdateReady] = useState(null);
   const [markerCount, setMarkerCount] = useState(0);
   const [liveTranscriptChunks, setLiveTranscriptChunks] = useState([]);
   const [activeCall, setActiveCall] = useState(null); // { app, process, detected_at }
@@ -564,6 +566,23 @@ export function StoreProvider({ children }) {
     []
   );
 
+  const installUpdate = useCallback(async () => {
+    const result = await window.jotva?.installUpdate?.();
+    if (result?.reason === "recording") showToast(i18n.t("update.afterRecording"));
+  }, [showToast]);
+  useEffect(() => {
+    const announce = (info) => {
+      if (!info?.version) return;
+      setUpdateReady(info);
+      showToast(i18n.t("update.ready", { version: info.version }), "info", {
+        duration: 20000,
+        action: { label: i18n.t("update.restart"), onAction: installUpdate },
+      });
+    };
+    window.jotva?.updateStatus?.().then(announce).catch(() => {});
+    return window.jotva?.onUpdateReady?.(announce);
+  }, [installUpdate, showToast]);
+
   // Freemium: Pro features check license.features before calling the backend and
   // open the upgrade prompt instead. A 402 from the backend is the backstop.
   const [upgradeFeature, setUpgradeFeature] = useState(null);
@@ -723,6 +742,8 @@ export function StoreProvider({ children }) {
     setCaptureOpen,
     liveNotes,
     meetingLiveNotes,
+    updateReady,
+    installUpdate,
     markerCount,
     dropMarker,
     liveTranscriptChunks,

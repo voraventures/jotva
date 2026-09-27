@@ -58,13 +58,16 @@ jobs:
         shell: bash
         run: |
           npm run build
-          npx electron-builder --win --config.extraMetadata.version="${GITHUB_REF_NAME#v}"
+          npx electron-builder --win --publish never --config.extraMetadata.version="${GITHUB_REF_NAME#v}"
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: release/*.exe
+          files: |
+            release/*.exe
+            release/*.exe.blockmap
+            release/latest.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

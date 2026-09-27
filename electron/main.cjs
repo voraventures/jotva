@@ -331,7 +331,10 @@ function buildRecordingIcon(dim) {
   return img;
 }
 
+let recordingNow = false; // for the updater: never restart mid-recording
+
 function setTrayRecording(recording) {
+  recordingNow = recording;
   if (recording && !pulseTimer) {
     pulseTimer = setInterval(() => {
       pulsePhase = !pulsePhase;
@@ -574,6 +577,7 @@ app.whenReady().then(() => {
   checkScreenRecordingPermission();
   createTray();
   registerShortcuts();
+  require("./updater.cjs").setupAutoUpdates({ getWindow: () => mainWindow, isRecording: () => recordingNow });
   app.on("activate", () => showWindow());
 });
 

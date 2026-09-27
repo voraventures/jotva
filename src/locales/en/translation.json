@@ -1112,5 +1112,10 @@
     "left": "{{remaining}} of {{limit}} free AI notes left this month",
     "resets": "Resets {{date}}",
     "unlimited": "Unlimited AI notes"
+  },
+  "update": {
+    "ready": "Jotva {{version}} is ready to install.",
+    "restart": "Restart to update",
+    "afterRecording": "The update will install when you finish recording."
   }
 }

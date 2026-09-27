@@ -51,6 +51,16 @@ contextBridge.exposeInMainWorld("jotva", {
     return ipcRenderer.invoke("jotva:set-auto-launch", enabled);
   },
 
+  // Automatic updates: { version } once a new version has downloaded.
+  updateStatus: () => ipcRenderer.invoke("jotva:update-status"),
+  installUpdate: () => ipcRenderer.invoke("jotva:install-update"),
+  onUpdateReady: (callback) => {
+    if (typeof callback !== "function") return () => {};
+    const handler = (_event, info) => callback({ version: String(info?.version || "") });
+    ipcRenderer.on("jotva:update-ready", handler);
+    return () => ipcRenderer.removeListener("jotva:update-ready", handler);
+  },
+
   onShortcut: (callback) => {
     if (typeof callback !== "function") return () => {};
     const handler = (_event, name) => {
