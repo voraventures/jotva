@@ -78,7 +78,7 @@ function LogoMark({ phase, amp, size = 168, animate = false }) {
           <stop offset="1" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
         <filter id={`${uid}bloom`} x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="22" /></filter>
-        <clipPath id={`${uid}clip`}>{paths.map((d) => <path key={d} d={d} />)}</clipPath>
+        <clipPath id={`${uid}clip`}>{paths.map((d, i) => <path key={i} d={d} />)}</clipPath>
       </defs>
       {phase === "idle" && (
         <g filter={`url(#${uid}bloom)`} opacity={0.5 + 0.2 * Math.sin(Math.PI * sweep)}>

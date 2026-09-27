@@ -4,8 +4,20 @@
     {
       "name": "jotva-renderer",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev:renderer"],
+      "runtimeArgs": [
+        "run",
+        "dev:renderer"
+      ],
       "port": 5173
+    },
+    {
+      "name": "jotva-website",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/ceo/code/vora-jotva-landing && npx next dev -p 3100"
+      ],
+      "port": 3100
     }
   ]
 }
