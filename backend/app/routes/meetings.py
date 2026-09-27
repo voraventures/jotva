@@ -234,11 +234,36 @@ def ask_meeting_route(meeting_id: str, body: MeetingAskBody):
 @router.delete("/{meeting_id}")
 def delete_meeting(meeting_id: str):
     db = get_db()
+    row = db.execute("SELECT audio_path, transcript_path, notes_path FROM meetings WHERE id=?",
+                     (meeting_id,)).fetchone()
     cur = db.execute("DELETE FROM meetings WHERE id=?", (meeting_id,))
     db.commit()
     if cur.rowcount == 0:
         raise HTTPException(status_code=404, detail="Meeting not found")
+    _delete_meeting_files(meeting_id, row)
     return {"ok": True}
+
+
+def _delete_meeting_files(meeting_id: str, row) -> None:
+    """The delete dialog promises the recording, transcript and notes are removed:
+    remove the files too, not just the database row. Only paths inside Jotva's
+    own folders are touched."""
+    from pathlib import Path
+
+    from ..config import DATA_DIR, NOTES_DIR, RECORDINGS_DIR, TRANSCRIPTS_DIR
+
+    candidates = [RECORDINGS_DIR / f"{meeting_id}{suffix}" for suffix in (".wav", ".loudness.json", ".transcript_partial.json")]
+    candidates += [TRANSCRIPTS_DIR / f"{meeting_id}.txt", NOTES_DIR / f"{meeting_id}.md"]
+    if row:
+        candidates += [Path(p) for p in (row["audio_path"], row["transcript_path"], row["notes_path"]) if p]
+    root = DATA_DIR.resolve()
+    for path in candidates:
+        try:
+            resolved = path.resolve()
+            if resolved.is_relative_to(root) and resolved.is_file():
+                resolved.unlink()
+        except OSError:
+            pass
 
 
 @router.post("/{meeting_id}/share")

@@ -24,7 +24,7 @@ from pathlib import Path
 
 import numpy as np
 
-from ..config import RECORDINGS_DIR, secure_file, touch_secure
+from ..config import RECORDINGS_DIR, secure_file, touch_secure, write_secure_text
 from ..events import hub
 
 log = logging.getLogger("jotva.recorder")
@@ -366,6 +366,35 @@ def _drain_capture(cap, cursor: dict) -> np.ndarray | None:
         return np.zeros(0, dtype=np.float32)
     audio = np.concatenate([_to_mono(c) for c in chunks], axis=0).astype(np.float32)
     return _resample(audio, cap.samplerate, TARGET_SR).astype(np.float32)
+
+
+LOUDNESS_STEP = 0.25  # seconds per loudness sample
+
+
+def _loudness(path: str, samplerate: int) -> list[float]:
+    """RMS per LOUDNESS_STEP of a raw float32 mono track: loudness only, no voice data."""
+    p = Path(path)
+    n = p.stat().st_size // 4 if p.exists() else 0
+    if not n:
+        return []
+    audio = np.memmap(p, dtype=np.float32, mode="r", shape=(n,))
+    step = max(1, int(samplerate * LOUDNESS_STEP))
+    usable = (n // step) * step
+    blocks = np.asarray(audio[:usable], dtype=np.float32).reshape(-1, step)
+    return [round(float(v), 5) for v in np.sqrt(np.mean(np.square(blocks), axis=1))]
+
+
+def track_loudness_path(meeting_id: str) -> Path:
+    return RECORDINGS_DIR / f"{meeting_id}.loudness.json"
+
+
+def save_track_loudness(meeting_id: str, mic: dict, system: dict) -> None:
+    """How loud the user's mic and the call audio were over time. Lets speaker
+    naming tell the note-taker (speaking into this Mac's mic) from remote
+    participants (coming through the call audio) without any voiceprint."""
+    data = {"step": LOUDNESS_STEP, "mic": _loudness(mic["path"], int(mic["samplerate"])),
+            "system": _loudness(system["path"], int(system["samplerate"]))}
+    write_secure_text(track_loudness_path(meeting_id), json.dumps(data))
 
 
 def _load_tracks(track_specs: list[dict]) -> list[dict]:
@@ -753,6 +782,11 @@ class Recorder:
 
         path = RECORDINGS_DIR / f"{meeting_id}.wav"
         mix_tracks_to_wav(specs, path)
+        if len(specs) >= 2:  # mic + call audio: keep who-was-loud-where for speaker names
+            try:
+                save_track_loudness(meeting_id, specs[0], specs[1])
+            except Exception:
+                log.exception("Could not save track loudness for %s", meeting_id)
         _cleanup_partial(meeting_id, {"captures": specs})
         hub.emit("recording_stopped", {"meeting_id": meeting_id, "path": str(path)})
         return path
