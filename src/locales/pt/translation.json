@@ -860,7 +860,8 @@
     },
     "titlePrefix": "Cada conversa",
     "titleEmphasis": "vira",
-    "titleSuffix": "conhecimento."
+    "titleSuffix": "conhecimento.",
+    "wiselyHi": "Oi, eu sou o Wisely!"
   },
   "tour": {
     "stepIndicator": "PASSO {{step}} DE {{total}}",

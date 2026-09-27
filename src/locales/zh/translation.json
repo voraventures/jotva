@@ -857,7 +857,8 @@
     },
     "titlePrefix": "每一次对话都",
     "titleEmphasis": "化为",
-    "titleSuffix": "知识。"
+    "titleSuffix": "知识。",
+    "wiselyHi": "你好，我是 Wisely！"
   },
   "tour": {
     "stepIndicator": "第 {{step}} 步，共 {{total}} 步",

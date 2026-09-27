@@ -857,7 +857,8 @@
     },
     "titlePrefix": "모든 대화가",
     "titleEmphasis": "그대로",
-    "titleSuffix": "지식이 돼요."
+    "titleSuffix": "지식이 돼요.",
+    "wiselyHi": "안녕하세요, 저는 Wisely예요!"
   },
   "tour": {
     "stepIndicator": "{{total}}단계 중 {{step}}단계",

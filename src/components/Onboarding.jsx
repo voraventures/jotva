@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import wiselyHello from "../assets/wisely/hello.webm";
+import wiselyIdle from "../assets/wisely/idle.webm";
+import wiselyStill from "../assets/wisely/still.jpg";
 import { useTranslation } from "react-i18next";
 import { api } from "../api.js";
-import { useLogo, useStore } from "../store.jsx";
+import { useStore } from "../store.jsx";
 import { MicIcon, SparkIcon, CheckIcon } from "./icons.jsx";
 
 // First-launch demo meeting — created via POST /api/meetings, which derives
@@ -37,10 +40,30 @@ const CALLOUTS = [
   { Icon: CheckIcon, key: "offline" },
 ];
 
+// Wisely, the Agent, greets new users: he waves once, then settles into his idle loop.
+// A still image when the Mac asks for reduced motion.
+function WiselyHello() {
+  const { t } = useTranslation();
+  const [clip, setClip] = useState("hello");
+  const still = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  return (
+    <figure className="onboarding-wisely">
+      <div className="onboarding-wisely-stage">
+        {still ? (
+          <img src={wiselyStill} alt="" />
+        ) : (
+          <video key={clip} src={clip === "hello" ? wiselyHello : wiselyIdle} poster={wiselyStill}
+            autoPlay muted playsInline loop={clip === "idle"} onEnded={() => setClip("idle")} aria-hidden="true" />
+        )}
+      </div>
+      <figcaption>{t("onboarding.wiselyHi")}</figcaption>
+    </figure>
+  );
+}
+
 export default function Onboarding({ onDone }) {
   const { t } = useTranslation();
   const { refreshMeetings, selectMeeting, showToast } = useStore();
-  const logoUrl = useLogo();
   const [loading, setLoading] = useState(false);
 
   const markOnboarded = () => localStorage.setItem("jotva_onboarded", "true");
@@ -69,7 +92,7 @@ export default function Onboarding({ onDone }) {
   return (
     <div className="detail-panel">
       <div className="onboarding">
-        <img className="onboarding-mark" src={logoUrl} width="132" alt="" aria-hidden="true" />
+        <WiselyHello />
         <h1 className="onboarding-title">
           {t("onboarding.titlePrefix")} <em>{t("onboarding.titleEmphasis")}</em>{" "}
           {t("onboarding.titleSuffix")}

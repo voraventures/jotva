@@ -860,7 +860,8 @@
     },
     "titlePrefix": "Cada conversación",
     "titleEmphasis": "se convierte",
-    "titleSuffix": "en conocimiento."
+    "titleSuffix": "en conocimiento.",
+    "wiselyHi": "¡Hola, soy Wisely!"
   },
   "tour": {
     "stepIndicator": "PASO {{step}} DE {{total}}",

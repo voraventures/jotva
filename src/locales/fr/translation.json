@@ -860,7 +860,8 @@
     },
     "titlePrefix": "Chaque conversation",
     "titleEmphasis": "devient",
-    "titleSuffix": "connaissance."
+    "titleSuffix": "connaissance.",
+    "wiselyHi": "Salut, moi c'est Wisely !"
   },
   "tour": {
     "stepIndicator": "ÉTAPE {{step}} SUR {{total}}",
