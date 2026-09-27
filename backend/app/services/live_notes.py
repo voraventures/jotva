@@ -20,9 +20,9 @@ from .recorder import recorder
 log = logging.getLogger("jotva.live_notes")
 
 POLL = 5.0             # how often to look for new transcript
-MIN_GAP = 60.0         # at most one update a minute after the first
+MIN_GAP = 25.0         # after the first, an update about every 30 s of talk
 MIN_NEW_CHARS = 60     # a sentence or two: enough for the AI to write something real
-MAX_UPDATES = 90       # hard cap per meeting (~90 min of updates)
+MAX_UPDATES = 240      # hard cap per meeting (~2 h of updates)
 
 
 class LiveNotes:

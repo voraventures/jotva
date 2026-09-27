@@ -1013,7 +1013,7 @@
       "tab": "Notes en direct",
       "updated": "Notes en direct mises à jour",
       "updatedAgo": "Mis à jour à {{time}}",
-      "empty": "Les notes en direct démarrent dès que quelqu'un parle.",
+      "empty": "Les notes en direct démarrent dès que quelqu'un parle, puis se mettent à jour environ toutes les 30 secondes.",
       "starting": "On vous entend — rédaction des premières notes…"
     }
   },

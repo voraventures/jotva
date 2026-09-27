@@ -49,16 +49,16 @@ def run_loop(monkeypatch, captures, feed):
     return blocks, progress, rec
 
 
-def test_transcribes_30s_blocks_from_memory_with_correct_offsets(monkeypatch):
+def test_transcribes_blocks_from_memory_with_correct_offsets(monkeypatch):
     mic, system = FakeCapture(44100), FakeCapture(48000)  # different native rates get mixed
     def feed():
         for _ in range(16):  # 80 s of audio, 5 s at a time
             mic.feed(5); system.feed(5); time.sleep(0.01)
     blocks, progress, rec = run_loop(monkeypatch, [mic, system], feed)
     # a short first block so live notes can start early, then 30 s blocks
-    assert [b[0] for b in blocks] == [0, 12, 42]
-    assert [round(b[1] / 16000) for b in blocks] == [12, 30, 30]
-    assert progress == [12, 42, 72] and rec._live_transcribed_until == 72  # an ~8 s tail is left for stop
+    assert [b[0] for b in blocks] == [0, 12, 32, 52]
+    assert [round(b[1] / 16000) for b in blocks] == [12, 20, 20, 20]
+    assert progress == [12, 32, 52, 72] and rec._live_transcribed_until == 72  # an ~8 s tail is left for stop
 
 
 def test_stops_safely_if_audio_was_spilled_before_it_was_read():

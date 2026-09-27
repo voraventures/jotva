@@ -1013,7 +1013,7 @@
       "tab": "Notas ao vivo",
       "updated": "Notas ao vivo atualizadas",
       "updatedAgo": "Atualizado às {{time}}",
-      "empty": "As notas ao vivo começam assim que alguém fala.",
+      "empty": "As notas ao vivo começam assim que alguém fala e se atualizam a cada 30 segundos, aprox.",
       "starting": "Ouvimos você — escrevendo as primeiras notas…"
     }
   },

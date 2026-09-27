@@ -42,11 +42,11 @@ SPILL_INTERVAL = 2.0
 # so only a short tail is left to transcribe at stop time (see
 # _incremental_transcribe_loop). Audio is read straight from the in-memory
 # chunks every INCR_INTERVAL seconds — well inside TAIL_SECONDS, so nothing is
-# spilled to disk before it's read. 30s matches Whisper's own window and keeps
-# the tail at stop to ~30s (about 2s of work at ~12x real time).
-INCR_BLOCK_SEC = 30
+# spilled to disk before it's read. 20 s blocks feed live notes about every
+# 30 s and keep the tail at stop short (~20 s, about 2 s of work).
+INCR_BLOCK_SEC = 20
 # The first block is short so live notes (Pro) can start ~15 s after people
-# start talking instead of waiting for a full 30 s block.
+# start talking instead of waiting for a full block.
 INCR_FIRST_BLOCK_SEC = 12
 INCR_INTERVAL = 5.0
 
