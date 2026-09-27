@@ -130,3 +130,16 @@ def test_pro_can_turn_on_pro_settings():
     set_setting("license_status", {"valid": True, "dev": True})
     assert client.post("/api/settings", json={"key": "mcp_enabled", "value": True}).status_code == 200
     assert client.post("/api/settings", json={"key": "recording_mode", "value": "all"}).status_code == 200
+
+
+def test_a_keychain_refusal_never_breaks_the_plan_status(monkeypatch):
+    from app.routes import workspace
+
+    def refuse(*a):
+        raise RuntimeError("(-25244, 'Unknown Error')")
+    monkeypatch.undo()  # use the real _sync_install_id_key
+    monkeypatch.setattr(license, "_keyring", None)
+    monkeypatch.setattr(license, "get_secret", lambda name: None)
+    monkeypatch.setattr(license, "set_secret", refuse)
+    monkeypatch.setattr(workspace, "_install_id", lambda: "a" * 32)
+    assert license.status()["tier"] in ("free", "pro")

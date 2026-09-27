@@ -181,7 +181,10 @@ def _sync_install_id_key() -> None:
         return
     iid = _install_id()
     if current != iid:
-        set_secret("license_key", iid)
+        try:
+            set_secret("license_key", iid)
+        except Exception as exc:  # a keychain refusal must never break the plan screen
+            log.warning("Could not store license key in the keychain: %s", exc)
 
 
 def status() -> dict:
@@ -293,7 +296,9 @@ def _verify_signed_license(data: dict, install_id: str) -> bool:
 def refresh() -> dict:
     """Validate the stored license key against the license server."""
     _sync_install_id_key()  # after checkout: ensure we validate the install_id
-    key = get_secret("license_key")
+    from ..routes.workspace import _install_id
+
+    key = get_secret("license_key") or _install_id()  # the key IS the install id
     if not key:
         set_setting("license_status", {"valid": False, "checked_at": time.time()})
         return status()
