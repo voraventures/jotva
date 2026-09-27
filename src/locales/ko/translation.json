@@ -654,6 +654,10 @@
     },
     "decisions": {
       "none": "이 회의에는 기록된 결정이 없습니다."
+    },
+    "live": {
+      "writing": "노트를 작성하는 중…",
+      "transcribing": "전사를 마무리하는 중…"
     }
   },
   "store": {

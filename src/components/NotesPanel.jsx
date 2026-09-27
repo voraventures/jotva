@@ -242,6 +242,7 @@ export default function NotesPanel() {
     hasFeature,
     openUpgrade,
     handleError,
+    liveNotes,
   } = useStore();
   const logoUrl = useLogo();
   const [tab, setTab] = useState("overview"); // overview | timeline | transcript | ask
@@ -607,11 +608,8 @@ export default function NotesPanel() {
           </div>
         </div>
 
-        {busy ? (
-          <div className="empty-state" style={{ height: "auto", padding: "120px 24px" }}>
-            <div className="empty-title">{t("processing.jotting")}</div>
-            <div className="empty-sub">{t("processing.takesAbout")}</div>
-          </div>
+        {busy || (!m.notes && liveNotes[m.id]) ? (
+          <LiveNotesView text={liveNotes[m.id]} stage={live} />
         ) : live === "error" ? (
           <div className="callout risk" style={{ marginTop: 28 }}>
             <WarnIcon size={15} />
@@ -962,4 +960,50 @@ function MeetingTitle({ meeting, onRenamed, onError }) {
       }}
     />
   );
+}
+
+// The notes as the AI writes them, right after Stop: the text grows in place with
+// a caret, and placeholder lines hint at the sections still to come. Swapped for
+// the full Overview as soon as the saved notes load.
+function LiveNotesView({ text, stage }) {
+  const { t } = useTranslation();
+  const waiting = !text;
+  return (
+    <div className="live-notes" aria-live="polite" aria-busy="true">
+      <div className="live-notes-head">
+        <span className="summary-eyebrow">{t("notes.section.summaryBy")}</span>
+        <span className="live-notes-status">
+          <span className="live-dot" aria-hidden="true" />
+          {waiting && stage === "transcribing" ? t("notes.live.transcribing") : t("notes.live.writing")}
+        </span>
+      </div>
+      {text && (
+        <div className="live-notes-body">
+          {liveSections(text).map((sec, i, all) => (
+            <section key={i} className="live-notes-section">
+              {sec.title && <h3>{sec.title}</h3>}
+              <Markdown text={sec.body} />
+              {i === all.length - 1 && <span className="live-caret" aria-hidden="true" />}
+            </section>
+          ))}
+        </div>
+      )}
+      <div className="live-skeleton" aria-hidden="true">
+        {[92, 78, 85, 60].map((w, i) => <span key={i} style={{ width: `${w}%` }} />)}
+      </div>
+    </div>
+  );
+}
+
+// Split streaming markdown on its "## Section" headers so each renders as a heading.
+function liveSections(text) {
+  const out = [];
+  for (const part of text.replace(/\s+$/, "").split(/^## /m)) {
+    if (!part) continue;
+    const nl = part.indexOf("\n");
+    const isHeaded = out.length > 0 || text.startsWith("## ");
+    if (isHeaded) out.push({ title: (nl < 0 ? part : part.slice(0, nl)).trim(), body: nl < 0 ? "" : part.slice(nl + 1) });
+    else out.push({ title: "", body: part });
+  }
+  return out;
 }

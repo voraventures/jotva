@@ -654,6 +654,10 @@
     },
     "decisions": {
       "none": "这场会议没有记录任何决定。"
+    },
+    "live": {
+      "writing": "正在撰写笔记…",
+      "transcribing": "正在完成转录…"
     }
   },
   "store": {

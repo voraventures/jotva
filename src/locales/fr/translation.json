@@ -655,6 +655,10 @@
     },
     "decisions": {
       "none": "Aucune décision enregistrée dans cette réunion."
+    },
+    "live": {
+      "writing": "Rédaction de vos notes…",
+      "transcribing": "Finalisation de la transcription…"
     }
   },
   "store": {

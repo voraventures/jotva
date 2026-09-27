@@ -165,27 +165,43 @@ def _model_for(provider: str) -> str:
     return current_model()
 
 
-def _complete(system: str, user_content: str, max_tokens: int) -> str:
-    """One completion on the active provider; only the SDK call differs."""
+def _complete(system: str, user_content: str, max_tokens: int, on_text=None) -> str:
+    """One completion on the active provider; only the SDK call differs.
+    With `on_text`, Anthropic and OpenAI stream and call it with the text so far
+    as it is written (live notes); anything else calls it once at the end."""
     provider = get_setting("ai_provider", DEFAULT_AI_PROVIDER)
     model = _model_for(provider)
     if provider == "anthropic":
-        message = get_client().messages.create(
-            model=model,
-            max_tokens=max_tokens,
-            system=system,
-            messages=[{"role": "user", "content": user_content}],
-        )
-        return "".join(b.text for b in message.content if b.type == "text").strip()
+        import anthropic
+
+        kwargs = dict(model=model, max_tokens=max_tokens, system=system,
+                      messages=[{"role": "user", "content": user_content}])
+        client = get_client()
+        if on_text:
+            try:
+                return _stream_anthropic(client.messages.create(stream=True, **kwargs), on_text)
+            except anthropic.BadRequestError as exc:
+                # A license server without streaming support: fall back to one response.
+                log.warning("Streaming unavailable (%s); writing notes in one piece", exc)
+        message = client.messages.create(**kwargs)
+        text = "".join(b.text for b in message.content if b.type == "text").strip()
+        if on_text:
+            on_text(text)
+        return text
     if provider == "openai":
-        resp = get_openai_client().chat.completions.create(
-            model=model,
-            max_completion_tokens=max_tokens,
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user_content},
-            ],
-        )
+        messages = [{"role": "system", "content": system}, {"role": "user", "content": user_content}]
+        client = get_openai_client()
+        if on_text:
+            parts = []
+            for chunk in client.chat.completions.create(
+                model=model, max_completion_tokens=max_tokens, messages=messages, stream=True
+            ):
+                delta = chunk.choices[0].delta.content if chunk.choices else None
+                if delta:
+                    parts.append(delta)
+                    on_text("".join(parts))
+            return "".join(parts).strip()
+        resp = client.chat.completions.create(model=model, max_completion_tokens=max_tokens, messages=messages)
         return (resp.choices[0].message.content or "").strip()
     if provider == "google":
         genai = get_gemini_client()
@@ -193,6 +209,36 @@ def _complete(system: str, user_content: str, max_tokens: int) -> str:
         resp = gmodel.generate_content(user_content, generation_config={"max_output_tokens": max_tokens})
         return (resp.text or "").strip()
     raise RuntimeError(f"Unknown AI provider: {provider}")
+
+
+def _stream_anthropic(stream, on_text) -> str:
+    """Collect a streamed Anthropic response, reporting the text so far as it grows."""
+    if hasattr(stream, "content"):  # a client that answered in one piece
+        text = "".join(b.text for b in stream.content if b.type == "text").strip()
+        on_text(text)
+        return text
+    parts = []
+    for event in stream:
+        if event.type == "content_block_delta" and getattr(event.delta, "type", "") == "text_delta":
+            parts.append(event.delta.text)
+            on_text("".join(parts))
+    return "".join(parts).strip()
+
+
+class _LiveNotes:
+    """Throttled `notes_delta` events so the meeting page can show the notes
+    being written without flooding the socket."""
+
+    def __init__(self, meeting_id: str, every: float = 0.12):
+        import time
+
+        self._time, self.meeting_id, self.every, self._last = time.monotonic, meeting_id, every, 0.0
+
+    def __call__(self, text: str, final: bool = False) -> None:
+        now = self._time()
+        if final or now - self._last >= self.every:
+            self._last = now
+            hub.emit("notes_delta", {"meeting_id": self.meeting_id, "text": text, "final": final})
 
 
 def _meeting_day(meeting_id: str) -> str:
@@ -300,7 +346,9 @@ def generate_notes(
         + f"Transcript:\n\n{transcript[:120000]}"
     )
 
-    content = _complete(system, user_content, max_tokens=2400)
+    live = _LiveNotes(meeting_id)
+    content = _complete(system, user_content, max_tokens=2400, on_text=live)
+    live(content, final=True)
 
     path = NOTES_DIR / f"{meeting_id}.md"
     write_secure_text(path, content)

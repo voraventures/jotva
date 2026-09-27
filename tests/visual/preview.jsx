@@ -115,7 +115,9 @@ function Preview() {
     setSettingsOpen: open => open ? openSettings("general") : setOpen(false),
     meetings: visibleMeetings.filter(m => !deletedIds.includes(m.id)).map(m => m.id === meeting.id && ["recording", "error"].includes(state) ? { ...m, status: state, started_at: new Date(Date.now() - 120000).toISOString(), ended_at: null } : m), selectedId, selectMeeting,
     meetingDetail: state === "loading" ? null : { ...(visibleMeetings.find(m => m.id === selectedId) || meeting), status: state === "error" ? "error" : "ready" },
-    progress: state === "processing" ? { [meeting.id]: { stage: "transcribing", pct: .45 } } : {},
+    progress: state === "processing" ? { [meeting.id]: { stage: "transcribing", pct: .45 } }
+      : state === "live-notes" ? { [meeting.id]: { stage: "generating", pct: null } } : {},
+    liveNotes: state === "live-notes" ? { [meeting.id]: "## Executive Summary\nLuis assigned weekly responsibilities across five team members with clear deadlines. A critical dependency exists: Emily's vendor pricing must land before Sarah can finalize the\n" } : {},
     recording, recordingLevel: .3, captureOpen, setCaptureOpen, processingId, setProcessingId, readyMeetingId, setReadyMeetingId, paused, muted: false,
     startRecording: async () => { setCaptureOpen(false); setRecording({ active: true, meetingId: meeting.id }); },
     stopRecording: async () => { setRecording({ active: false }); setProcessingId(meeting.id); }, togglePause: () => setPaused(v => !v),

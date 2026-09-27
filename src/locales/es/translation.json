@@ -655,6 +655,10 @@
     },
     "decisions": {
       "none": "No se registraron decisiones en esta reunión."
+    },
+    "live": {
+      "writing": "Escribiendo tus notas…",
+      "transcribing": "Terminando la transcripción…"
     }
   },
   "store": {

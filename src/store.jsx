@@ -77,6 +77,8 @@ export function StoreProvider({ children }) {
   // Capture-flow card opened in "idle" phase from the sidebar's Record entry,
   // before the user has actually started the microphone.
   const [captureOpen, setCaptureOpen] = useState(false);
+  // Notes as the AI writes them, by meeting id (the meeting page shows them live).
+  const [liveNotes, setLiveNotes] = useState({});
   const [markerCount, setMarkerCount] = useState(0);
   const [liveTranscriptChunks, setLiveTranscriptChunks] = useState([]);
   const [activeCall, setActiveCall] = useState(null); // { app, process, detected_at }
@@ -322,13 +324,21 @@ export function StoreProvider({ children }) {
             );
             break;
           case "recording_stopped":
+            // Straight to the meeting page, where the notes write themselves in.
             setRecording((prev) => {
-              if (prev.meetingId) setProcessingId(prev.meetingId);
+              if (prev.meetingId) {
+                setCaptureOpen(false);
+                setNav("meetings");
+                selectMeeting(prev.meetingId);
+              }
               return { active: false, meetingId: null };
             });
             setRecordingLevel(0);
             setPaused(false);
             setLiveTranscriptChunks([]);
+            break;
+          case "notes_delta":
+            setLiveNotes((prev) => ({ ...prev, [data.meeting_id]: data.text }));
             break;
           case "recording_level":
             setRecordingLevel(data.rms || 0);
@@ -348,6 +358,8 @@ export function StoreProvider({ children }) {
               refreshMyWork();
               refreshLicense();
               if (selectedIdRef.current === data.meeting_id) refreshDetail();
+              // Keep the live text until the saved notes have loaded, then drop it.
+              setTimeout(() => setLiveNotes(({ [data.meeting_id]: _done, ...rest }) => rest), 4000);
               if (data.status === "error") showToast(data.error || i18n.t("store.toast.processingFailed"), "error");
               if (data.status === "ready")
                 notify(
@@ -704,6 +716,7 @@ export function StoreProvider({ children }) {
     setReadyMeetingId,
     captureOpen,
     setCaptureOpen,
+    liveNotes,
     markerCount,
     dropMarker,
     liveTranscriptChunks,

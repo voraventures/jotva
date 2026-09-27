@@ -550,3 +550,29 @@
   .capture-mic button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
   .capture-mic.missing { color: var(--warning); }
 }
+
+/* ---- live-writing notes (meeting page, right after Stop) ---- */
+@media screen {
+  .live-notes {
+    margin-top: 24px; padding: 20px 22px; border-radius: 18px;
+    background: linear-gradient(180deg, var(--accent-softer), transparent 140%), var(--panel-glass);
+    border: 1px solid var(--border);
+  }
+  .live-notes-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .live-notes-status { display: inline-flex; align-items: center; gap: 7px; font-size: calc(12rem / 14); color: var(--muted); }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brand-solid); box-shadow: 0 0 0 0 rgba(123, 108, 246, .6); animation: live-pulse 1.4s ease-out infinite; }
+  @keyframes live-pulse { 0% { box-shadow: 0 0 0 0 rgba(123, 108, 246, .55); } 100% { box-shadow: 0 0 0 9px rgba(123, 108, 246, 0); } }
+  .live-notes-body { position: relative; color: var(--text); line-height: 1.6; }
+  .live-caret { display: inline-block; width: 2px; height: 1.05em; margin-left: 2px; vertical-align: text-bottom; background: var(--accent); animation: live-caret 1s steps(1) infinite; }
+  @keyframes live-caret { 50% { opacity: 0; } }
+  .live-skeleton { display: grid; gap: 10px; margin-top: 18px; }
+  .live-skeleton span { height: 10px; border-radius: 6px; background: linear-gradient(90deg, var(--surface-2), var(--panel-glass), var(--surface-2)); background-size: 200% 100%; animation: live-shimmer 1.6s ease-in-out infinite; }
+  @keyframes live-shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+  body.reduce-motion .live-dot, body.reduce-motion .live-caret, body.reduce-motion .live-skeleton span { animation: none; }
+}
+@media screen {
+  .live-notes-section + .live-notes-section { margin-top: 14px; }
+  .live-notes-section h3 { margin: 0 0 6px; font-size: calc(14rem / 14); font-weight: 600; color: var(--text); }
+  .live-notes-section > .section-body:nth-last-child(2), .live-notes-section > .section-body:nth-last-child(2) > p:last-child { display: inline; }
+  .live-notes-head { gap: 12px; flex-wrap: wrap; }
+}
