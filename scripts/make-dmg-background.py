@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+"""The DMG window background (the install window: drag Jotva to Applications).
+
+  python3 scripts/make-dmg-background.py   → build/background.tiff (+ the 1x/2x PNGs)
+
+Dark like the website, with the glass notepad and "Jotva" at the top, soft light pools
+under the two icons, and a brand-gradient arrow between them. Icon positions must match
+build.dmg.contents in package.json (app at x=160, Applications at x=440, y=205).
+"""
+import math
+import os
+import subprocess
+
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+W, H = 600, 400
+APP, APPS, ICON_Y = (160, 205), (440, 205), 205
+BG = (5, 5, 7)
+BRAND = [(90, 130, 240), (107, 88, 230), (150, 96, 238)]
+FONTS = ["/Applications/Blender.app/Contents/Resources/5.2/datafiles/fonts/Inter.woff2",
+         os.path.join(ROOT, "design-reference/redesign/fonts/inter-0.woff2")]
+MARK = os.path.join(ROOT, "electron/assets/logo-mark-render.png")  # the Blender-rendered notepad
+
+
+def inter(size, weight):
+    for p in FONTS:
+        if os.path.exists(p):
+            f = ImageFont.truetype(p, size)
+            try:
+                f.set_variation_by_axes([min(32, max(14, size)), weight])
+            except Exception:
+                pass
+            return f
+    return ImageFont.load_default()
+
+
+def glow(img, cx, cy, r, color, strength):
+    layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    d.ellipse((cx - r, cy - r * 0.8, cx + r, cy + r * 0.8), fill=(*color, strength))
+    layer = layer.filter(ImageFilter.GaussianBlur(r * 0.45))
+    img.alpha_composite(layer)
+
+
+def draw(scale):
+    s = scale
+    img = Image.new("RGBA", (W * s, H * s), (*BG, 255))
+    # soft light pools under the two icons, and a faint wash behind the title
+    glow(img, APP[0] * s, (ICON_Y + 8) * s, 120 * s, (122, 61, 246), 120)
+    glow(img, APPS[0] * s, (ICON_Y + 8) * s, 120 * s, (52, 82, 246), 110)
+    glow(img, W / 2 * s, 64 * s, 170 * s, (78, 144, 248), 40)
+
+    d = ImageDraw.Draw(img)
+    # title: the rendered notepad mark + "Jotva"
+    title_font = inter(34 * s, 650)
+    tw = d.textlength("Jotva", font=title_font)
+    mark_h = 46 * s
+    mark_w = 0
+    if os.path.exists(MARK):
+        m = Image.open(MARK).convert("RGBA")
+        m = m.crop(m.getbbox())
+        mark_w = int(m.width * mark_h / m.height)
+        m = m.resize((mark_w, mark_h), Image.LANCZOS)
+    gap = 12 * s
+    x0 = int((W * s - (mark_w + gap + tw)) / 2)
+    y_mid = 62 * s
+    if mark_w:
+        img.alpha_composite(m, (x0, int(y_mid - mark_h / 2)))
+    d.text((x0 + mark_w + gap, y_mid), "Jotva", font=title_font, fill=(244, 245, 255), anchor="lm")
+
+    # the arrow: a gradient stroke with a rounded head, between the icons
+    ax0, ax1, ay = (APP[0] + 78) * s, (APPS[0] - 78) * s, ICON_Y * s
+    grad = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    gd = ImageDraw.Draw(grad)
+    steps = 60
+    for i in range(steps):
+        t = i / (steps - 1)
+        k = min(len(BRAND) - 2, int(t * (len(BRAND) - 1)))
+        u = t * (len(BRAND) - 1) - k
+        c = tuple(int(BRAND[k][j] + (BRAND[k + 1][j] - BRAND[k][j]) * u) for j in range(3))
+        x = ax0 + (ax1 - ax0 - 14 * s) * t
+        gd.ellipse((x - 3.2 * s, ay - 3.2 * s, x + 3.2 * s, ay + 3.2 * s), fill=(*c, 255))
+    head = [(ax1, ay), (ax1 - 20 * s, ay - 14 * s), (ax1 - 20 * s, ay + 14 * s)]
+    gd.polygon(head, fill=(*BRAND[-1], 255))
+    soft = grad.filter(ImageFilter.GaussianBlur(6 * s))
+    img.alpha_composite(soft)
+    img.alpha_composite(grad)
+
+    # hint
+    hint = inter(13 * s, 500)
+    d.text((W / 2 * s, 352 * s), "Drag Jotva to Applications", font=hint, fill=(169, 169, 192), anchor="mm")
+    return img.convert("RGB")
+
+
+if __name__ == "__main__":
+    out = os.path.join(ROOT, "build")
+    os.makedirs(out, exist_ok=True)
+    one, two = os.path.join(out, "background.png"), os.path.join(out, "background@2x.png")
+    draw(1).save(one)
+    draw(2).save(two)
+    subprocess.run(["tiffutil", "-cathidpicheck", one, two, "-out", os.path.join(out, "background.tiff")], check=True)
+    print("wrote build/background.tiff")

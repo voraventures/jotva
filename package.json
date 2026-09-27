@@ -42,7 +42,26 @@
     "appId": "app.jotva.desktop",
     "dmg": {
       "title": "Jotva app",
-      "artifactName": "Jotva-app.dmg"
+      "artifactName": "Jotva-app.dmg",
+      "background": "build/background.tiff",
+      "window": {
+        "width": 600,
+        "height": 400
+      },
+      "iconSize": 112,
+      "contents": [
+        {
+          "x": 160,
+          "y": 205,
+          "type": "file"
+        },
+        {
+          "x": 440,
+          "y": 205,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
     },
     "publish": [
       {
