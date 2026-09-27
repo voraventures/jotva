@@ -9,7 +9,12 @@ const CHECK_EVERY_MS = 6 * 60 * 60 * 1000;
 const FIRST_CHECK_MS = 20 * 1000;
 
 function setupAutoUpdates({ getWindow, isRecording }) {
-  if (!app.isPackaged) return; // dev builds run from source
+  if (!app.isPackaged) {
+    // Dev builds run from source: never update, but still answer the window.
+    ipcMain.handle("jotva:update-status", () => null);
+    ipcMain.handle("jotva:install-update", () => ({ ok: false, reason: "none" }));
+    return;
+  }
   const { autoUpdater } = require("electron-updater");
   autoUpdater.autoDownload = true;
   autoUpdater.autoInstallOnAppQuit = true;
