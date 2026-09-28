@@ -75,6 +75,15 @@ Wisely gets a voice for the briefings, the car, voice-jot confirmations and shor
 - **For now, Wisely speaks in the founder's cloned voice** (from a 20–30 s recording, cloned
   locally with OmniVoice, compared against OpenVoice, which is MIT-licensed). Later it becomes an
   alternate ("Wisely, as read by Jotva's founder") when a designed signature voice takes over.
+- **Founder clone: take 2** (founder's pick). Generation settings that sound natural: 64 decoding
+  steps, 0.4 s silence after the last word, 0.03 s fade (the defaults clip the final word and
+  sound robotic). Scripts: vora-jotva-landing/motion/voice/ (private repo).
+- **How Wisely signs off.** Evening recap default: "Nice work today." Day-aware variations keep
+  it from sounding recorded:
+  - Friday: "Nice work this week. Have a great weekend."
+  - Inbox cleared: "Inbox clear, too. Nice work today."
+  - Heavy day (5+ meetings): "Long day. Nice work, get some rest."
+  Keep sign-offs short; people hear them every day.
 - Engines: OmniVoice (code Apache-2.0; its audio tokenizer is under the Boson Higgs Audio 2
   Community License) and OpenVoice V2 (MIT). VoiceStudio is AGPL-3.0: use it only as a tool,
   never ship its code. Confirm licenses before shipping a voice inside Jotva.
