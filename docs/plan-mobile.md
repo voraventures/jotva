@@ -84,11 +84,10 @@ Wisely gets a voice for the briefings, the car, voice-jot confirmations and shor
   - Inbox cleared: "Inbox clear, too. Nice work today."
   - Heavy day (5+ meetings): "Long day. Nice work, get some rest."
   Keep sign-offs short; people hear them every day.
-- **Talking Wisely (locked in 2026-09-27):** Wisely speaks on screen with cartoon lip sync made
-  locally, $0 per clip: `vora-jotva-landing/motion/voice/wisely_talk.py` (mouth drawn every
-  frame, opening driven by the voice's loudness, shapes from word timings + CMU dictionary;
-  mouth art from `wisely_mouths.py`, layers in `motion/avatar/mouths`). Reference clip:
-  `motion/voice/videos/wisely-intro-talk.mp4`. Higgsfield's lip-sync model does not work on him.
+- **Talking Wisely (locked in 2026-09-27):** lip sync and blinking are done locally for $0
+  (vora-jotva-landing/motion/voice/wisely_talk.py + wisely_blink.py, mouth layers in
+  motion/avatar/mouths). Full body in frame, never zoomed to the face. Reference clip:
+  motion/voice/videos/wisely-intro-talk.mp4.
 - Engines: OmniVoice (code Apache-2.0; its audio tokenizer is under the Boson Higgs Audio 2
   Community License) and OpenVoice V2 (MIT). VoiceStudio is AGPL-3.0: use it only as a tool,
   never ship its code. Confirm licenses before shipping a voice inside Jotva.
