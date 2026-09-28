@@ -88,6 +88,14 @@ Wisely gets a voice for the briefings, the car, voice-jot confirmations and shor
   (vora-jotva-landing/motion/voice/wisely_talk.py + wisely_blink.py, mouth layers in
   motion/avatar/mouths). Full body in frame, never zoomed to the face. Reference clip:
   motion/voice/videos/wisely-intro-talk.mp4.
+- **Knitted Wisely and voice K (decided 2026-09-27):** Wisely's look is now the hand-knitted
+  lavender yarn toy (vora-jotva-landing/motion/avatar/materials/wisely-knit.jpg). Feedback said
+  the founder's voice doesn't fit him, so his voice is **K**: a soft, higher kid's voice designed
+  with OmniVoice (`child, high pitch, american accent`, seed 425; motion/voice/wisely_soft_voices.py,
+  with "Jotva" pinned as JOT-vuh). The founder's cloned voice stays a Settings alternate.
+- **Knitted Wisely animation:** replacement knitted mouths and stitched blinks
+  (motion/voice/knit_talk.py) on a puffy 2.5D body in Blender (motion/blender/knit_wisely.py).
+  Video AI (Kling) re-invents his face, so it isn't used for him.
 - Engines: OmniVoice (code Apache-2.0; its audio tokenizer is under the Boson Higgs Audio 2
   Community License) and OpenVoice V2 (MIT). VoiceStudio is AGPL-3.0: use it only as a tool,
   never ship its code. Confirm licenses before shipping a voice inside Jotva.
