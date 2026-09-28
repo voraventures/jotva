@@ -70,6 +70,14 @@ Wisely gets a voice for the briefings, the car, voice-jot confirmations and shor
 - **Cost:** about $5–22/month to start, then a few cents per briefing per user. Set a budget
   and estimate before generating, as with Higgsfield.
 - Later: the same voice on the Mac and in the website's "Meet Wisely" section.
+- **Voices offered (decided 2026-09-27):** one signature voice by default, plus two alternates and
+  "On-device only (Apple voice)" in Settings → Wisely's voice. No voice choice during setup.
+- **For now, Wisely speaks in the founder's cloned voice** (from a 20–30 s recording, cloned
+  locally with OmniVoice, compared against OpenVoice, which is MIT-licensed). Later it becomes an
+  alternate ("Wisely, as read by Jotva's founder") when a designed signature voice takes over.
+- Engines: OmniVoice (code Apache-2.0; its audio tokenizer is under the Boson Higgs Audio 2
+  Community License) and OpenVoice V2 (MIT). VoiceStudio is AGPL-3.0: use it only as a tool,
+  never ship its code. Confirm licenses before shipping a voice inside Jotva.
 
 ## Sync and storage
 
