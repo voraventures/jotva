@@ -324,9 +324,8 @@ def get_avatar():
     return {"avatar": get_setting("user_avatar")}
 
 
-@router.post("/settings/avatar")
-def set_avatar(body: AvatarBody):
-    match = _AVATAR_RE.match(body.image)
+def _check_photo(image: str) -> None:
+    match = _AVATAR_RE.match(image)
     if not match:
         raise HTTPException(status_code=422, detail="Photo must be a JPEG, PNG or WebP image")
     kind, payload = match.groups()
@@ -337,6 +336,11 @@ def set_avatar(body: AvatarBody):
     valid = raw.startswith(_AVATAR_MAGIC[kind]) and (kind != "webp" or raw[8:12] == b"WEBP")
     if not valid or len(raw) > AVATAR_MAX_BYTES:
         raise HTTPException(status_code=422, detail="Photo is not a valid image or is too large")
+
+
+@router.post("/settings/avatar")
+def set_avatar(body: AvatarBody):
+    _check_photo(body.image)
     set_setting("user_avatar", body.image)
     return {"ok": True}
 
@@ -344,6 +348,49 @@ def set_avatar(body: AvatarBody):
 @router.delete("/settings/avatar")
 def delete_avatar():
     set_setting("user_avatar", None)
+    return {"ok": True}
+
+
+# ---------- people's photos ----------
+# Photos the user adds for the people in their meetings and inbox (speakers, owners,
+# attendees, email senders), shown in place of their initials. Keyed by the person's
+# name or email, normalised, and stored on this Mac like the profile photo.
+PEOPLE_PHOTOS_MAX = 300
+
+
+class PersonPhotoBody(BaseModel):
+    name: str = Field(min_length=1, max_length=320)
+    image: str = Field(max_length=360_000)
+
+
+def person_key(name: str) -> str:
+    return " ".join(name.split()).casefold()
+
+
+@router.get("/people/photos")
+def get_people_photos():
+    return {"photos": get_setting("people_photos") or {}}
+
+
+@router.post("/people/photos")
+def set_person_photo(body: PersonPhotoBody):
+    key = person_key(body.name)
+    if not key:
+        raise HTTPException(status_code=422, detail="A name is required")
+    _check_photo(body.image)
+    photos = dict(get_setting("people_photos") or {})
+    if key not in photos and len(photos) >= PEOPLE_PHOTOS_MAX:
+        raise HTTPException(status_code=422, detail="Too many photos saved; remove some first")
+    photos[key] = body.image
+    set_setting("people_photos", photos)
+    return {"ok": True, "key": key}
+
+
+@router.delete("/people/photos")
+def delete_person_photo(name: str):
+    photos = dict(get_setting("people_photos") or {})
+    photos.pop(person_key(name), None)
+    set_setting("people_photos", photos)
     return {"ok": True}
 
 

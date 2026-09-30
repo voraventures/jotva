@@ -20,3 +20,7 @@ export async function imageFileToAvatar(file, size = 256) {
 
 export const initialsOf = (name) =>
   (name || "").trim().split(/\s+/).filter(Boolean).map((s) => s[0]).join("").slice(0, 2).toUpperCase();
+
+// How a person's photo is looked up: their name or email, spaces collapsed, case-insensitive.
+// Must match person_key() in backend/app/routes/misc.py.
+export const personKey = (name) => (name || "").split(/\s+/).filter(Boolean).join(" ").toLowerCase();

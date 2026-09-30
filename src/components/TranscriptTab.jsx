@@ -11,6 +11,7 @@ import { api, mediaUrl } from "../api.js";
 import { useStore } from '../store.jsx';
 import { transcriptText } from '../transcriptText.js';
 import { PauseIcon, PlayIcon, SearchIcon } from "./icons.jsx";
+import PersonAvatar from "./PersonAvatar.jsx";
 
 const SPEEDS = [1, 1.25, 1.5, 2];
 const AVATAR_COLORS = ["var(--av-amber)", "var(--av-teal)", "var(--av-purple)", "var(--av-green)"];
@@ -217,12 +218,14 @@ export default function TranscriptTab({ meeting, jump }) {
                   onClick={src ? () => seek(seg.start ?? 0) : undefined}
                   onKeyDown={src ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); seek(seg.start ?? 0); } } : undefined}
                 >
-                  <span
+                  <PersonAvatar
                     className="tr-avatar"
+                    name={seg.speaker && !/^Speaker[\s_]*\d+$/i.test(seg.speaker) ? seg.speaker : undefined}
+                    editable={!!seg.speaker && !/^Speaker[\s_]*\d+$/i.test(seg.speaker)}
                     style={{ background: AVATAR_COLORS[speakerColorIndex((seg.speaker_id || seg.speaker)?.replace('_', ' '))] }}
                   >
                     {speakerInitials(seg.speaker || t("timeline.speakerFallback"))}
-                  </span>
+                  </PersonAvatar>
                   <div className="tr-turn-main">
                     <div className="tr-turn-head">
                       {seg.speaker_id ? (

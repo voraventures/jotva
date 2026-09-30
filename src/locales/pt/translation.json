@@ -1197,5 +1197,14 @@
     "copied": "Resposta copiada. Cole no seu e-mail.",
     "sent": "Resposta enviada.",
     "savedDraft": "Salva nos seus rascunhos do Gmail."
+  },
+  "people": {
+    "addPhoto": "Adicionar foto",
+    "changePhoto": "Alterar foto",
+    "removePhoto": "Remover foto",
+    "addPhotoOf": "Adicionar uma foto de {{name}}",
+    "changePhotoOf": "Alterar a foto de {{name}}",
+    "saved": "Foto adicionada para {{name}}",
+    "removed": "Foto removida"
   }
 }

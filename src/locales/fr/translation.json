@@ -1197,5 +1197,14 @@
     "copied": "Réponse copiée. Collez-la dans votre e-mail.",
     "sent": "Réponse envoyée.",
     "savedDraft": "Enregistrée dans vos brouillons Gmail."
+  },
+  "people": {
+    "addPhoto": "Ajouter une photo",
+    "changePhoto": "Changer la photo",
+    "removePhoto": "Retirer la photo",
+    "addPhotoOf": "Ajouter une photo de {{name}}",
+    "changePhotoOf": "Changer la photo de {{name}}",
+    "saved": "Photo ajoutée pour {{name}}",
+    "removed": "Photo retirée"
   }
 }

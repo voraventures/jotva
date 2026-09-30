@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { api, openExternal } from "../api.js";
 import { useStore } from "../store.jsx";
 import { CheckIcon, RefreshIcon, SparkIcon } from "./icons.jsx";
+import PersonAvatar from "./PersonAvatar.jsx";
 
 function openLink(thread) {
   const id = thread.last_message_id;
@@ -116,9 +117,9 @@ export default function AgentView() {
               <ul className="agent-list">
                 {threads.map((th) => (
                   <li key={th.id} className={`agent-item urgency-${th.urgency}`}>
-                    <span className="agent-avatar" aria-hidden="true">
+                    <PersonAvatar className="agent-avatar" name={th.counterpart_name} email={th.counterpart_email} editable>
                       {(th.counterpart_name || th.counterpart_email || "?").trim()[0].toUpperCase()}
-                    </span>
+                    </PersonAvatar>
                     <div className="agent-main">
                       <div className="agent-line">
                         <strong>{th.counterpart_name || th.counterpart_email}</strong>

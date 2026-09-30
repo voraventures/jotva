@@ -4577,3 +4577,12 @@ textarea.text-input {
   color: #b8b2a6;
 }
 
+
+/* People's photos (PersonAvatar): the photo fills the circle in place of the initials */
+.has-photo { overflow: hidden; padding: 0; }
+.person-photo { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+.person-avatar-wrap { position: relative; display: inline-flex; flex: none; }
+.person-avatar-btn { display: inline-flex; padding: 0; margin: 0; border: 0; background: none; border-radius: 50%; cursor: pointer; }
+.person-avatar-btn:hover > span { box-shadow: 0 0 0 2px var(--brand-solid); }
+.person-avatar-btn:focus-visible { outline: 2px solid var(--brand-solid); outline-offset: 2px; }
+.person-menu { min-width: 180px; }

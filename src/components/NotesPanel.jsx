@@ -21,6 +21,7 @@ import TimelineTab from "./TimelineTab.jsx";
 import TranscriptTab from "./TranscriptTab.jsx";
 import { CheckIcon, ClockIcon, DotsIcon, PlayIcon, StarIcon, UsersIcon, WarnIcon } from "./icons.jsx";
 import { Confirm } from "./ui.jsx";
+import PersonAvatar from "./PersonAvatar.jsx";
 
 const INTEGRATION_LABELS = {
   slack: "Slack",
@@ -178,7 +179,7 @@ function ActionRow({ item, onAssign, onComplete }) {
           ) : (
             <button className={`ov-action-owner${isTbd ? " tbd" : ""}`} onClick={() => setAssigning(true)}>
               {isTbd ? t("notes.action.assignOwner") : (
-                <><span className="owner-avatar" style={{ background: ownerColor(item.owner) }} aria-hidden="true">{initials(item.owner)}</span>{item.owner}</>
+                <><PersonAvatar className="owner-avatar" name={item.owner} style={{ background: ownerColor(item.owner) }}>{initials(item.owner)}</PersonAvatar>{item.owner}</>
               )}
             </button>
           )}
@@ -505,13 +506,15 @@ export default function NotesPanel() {
             {participants.length > 0 && (
               <span className="avatar-stack" title={participants.join(", ")}>
                 {participants.slice(0, 3).map((p, i) => (
-                  <span
+                  <PersonAvatar
                     className="avatar"
                     key={p}
+                    name={p}
+                    editable
                     style={{ background: AVATAR_COLORS[i % AVATAR_COLORS.length] }}
                   >
                     {initials(p)}
-                  </span>
+                  </PersonAvatar>
                 ))}
                 {participants.length > 3 && (
                   <span className="avatar" style={{ background: "var(--surface-2)", color: "var(--muted)" }}>

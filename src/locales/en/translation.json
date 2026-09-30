@@ -1197,5 +1197,14 @@
     "copied": "Reply copied. Paste it into your email.",
     "sent": "Reply sent.",
     "savedDraft": "Saved to your Gmail drafts."
+  },
+  "people": {
+    "addPhoto": "Add photo",
+    "changePhoto": "Change photo",
+    "removePhoto": "Remove photo",
+    "addPhotoOf": "Add a photo of {{name}}",
+    "changePhotoOf": "Change {{name}}'s photo",
+    "saved": "Photo added for {{name}}",
+    "removed": "Photo removed"
   }
 }

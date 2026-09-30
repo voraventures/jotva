@@ -1197,5 +1197,14 @@
     "copied": "Respuesta copiada. Pégala en tu correo.",
     "sent": "Respuesta enviada.",
     "savedDraft": "Guardada en tus borradores de Gmail."
+  },
+  "people": {
+    "addPhoto": "Añadir foto",
+    "changePhoto": "Cambiar foto",
+    "removePhoto": "Quitar foto",
+    "addPhotoOf": "Añadir una foto de {{name}}",
+    "changePhotoOf": "Cambiar la foto de {{name}}",
+    "saved": "Foto añadida para {{name}}",
+    "removed": "Foto eliminada"
   }
 }

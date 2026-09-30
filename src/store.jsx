@@ -40,6 +40,7 @@ export function StoreProvider({ children }) {
   const [meetingDetail, setMeetingDetail] = useState(null);
   const [license, setLicense] = useState(null);
   const [avatar, setAvatar] = useState(null); // profile photo data: URL, or null
+  const [peoplePhotos, setPeoplePhotos] = useState({}); // person key -> photo data: URL (PersonAvatar)
   const [myWork, setMyWork] = useState(null);
   const [recording, setRecording] = useState({ active: false, meetingId: null });
   const [recordingLevel, setRecordingLevel] = useState(0);
@@ -255,6 +256,7 @@ export function StoreProvider({ children }) {
         }).catch(() => {}),
         refreshTemplates(),
         api.get("/api/settings/avatar").then((r) => setAvatar(r.avatar || null)).catch(() => {}),
+        api.get("/api/people/photos").then((r) => setPeoplePhotos(r.photos || {})).catch(() => {}),
         api
           .get("/api/recording/status")
           .then((s) => setRecording({ active: s.recording, meetingId: s.meeting_id }))
@@ -682,6 +684,16 @@ export function StoreProvider({ children }) {
     }
   }, [showToast]);
 
+  // Save (image) or remove (null) a person's photo under each of their names/emails.
+  const setPersonPhoto = async (names, image) => {
+    for (const n of [...new Set(names.filter(Boolean))]) {
+      if (image) await api.post("/api/people/photos", { name: n, image });
+      else await api.delete(`/api/people/photos?name=${encodeURIComponent(n)}`);
+    }
+    const r = await api.get("/api/people/photos");
+    setPeoplePhotos(r.photos || {});
+  };
+
   const value = {
     ready,
     connectionFailed,
@@ -690,6 +702,8 @@ export function StoreProvider({ children }) {
     setTheme,
     avatar,
     setAvatar,
+    peoplePhotos,
+    setPersonPhoto,
     nav,
     setNav,
     meetings,

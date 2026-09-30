@@ -1184,5 +1184,14 @@
     "copied": "已复制回复，请粘贴到邮件中。",
     "sent": "回复已发送。",
     "savedDraft": "已存到你的 Gmail 草稿。"
+  },
+  "people": {
+    "addPhoto": "添加照片",
+    "changePhoto": "更换照片",
+    "removePhoto": "移除照片",
+    "addPhotoOf": "添加{{name}}的照片",
+    "changePhotoOf": "更换{{name}}的照片",
+    "saved": "已为{{name}}添加照片",
+    "removed": "照片已移除"
   }
 }

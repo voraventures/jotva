@@ -11,6 +11,13 @@ import "../../src/styles.css";
 import "../../src/screen-type.css";
 import "../../src/green-glass.css";
 import "../../src/jotva-theme.css";
+// Photos of the made-up people in these fixtures (AI-generated, not real people), shown in
+// place of their initials the way a user's own added photos would be. ?photos=0 turns them off.
+import alexRivera from "./people/alex-rivera.jpg";
+import emilyChen from "./people/emily-chen.jpg";
+import marcusDiaz from "./people/marcus-diaz.jpg";
+import mayaChen from "./people/maya-chen.jpg";
+import sarahLee from "./people/sarah-lee.jpg";
 
 if (!import.meta.env.DEV) throw new Error("Design fixtures are development-only");
 // Each gallery frame gets its own in-memory preferences; no cross-frame races
@@ -116,7 +123,11 @@ function Preview() {
   document.documentElement.dataset.theme = theme;
   document.documentElement.dataset.fontsize = settings.font_size;
   document.body.classList.toggle("reduce-motion", settings.reduce_motion);
+  const peoplePhotos = params.get("photos") === "0" ? {} : Object.fromEntries(Object.entries({
+    "alex rivera": alexRivera, "emily chen": emilyChen, "marcus diaz": marcusDiaz, "maya chen": mayaChen, "sarah lee": sarahLee,
+  }).filter(([, url]) => url));
   const value = {
+    peoplePhotos, setPersonPhoto: async () => { throw new Error("Writes disabled in synthetic preview"); },
     ready: state !== "boot-loading", connectionFailed: state === "boot-error", theme, setTheme, nav, setNav, settings, setSettings, settingsOpen, settingsSection, openSettings,
     setSettingsOpen: open => open ? openSettings("general") : setOpen(false),
     meetings: visibleMeetings.filter(m => !deletedIds.includes(m.id)).map(m => m.id === meeting.id && ["recording", "error"].includes(state) ? { ...m, status: state, started_at: new Date(Date.now() - 120000).toISOString(), ended_at: null } : m), selectedId, selectMeeting,

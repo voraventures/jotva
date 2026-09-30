@@ -1184,5 +1184,14 @@
     "copied": "답장을 복사했어요. 이메일에 붙여넣으세요.",
     "sent": "답장을 보냈어요.",
     "savedDraft": "Gmail 임시보관함에 저장했어요."
+  },
+  "people": {
+    "addPhoto": "사진 추가",
+    "changePhoto": "사진 변경",
+    "removePhoto": "사진 삭제",
+    "addPhotoOf": "{{name}}님의 사진 추가",
+    "changePhotoOf": "{{name}}님의 사진 변경",
+    "saved": "{{name}}님의 사진을 추가했어요",
+    "removed": "사진을 삭제했어요"
   }
 }
