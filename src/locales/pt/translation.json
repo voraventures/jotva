@@ -67,7 +67,8 @@
       "Export & backup": "Exportar e fazer backup",
       "Subscription": "Assinatura",
       "Agent": "Agente",
-      "Waiting on you": "Esperando você"
+      "Waiting on you": "Esperando você",
+      "Ask across meetings": "Perguntar a todas as reuniões"
     }
   },
   "sidebar": {
@@ -370,7 +371,7 @@
       "pollNote": "O Jotva consulta os calendários conectados a cada 30 segundos e mescla automaticamente eventos duplicados entre calendários. O macOS solicitará permissão de Calendário na primeira vez que o Apple Calendar for ativado.",
       "intro": "Conecte um calendário para que o Jotva transcreva automaticamente as reuniões assim que você entrar — sem precisar apertar gravar.",
       "autoTranscribe": "Transcrever automaticamente reuniões do calendário",
-      "autoTranscribeDesc": "Entra no Zoom, Meet e Teams automaticamente, sem confirmação.",
+      "autoTranscribeDesc": "Grava suas chamadas do Zoom, Meet e Teams neste Mac assim que começam, sem confirmação. Nada entra na chamada.",
       "notify5min": "Avisar 1 minuto antes",
       "notify5minDesc": "Aviso no app antes do início de uma reunião gravada automaticamente."
     },
@@ -549,7 +550,7 @@
     },
     "email": {
       "title": "E-mail — Esperando você",
-      "desc": "O Jotva verifica sua caixa a cada 5 minutos e lista os e-mails que ainda precisam da sua resposta. Só lê: nunca envia, apaga ou marca nada.",
+      "desc": "O Jotva verifica sua caixa a cada 5 minutos e lista os e-mails que ainda esperam sua resposta. Nunca apaga, move ou marca nada, e só envia uma resposta quando você toca em Enviar (ou se ativar a resposta automática abaixo).",
       "connected": "E-mail conectado. Verificando sua caixa…",
       "error": "Não foi possível conectar",
       "synced": "Atualizado",
@@ -1055,6 +1056,10 @@
       "updatedAgo": "Atualizado às {{time}}",
       "empty": "As notas ao vivo começam assim que alguém fala e se atualizam a cada 30 segundos, aprox.",
       "starting": "Ouvimos você — escrevendo as primeiras notas…"
+    },
+    "wisely": {
+      "taking": "está fazendo anotações",
+      "writing": "está escrevendo suas notas…"
     }
   },
   "upcomingToast": {

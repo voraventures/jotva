@@ -67,7 +67,8 @@
       "Export & backup": "导出与备份",
       "Subscription": "订阅",
       "Agent": "助理",
-      "Waiting on you": "等你回复"
+      "Waiting on you": "等你回复",
+      "Ask across meetings": "跨会议提问"
     }
   },
   "sidebar": {
@@ -370,7 +371,7 @@
       "pollNote": "Jotva 每 30 秒轮询一次已连接的日历，并自动合并跨日历的重复事件。首次启用 Apple Calendar 时，macOS 会请求日历权限。",
       "intro": "连接日历后，Jotva 会在你加入会议的那一刻自动转录——无需手动点击录制。",
       "autoTranscribe": "自动转录日历会议",
-      "autoTranscribeDesc": "自动加入 Zoom、Meet 和 Teams，无需确认。",
+      "autoTranscribeDesc": "Zoom、Meet 和 Teams 通话一开始就在这台 Mac 上录音，无需确认。不会有任何东西加入通话。",
       "notify5min": "提前 1 分钟提醒",
       "notify5minDesc": "在自动录制的会议开始前，应用内会显示提醒横幅。"
     },
@@ -549,7 +550,7 @@
     },
     "email": {
       "title": "邮件——等你回复",
-      "desc": "Jotva 每 5 分钟检查一次收件箱，列出仍需要你回复的邮件。只读取：从不发送、删除或标记任何邮件。",
+      "desc": "Jotva 每 5 分钟检查一次收件箱，列出仍需你回复的邮件。它从不删除、移动或标记任何内容，只有在你点击“发送”时（或在下方开启自动回复后）才会发送回复。",
       "connected": "邮箱已连接，正在检查收件箱…",
       "error": "无法连接",
       "synced": "已是最新",
@@ -1043,6 +1044,10 @@
       "updatedAgo": "{{time}} 更新",
       "empty": "有人开始说话，实时笔记就会开始，之后约每 30 秒更新一次。",
       "starting": "听到了——正在撰写第一条笔记…"
+    },
+    "wisely": {
+      "taking": "正在记笔记",
+      "writing": "正在整理你的笔记…"
     }
   },
   "upcomingToast": {

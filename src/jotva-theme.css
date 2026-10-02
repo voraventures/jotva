@@ -695,3 +695,14 @@
   .email-autosend { flex-basis: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px;
     padding-top: 12px; border-top: 1px solid var(--border); }
 }
+
+/* Wisely in the recording window: his picture and what he's doing (CaptureFlow) */
+@media screen {
+  .capture-wisely { display: flex; align-items: center; gap: 8px; width: max-content; margin: 8px auto 0; padding: 4px 12px 4px 5px;
+    border-radius: 999px; background: var(--accent-softer); border: 1px solid var(--accent-border); color: var(--muted); font-size: calc(12.5rem / 14); }
+  .capture-wisely img { width: 26px; height: 26px; object-fit: contain; flex: none; }
+  .capture-wisely b { color: var(--text); font-weight: 600; }
+  .capture-wisely.is-writing img { animation: wisely-write 1.2s ease-in-out infinite; }
+  @keyframes wisely-write { 0%, 100% { transform: rotate(-6deg) translateY(0); } 50% { transform: rotate(6deg) translateY(-1px); } }
+  @media (prefers-reduced-motion: reduce) { .capture-wisely.is-writing img { animation: none; } }
+}

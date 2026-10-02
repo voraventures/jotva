@@ -67,7 +67,8 @@
       "Export & backup": "내보내기 및 백업",
       "Subscription": "구독",
       "Agent": "에이전트",
-      "Waiting on you": "나를 기다리는 이메일"
+      "Waiting on you": "나를 기다리는 이메일",
+      "Ask across meetings": "모든 회의에 질문하기"
     }
   },
   "sidebar": {
@@ -370,7 +371,7 @@
       "pollNote": "Jotva는 30초마다 연결된 캘린더를 확인하고 캘린더 간 중복 일정을 자동으로 병합합니다. Apple Calendar를 처음 사용 설정하면 macOS가 캘린더 권한을 요청합니다.",
       "intro": "캘린더를 연결하면 회의에 참여하는 순간 Jotva가 자동으로 전사를 시작해요 — 녹음 버튼을 누를 필요가 없어요.",
       "autoTranscribe": "캘린더 회의 자동 전사",
-      "autoTranscribeDesc": "확인 없이 Zoom, Meet, Teams에 자동으로 참여해요.",
+      "autoTranscribeDesc": "Zoom, Meet, Teams 통화가 시작되면 이 Mac에서 바로 녹음해요. 확인이 필요 없고, 통화에 아무것도 참여하지 않아요.",
       "notify5min": "1분 전에 알림",
       "notify5minDesc": "자동 녹음될 회의가 시작되기 전 앱 내 배너로 알려드려요."
     },
@@ -549,7 +550,7 @@
     },
     "email": {
       "title": "이메일 — 나를 기다리는 이메일",
-      "desc": "Jotva는 5분마다 받은편지함을 확인하고 아직 답장이 필요한 이메일을 보여줘요. 읽기만 하며 보내거나 삭제하거나 표시하지 않아요.",
+      "desc": "Jotva는 5분마다 받은편지함을 확인하고 아직 답장이 필요한 이메일을 보여줘요. 아무것도 삭제·이동·표시하지 않으며, 보내기를 누를 때(또는 아래에서 자동 답장을 켠 경우)에만 답장을 보내요.",
       "connected": "이메일이 연결됐어요. 받은편지함을 확인하는 중…",
       "error": "연결할 수 없음",
       "synced": "최신 상태",
@@ -1043,6 +1044,10 @@
       "updatedAgo": "{{time}} 업데이트",
       "empty": "누군가 말하기 시작하면 실시간 노트가 시작되고 약 30초마다 업데이트돼요.",
       "starting": "듣고 있어요 — 첫 노트를 작성하는 중…"
+    },
+    "wisely": {
+      "taking": "이(가) 메모하고 있어요",
+      "writing": "이(가) 노트를 작성하고 있어요…"
     }
   },
   "upcomingToast": {

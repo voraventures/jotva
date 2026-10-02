@@ -7,6 +7,7 @@
 // A 40-sample rolling amplitude array rolls forward on every genuine
 // `recording_level` sample from the backend and drives the logo's fan.
 import React, { useEffect, useId, useMemo, useRef, useState } from "react";
+import wiselyStill from "../assets/wisely/still.png";
 import { useTranslation } from "react-i18next";
 import { useStore, useLogo } from "../store.jsx";
 import { api } from "../api.js";
@@ -188,6 +189,14 @@ export default function CaptureFlow() {
     if (recTab === "live" && liveForThis) setSeenLiveAt(liveForThis.at);
   }, [recTab, liveForThis]);
   const liveUnseen = !!liveForThis && liveForThis.at > seenLiveAt && recTab !== "live";
+  // Wisely's chip says "writing your notes" for a few seconds each time live notes update.
+  const [wiselyWriting, setWiselyWriting] = useState(false);
+  useEffect(() => {
+    if (!liveForThis?.at) return undefined;
+    setWiselyWriting(true);
+    const id = setTimeout(() => setWiselyWriting(false), 6000);
+    return () => clearTimeout(id);
+  }, [liveForThis?.at]);
   const showLiveTab = () => (hasFeature("live_notes") ? setRecTab("live") : openUpgrade("live_notes"));
 
   // Which microphone "Start recording" will use, so a wrong or missing input is
@@ -400,6 +409,13 @@ export default function CaptureFlow() {
             {caretOn && <span className="capture-caret" />}
           </div>
         </div>
+
+        {phase === "recording" && (
+          <div className={`capture-wisely${wiselyWriting ? " is-writing" : ""}`} aria-live="polite">
+            <img src={wiselyStill} alt="" aria-hidden="true" />
+            <span><b>Wisely</b> {t(wiselyWriting ? "capture.wisely.writing" : "capture.wisely.taking")}</span>
+          </div>
+        )}
 
         {phase === "ready" && (
           <div className="capture-chips">

@@ -2,7 +2,7 @@
 export const SETTINGS_SECTIONS = ["general", "appearance", "recording", "templates", "ai", "calendars", "integrations", "privacy", "export", "workspace", "license"];
 export const DOCK_GROUPS = [
   { id: "meetings", label: "Meetings", items: [
-    { label: "Meeting library", nav: "meetings" }, { label: "Digest", nav: "digest" },
+    { label: "Meeting library", nav: "meetings" }, { label: "Ask across meetings", nav: "search" }, { label: "Digest", nav: "digest" },
   ] },
   { id: "record", label: "Record", items: [
     { label: "Start recording", action: "record" }, { label: "Recording settings", section: "recording" },

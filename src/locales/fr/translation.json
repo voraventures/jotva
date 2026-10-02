@@ -67,7 +67,8 @@
       "Export & backup": "Export et sauvegarde",
       "Subscription": "Abonnement",
       "Agent": "Agent",
-      "Waiting on you": "En attente de vous"
+      "Waiting on you": "En attente de vous",
+      "Ask across meetings": "Interroger toutes les réunions"
     }
   },
   "sidebar": {
@@ -370,7 +371,7 @@
       "pollNote": "Jotva interroge les calendriers connectés toutes les 30 secondes et fusionne automatiquement les événements en double entre les calendriers. macOS demandera l'autorisation d'accès au calendrier la première fois qu'Apple Calendar est activé.",
       "intro": "Connectez un calendrier pour qu'Jotva transcrive automatiquement les réunions dès que vous les rejoignez — pas besoin d'appuyer sur enregistrer.",
       "autoTranscribe": "Transcrire automatiquement les réunions du calendrier",
-      "autoTranscribeDesc": "Rejoint Zoom, Meet et Teams automatiquement, sans confirmation.",
+      "autoTranscribeDesc": "Enregistre vos appels Zoom, Meet et Teams depuis ce Mac dès qu'ils commencent, sans confirmation. Rien ne rejoint l'appel.",
       "notify5min": "Prévenir 1 minute avant",
       "notify5minDesc": "Bannière dans l'app avant le début d'une réunion enregistrée automatiquement."
     },
@@ -549,7 +550,7 @@
     },
     "email": {
       "title": "E-mail — En attente de vous",
-      "desc": "Jotva vérifie votre boîte toutes les 5 minutes et liste les e-mails qui attendent encore votre réponse. Lecture seule : rien n'est envoyé, supprimé ni marqué.",
+      "desc": "Jotva vérifie votre boîte toutes les 5 minutes et liste les e-mails qui attendent encore votre réponse. Il ne supprime, ne déplace et ne marque jamais rien, et n'envoie une réponse que lorsque vous appuyez sur Envoyer (ou si vous activez la réponse automatique ci-dessous).",
       "connected": "Messagerie connectée. Vérification…",
       "error": "Connexion impossible",
       "synced": "À jour",
@@ -1055,6 +1056,10 @@
       "updatedAgo": "Mis à jour à {{time}}",
       "empty": "Les notes en direct démarrent dès que quelqu'un parle, puis se mettent à jour environ toutes les 30 secondes.",
       "starting": "On vous entend — rédaction des premières notes…"
+    },
+    "wisely": {
+      "taking": "prend des notes",
+      "writing": "rédige vos notes…"
     }
   },
   "upcomingToast": {
