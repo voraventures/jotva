@@ -706,3 +706,4 @@
   @keyframes wisely-write { 0%, 100% { transform: rotate(-6deg) translateY(0); } 50% { transform: rotate(6deg) translateY(-1px); } }
   @media (prefers-reduced-motion: reduce) { .capture-wisely.is-writing img { animation: none; } }
 }
+@media screen { .capture-wisely.agent-wisely { margin: 10px 0 2px; } }

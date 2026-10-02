@@ -1188,7 +1188,8 @@
     "draftNote": "먼저 확인하세요. 보내기를 누르지 않으면 Jotva는 아무것도 보내지 않아요.",
     "copied": "답장을 복사했어요. 이메일에 붙여넣으세요.",
     "sent": "답장을 보냈어요.",
-    "savedDraft": "Gmail 임시보관함에 저장했어요."
+    "savedDraft": "Gmail 임시보관함에 저장했어요.",
+    "wiselyWriting": "이(가) 당신의 말투로 답장을 쓰고 있어요…"
   },
   "people": {
     "addPhoto": "사진 추가",

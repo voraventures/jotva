@@ -1201,7 +1201,8 @@
     "draftNote": "Review it first. Jotva never sends anything unless you press Send.",
     "copied": "Reply copied. Paste it into your email.",
     "sent": "Reply sent.",
-    "savedDraft": "Saved to your Gmail drafts."
+    "savedDraft": "Saved to your Gmail drafts.",
+    "wiselyWriting": "is writing a reply in your style…"
   },
   "people": {
     "addPhoto": "Add photo",

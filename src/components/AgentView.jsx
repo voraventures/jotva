@@ -2,6 +2,7 @@
 // email triage. Read-only on the mailbox: "Open" jumps to the message in Gmail
 // or Apple Mail; Done / Snooze / Not needed only change Jotva's own list.
 import React, { useCallback, useEffect, useState } from "react";
+import wiselyStill from "../assets/wisely/still.png";
 import { useTranslation } from "react-i18next";
 import { api, openExternal } from "../api.js";
 import { useStore } from "../store.jsx";
@@ -131,7 +132,9 @@ export default function AgentView() {
                       {drafting?.id === th.id && (
                         <div className="agent-draft">
                           {drafting.busy && !drafting.text ? (
-                            <div className="agent-draft-busy"><span className="live-dot" /> {t("agent.writing")}</div>
+                            <div className="capture-wisely is-writing agent-wisely" aria-live="polite">
+                              <img src={wiselyStill} alt="" aria-hidden="true" /><span><b>Wisely</b> {t("agent.wiselyWriting")}</span>
+                            </div>
                           ) : (
                             <>
                               <textarea aria-label={t("agent.draftLabel")} value={drafting.text} rows={6}
