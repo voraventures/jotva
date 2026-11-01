@@ -506,9 +506,6 @@
       "revalidate": "Revalidar",
       "getPro": "Obter Pro — $12/mo",
       "starting": "Iniciando…",
-      "devTesting": "Teste de Desenvolvedor",
-      "switchFree": "Mudar para Gratuito",
-      "switchPro": "Mudar para Pro",
       "planPro": "Pro",
       "planFree": "Gratuito"
     },
@@ -518,7 +515,6 @@
       "checkoutFailed": "Não foi possível iniciar o checkout",
       "checkoutFailedStatus": "Falha no checkout ({{status}})",
       "noCheckoutUrl": "Nenhuma URL de checkout retornada",
-      "switched": "Mudou para {{plan}}",
       "savedKeychain": "{{name}} salvo no keychain",
       "disconnected": "{{name}} desconectado"
     },

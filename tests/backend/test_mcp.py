@@ -16,6 +16,7 @@ import anyio
 import pytest
 from app.config import ensure_dirs, DB_PATH
 from app.db import get_db, set_setting
+from _pro import TEST_PUBLIC_PEM, grant_pro, revoke_pro  # noqa: E402
 from mcp.client.session import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
@@ -40,13 +41,17 @@ def seeded():
     db.execute("INSERT INTO topics(id,meeting_id,name) VALUES('t1','m1','Pricing')")
     db.commit()
     set_setting("mcp_enabled", True)
-    set_setting("license_status", {"valid": True, "dev": True})  # MCP is a Pro feature
+    grant_pro()  # MCP is a Pro feature
 
 
 def run(*calls):
     """Launch the server over stdio, run (tool, args) calls, return (tools, results)."""
     async def main():
-        params = StdioServerParameters(command=sys.executable, args=["run.py", "--mcp"],
+        # Same entry point as `run.py --mcp`, but the throwaway test key stands in for the license
+        # server's public key (the real key rightly rejects a test-signed license).
+        boot = ("import sys; sys.path.insert(0, '.'); from app.services import license as L; "
+                f"L.LICENSE_PUBLIC_KEY_PEM = {TEST_PUBLIC_PEM!r}; from app.mcp_server import main; main()")
+        params = StdioServerParameters(command=sys.executable, args=["-c", boot],
                                        # the data dir the app resolved (another test module may have set it first)
                                        env={"JOTVA_DATA_DIR": str(DB_PATH.parent)}, cwd=str(BACKEND))
         async with stdio_client(params) as (read, write):
@@ -79,7 +84,7 @@ def test_refuses_everything_until_the_user_opts_in():
 
 
 def test_free_plan_is_told_it_is_a_pro_feature():
-    set_setting("license_status", {"valid": False})
+    revoke_pro()
     _, (r,) = run(("list_meetings", {}))
     assert r.is_error and "Pro" in r.content[0].text
 

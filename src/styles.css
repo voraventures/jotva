@@ -3830,30 +3830,6 @@ textarea.text-input {
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* dev testing */
-.dev-testing {
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-.dev-testing-label {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-.dev-tier-btn {
-  font-size: 12px;
-  padding: 6px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  cursor: pointer;
-}
-
 /* tone chips (follow-up) */
 .tone-row {
   display: flex;

@@ -506,9 +506,6 @@
       "revalidate": "재검증",
       "getPro": "Pro 구매 — $12/mo",
       "starting": "시작 중…",
-      "devTesting": "개발자 테스트",
-      "switchFree": "Free로 전환",
-      "switchPro": "Pro로 전환",
       "planPro": "Pro",
       "planFree": "Free"
     },
@@ -518,7 +515,6 @@
       "checkoutFailed": "결제를 시작할 수 없습니다",
       "checkoutFailedStatus": "결제 실패 ({{status}})",
       "noCheckoutUrl": "반환된 결제 URL이 없습니다",
-      "switched": "{{plan}}(으)로 전환됨",
       "savedKeychain": "{{name}}이(가) 키체인에 저장됨",
       "disconnected": "{{name}} 연결 해제됨"
     },

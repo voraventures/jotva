@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from .auth import SESSION_TOKEN, check_ws_auth, require_token
-from .config import ALLOWED_HOSTS, ALLOWED_ORIGINS, DEV_MODE, ensure_dirs
+from .config import ALLOWED_HOSTS, ALLOWED_ORIGINS, ensure_dirs
 from .events import hub
 from .ratelimit import check_rate_limit
 from .routes import billing, calendar, email, intelligence, meetings, misc, mobile, recording, share, system, workspace, speakers
@@ -88,11 +88,6 @@ def create_app() -> FastAPI:
     app.include_router(mobile.router, dependencies=authed)
     # OAuth browser callback: protected by single-use PKCE state w/ TTL, not token.
     app.include_router(calendar.oauth_router)
-    # DEV ONLY: tier-switch testing endpoint, registered only in development.
-    if DEV_MODE:
-        from .routes import dev as dev_routes
-
-        app.include_router(dev_routes.router, dependencies=authed)
 
     @app.get("/ping")
     def ping():

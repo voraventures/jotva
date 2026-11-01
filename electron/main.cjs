@@ -100,7 +100,7 @@ function startBackend() {
     cwd: useExe ? path.dirname(exe) : path.join(PROJECT_ROOT, "backend"),
     // DEV ONLY: signal dev mode to the backend so it can register
     // developer-testing endpoints (never set true in packaged builds).
-    env: { ...process.env, PYTHONUNBUFFERED: "1", JOTVA_DEV: IS_DEV ? "1" : "0" },
+    env: { ...process.env, PYTHONUNBUFFERED: "1" },
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true,
   });

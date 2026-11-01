@@ -1,13 +1,20 @@
 """Freemium plan + Pro license validated against the remote server.
 
+Pro is a license SIGNED by the license server (RSA, bundled public key). The app stores the signed
+license itself and re-verifies the signature, the install id and the expiry every time it asks
+"is this install Pro?" (is_pro). There is no unsigned or developer shortcut anywhere: editing the
+local database, the settings or the environment cannot make an install Pro. A developer gets Pro
+the way a customer does, with a license the server signs for their install.
+
 Free, forever: unlimited recording and on-device transcription, plus AI notes for
 FREE_AI_NOTES_PER_MONTH meetings a month through the bundled AI. Pro unlocks
 unlimited notes and the power features in PRO_FEATURES. A free user never loses
 access to anything they already have — past notes stay readable and exportable."""
 import json
 import logging
-import os
+import threading
 import time
+from functools import lru_cache
 from datetime import datetime, timezone
 
 import httpx
@@ -44,12 +51,8 @@ PRO_FEATURES = (
     "integrations",      # Slack / Notion / workspace sharing
 )
 
-# Offline grace: a previously-validated license stays valid 72h without re-check.
-OFFLINE_GRACE_SEC = 72 * 3600
-
-# DEV ONLY: local development license — activates Pro indefinitely without
-# ever contacting the license server. Never publish this key.
-DEV_LICENSE_KEY = os.environ.get("JOTVA_DEV_KEY", "")
+# A signed license carries its own expiry (the server issues ~35 days at each renewal), so a Pro
+# install keeps working offline until then and never longer. The app re-fetches it regularly.
 
 
 try:
@@ -123,10 +126,20 @@ def uses_bundled_ai() -> bool:
 
 
 def is_pro() -> bool:
-    cached = get_setting("license_status", {})
-    if cached.get("dev"):  # DEV ONLY
-        return True
-    return bool(cached.get("valid")) and (time.time() - cached.get("checked_at", 0) < OFFLINE_GRACE_SEC)
+    """True only for a license the server signed for THIS install and that has not expired. The
+    stored license is re-verified on every call; nothing else in the settings is believed."""
+    return signed_license_valid(get_setting("license_signed"), _this_install_id())
+
+
+def _this_install_id() -> str:
+    from ..routes.workspace import _install_id
+
+    return _install_id()
+
+
+def signed_license_valid(signed, install_id: str) -> bool:
+    """Shared by the app and the MCP server (which reads the same database)."""
+    return isinstance(signed, dict) and bool(install_id) and _verify_signed_license(signed, install_id)
 
 
 def has_feature(feature: str) -> bool:
@@ -178,12 +191,10 @@ def record_ai_notes(meeting_id: str) -> None:
 def _sync_install_id_key() -> None:
     """The Stripe webhook keys the issued license to the install_id, so the
     install_id IS the license key — users never enter one manually. Keep the
-    keychain license_key in sync with the install_id, but never clobber a dev key."""
+    keychain license_key in sync with the install_id."""
     from ..routes.workspace import _install_id
 
     current = get_secret("license_key")
-    if DEV_LICENSE_KEY and current == DEV_LICENSE_KEY:
-        return
     iid = _install_id()
     if current != iid:
         try:
@@ -192,8 +203,29 @@ def _sync_install_id_key() -> None:
             log.warning("Could not store license key in the keychain: %s", exc)
 
 
+_migration_started = False
+
+
+def _migrate_legacy_flag() -> None:
+    """Earlier versions kept Pro as a bare yes/no flag. If one is there but no signed license is
+    stored yet, fetch the signed license once in the background (paying customers keep Pro), and
+    drop the old flag, including any "dev" marker, so nothing unsigned lingers in the database."""
+    global _migration_started
+    if _migration_started:
+        return
+    _migration_started = True
+    legacy = get_setting("license_status")
+    if not isinstance(legacy, dict):
+        return
+    if legacy.get("dev") or legacy.get("valid"):
+        set_setting("license_status", {"valid": False, "checked_at": 0})
+        if not isinstance(get_setting("license_signed"), dict):
+            threading.Thread(target=refresh, daemon=True, name="license-migrate").start()
+
+
 def status() -> dict:
     _sync_install_id_key()  # on app start: ensure license_key == install_id
+    _migrate_legacy_flag()
     pro = is_pro()
     used = ai_notes_used()
     bundled = uses_bundled_ai()
@@ -220,42 +252,15 @@ def _next_month_start() -> str:
 
 
 def activate(license_key: str) -> dict:
-    key = license_key.strip()
-    set_secret("license_key", key)
-    if DEV_LICENSE_KEY and key == DEV_LICENSE_KEY:  # DEV ONLY: bypass the remote server entirely
-        set_setting("license_status", {"valid": True, "dev": True, "checked_at": time.time()})
-        return status()
+    set_secret("license_key", license_key.strip())
     return refresh()
 
 
-def _reset_keychain_counter() -> None:  # DEV ONLY
-    """DEV ONLY: zero the monotonic free-tier counter so usage resets."""
-    if _keyring is None:
-        return
-    try:
-        _keyring.set_password(_KC_SERVICE, _KC_COUNTER, "0")
-    except Exception as exc:
-        log.warning("Could not reset keychain meeting counter: %s", exc)
+@lru_cache(maxsize=4)
+def _public_key(pem: str):
+    from cryptography.hazmat.primitives import serialization
 
-
-def set_tier(tier: str) -> dict:  # DEV ONLY
-    """DEV ONLY: flip local license state between free and pro without touching
-    the license server. 'pro' mirrors the AGUA-DEV-LOCAL-2026 bypass; 'free'
-    clears the cached license and resets the usage counter."""
-    if tier == "pro":
-        set_setting("license_status", {"valid": True, "dev": True, "checked_at": time.time()})
-    else:
-        set_setting("license_status", {"valid": False, "checked_at": time.time()})
-        _reset_keychain_counter()
-        month = _month()
-        get_db().execute("DELETE FROM ai_note_usage WHERE month=?", (month,))
-        get_db().commit()
-        if _keyring is not None:
-            try:
-                _keyring.set_password(_KC_SERVICE, _kc_month_key(month), "0")
-            except Exception:
-                pass
-    return status()
+    return serialization.load_pem_public_key(pem.encode())
 
 
 def _verify_signed_license(data: dict, install_id: str) -> bool:
@@ -282,7 +287,7 @@ def _verify_signed_license(data: dict, install_id: str) -> bool:
         from cryptography.hazmat.primitives import hashes, serialization
         from cryptography.hazmat.primitives.asymmetric import padding
 
-        public_key = serialization.load_pem_public_key(LICENSE_PUBLIC_KEY_PEM.encode())
+        public_key = _public_key(LICENSE_PUBLIC_KEY_PEM)
         # Must byte-match the server's canonicalization:
         # json.dumps(payload, sort_keys=True, separators=(",", ":"))
         canonical = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
@@ -299,37 +304,41 @@ def _verify_signed_license(data: dict, install_id: str) -> bool:
 
 
 def refresh() -> dict:
-    """Validate the stored license key against the license server."""
+    """Fetch this install's signed license from the license server and store it (only if its
+    signature checks out). A definitive "no license" (404) clears it; a server error or no network
+    leaves what is stored, so a paying customer never loses Pro because of an outage."""
     _sync_install_id_key()  # after checkout: ensure we validate the install_id
-    from ..routes.workspace import _install_id
-
-    key = get_secret("license_key") or _install_id()  # the key IS the install id
+    install = _this_install_id()
+    key = get_secret("license_key") or install  # the key IS the install id
     if not key:
-        set_setting("license_status", {"valid": False, "checked_at": time.time()})
-        return status()
-    if key == DEV_LICENSE_KEY:  # DEV ONLY: dev license never re-validates remotely
-        set_setting("license_status", {"valid": True, "dev": True, "checked_at": time.time()})
         return status()
     try:
-        resp = httpx.get(
-            f"{LICENSE_SERVER_URL}/license/{key}",
-            timeout=10,
-        )
-        data = resp.json() if resp.status_code == 200 else {}
-        valid = (
-            resp.status_code == 200
-            and not data.get("error")
-            and _verify_signed_license(data, key)
-        )
-        set_setting("license_status", {"valid": valid, "checked_at": time.time()})
+        resp = httpx.get(f"{LICENSE_SERVER_URL}/license/{key}", timeout=10)
+    except httpx.HTTPError as exc:
+        log.warning("License server unreachable: %s", exc)
+        return status()
+    if resp.status_code == 404:
+        set_setting("license_signed", None)
+        set_setting("license_status", {"valid": False, "checked_at": time.time()})
+        return status()
+    if resp.status_code != 200:
+        log.warning("License server answered %s; keeping the stored license", resp.status_code)
+        return status()
+    try:
+        data = resp.json()
+    except ValueError:
+        return status()
+    if not data.get("error") and _verify_signed_license(data, key):
+        # Store exactly what the server signed (not the portal token, which is not part of it)
+        set_setting("license_signed", {"payload": data["payload"], "signature": data["signature"]})
+        set_setting("license_status", {"valid": True, "checked_at": time.time()})
         # Cache the fresh portal token the server mints on each lookup; the
         # billing-portal call presents it to prove ownership of this install.
-        if valid and data.get("portal_token"):
+        if data.get("portal_token"):
             try:
                 set_secret("portal_token", data["portal_token"])
             except Exception as exc:  # keychain unavailable — non-fatal
                 log.warning("Could not store portal token: %s", exc)
-    except httpx.HTTPError as exc:
-        log.warning("License server unreachable: %s", exc)
-        # keep previous cached status (offline grace handled in status())
+    else:
+        log.warning("License response failed verification; ignoring it")
     return status()

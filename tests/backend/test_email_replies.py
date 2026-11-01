@@ -17,6 +17,7 @@ from app.config import ensure_dirs
 from app.db import get_db, set_setting
 from app.services import notes
 from app.services.mail import gmail, replies
+from _pro import grant_pro, revoke_pro  # noqa: E402
 
 ensure_dirs()
 ME = "luis@vora.co"
@@ -38,7 +39,7 @@ def setup(monkeypatch):
     db.execute("INSERT INTO email_messages(id,account_id,thread_key,from_email,from_name,sent_at,snippet,message_id) "
                "VALUES('g:m1','g','t1','sarah@acme.com','Sarah Lee','2026-09-26T10:00:00','Lunch Thursday?','m1@acme')")
     db.commit()
-    set_setting("license_status", {"valid": True, "dev": True})
+    grant_pro()
     set_setting("email_style", {"text": "- Signs off 'Best, Luis'", "at": 9e18})
 
 

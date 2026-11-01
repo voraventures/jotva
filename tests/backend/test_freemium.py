@@ -15,6 +15,7 @@ from app.config import ensure_dirs
 from app.db import get_db, get_setting, set_setting
 from app.routes import calendar, meetings, misc
 from app.services import conflicts, license, notes, pipeline, telemetry
+from _pro import grant_pro, revoke_pro  # noqa: E402
 
 ensure_dirs()
 app = FastAPI()
@@ -41,7 +42,7 @@ def isolated(monkeypatch):
         db.execute(f"DELETE FROM {table}")
     db.commit()
     set_setting("ai_provider", "anthropic")
-    set_setting("license_status", {"valid": False})
+    revoke_pro()
     return secrets
 
 
@@ -94,13 +95,13 @@ def test_regenerate_route_offers_upgrade_at_the_limit(monkeypatch):
 
 
 def test_pro_is_unlimited_and_own_key_is_a_pro_feature(isolated):
-    set_setting("license_status", {"valid": True, "dev": True})
+    grant_pro()
     for i in range(LIMIT + 2):
         assert write_notes(f"p{i}") == 0
     assert license.status()["ai_notes_limit"] is None
     isolated["anthropic_api_key"] = "user-key"
     assert license.uses_bundled_ai() is False  # Pro + own key: the user's own account
-    set_setting("license_status", {"valid": False})
+    revoke_pro()
     assert license.uses_bundled_ai() is True  # Free: an own key is ignored
     write_notes("byok")
     assert license.ai_notes_used() == 1  # so it counts against the free allowance
@@ -130,7 +131,7 @@ def test_pro_settings_and_routes_answer_402_on_free():
 
 
 def test_pro_can_turn_on_pro_settings():
-    set_setting("license_status", {"valid": True, "dev": True})
+    grant_pro()
     assert client.post("/api/settings", json={"key": "mcp_enabled", "value": True}).status_code == 200
     assert client.post("/api/settings", json={"key": "recording_mode", "value": "all"}).status_code == 200
 

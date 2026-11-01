@@ -7,7 +7,6 @@ an assistant reads is sent to that assistant's provider — the Settings UI says
 """
 import json
 import sqlite3
-import time
 from contextlib import closing
 from datetime import date, timedelta
 
@@ -16,7 +15,7 @@ from mcp.server.mcpserver.exceptions import ToolError
 from mcp.types import ToolAnnotations
 
 from .config import DB_PATH
-from .services.license import OFFLINE_GRACE_SEC
+from .services.license import signed_license_valid
 
 TRANSCRIPT_LIMIT = 40_000
 READ_ONLY = ToolAnnotations(read_only_hint=True, open_world_hint=False)
@@ -52,15 +51,17 @@ def _connect() -> sqlite3.Connection:
     return conn
 
 
+def _setting(conn: sqlite3.Connection, key: str):
+    row = conn.execute("SELECT value FROM settings WHERE key = ?", (key,)).fetchone()
+    try:
+        return json.loads(row["value"]) if row else None
+    except ValueError:
+        return None
+
+
 def _is_pro(conn: sqlite3.Connection) -> bool:
-    """Same rule as services.license.is_pro, read from the cached license row."""
-    row = conn.execute("SELECT value FROM settings WHERE key = 'license_status'").fetchone()
-    cached = json.loads(row["value"]) if row else {}
-    if not isinstance(cached, dict):
-        return False
-    if cached.get("dev"):
-        return True
-    return bool(cached.get("valid")) and time.time() - cached.get("checked_at", 0) < OFFLINE_GRACE_SEC
+    """Same rule as services.license.is_pro: the server-signed license, re-verified here."""
+    return signed_license_valid(_setting(conn, "license_signed"), _setting(conn, "install_id") or "")
 
 
 def _clamp(limit: int, top: int = 100) -> int:

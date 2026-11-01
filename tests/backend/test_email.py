@@ -18,6 +18,7 @@ from app.db import get_db, set_setting
 from app.routes import email as email_routes
 from app.services import license, notes
 from app.services.mail import imap, parse, sync, triage
+from _pro import grant_pro, revoke_pro  # noqa: E402
 
 ensure_dirs()
 app = FastAPI()
@@ -38,7 +39,7 @@ def clean(monkeypatch):
     for t in ("email_accounts", "email_messages", "email_threads", "settings"):
         db.execute(f"DELETE FROM {t}")
     db.commit()
-    set_setting("license_status", {"valid": True, "dev": True})
+    grant_pro()
     secrets = {}
     monkeypatch.setattr(sync, "set_secret", lambda k, v: secrets.__setitem__(k, v))
     monkeypatch.setattr(sync, "get_secret", lambda k: secrets.get(k))
@@ -128,7 +129,7 @@ def test_bad_login_is_explained_and_nothing_is_saved(monkeypatch):
 
 
 def test_email_is_a_pro_feature():
-    set_setting("license_status", {"valid": False})
+    revoke_pro()
     assert client.get("/api/email/waiting").status_code == 402
     r = client.post("/api/email/accounts", json={"provider": "gmail", "address": ME, "password": "abcdefgh"})
     assert r.status_code == 402 and r.json()["detail"]["feature"] == "email"

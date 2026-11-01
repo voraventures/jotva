@@ -506,9 +506,6 @@
       "revalidate": "重新验证",
       "getPro": "获取 Pro — $12/mo",
       "starting": "启动中…",
-      "devTesting": "开发者测试",
-      "switchFree": "切换到 Free",
-      "switchPro": "切换到 Pro",
       "planPro": "Pro",
       "planFree": "Free"
     },
@@ -518,7 +515,6 @@
       "checkoutFailed": "无法启动结账",
       "checkoutFailedStatus": "结账失败（{{status}}）",
       "noCheckoutUrl": "未返回结账 URL",
-      "switched": "已切换到 {{plan}}",
       "savedKeychain": "{{name}} 已保存到钥匙串",
       "disconnected": "{{name}} 已断开连接"
     },

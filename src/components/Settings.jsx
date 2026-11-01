@@ -772,19 +772,6 @@ export default function Settings() {
       .finally(() => setPortalLoading(false));
   };
 
-  // DEV ONLY: flip the local license tier for testing; the sidebar re-reads
-  // license state immediately via refreshLicense(). Backed by /api/dev/set-tier,
-  // which is only registered when the backend runs in development.
-  const switchTier = (tier) => {
-    api
-      .post("/api/dev/set-tier", { tier })
-      .then(() => {
-        refreshLicense();
-        showToast(t('settings.toast.switched', { plan: tier === "pro" ? t('settings.license.planPro') : t('settings.license.planFree') }));
-      })
-      .catch((e) => showToast(e.message, "error"));
-  };
-
   return (
     <div className="settings-layer">
       <SettingsPanel section={tab} title={t(`dock.labels.${settingsLabel(tab)}`, { defaultValue: settingsLabel(tab) })} onClose={() => setSettingsOpen(false)}>
@@ -2006,22 +1993,6 @@ export default function Settings() {
                   )}
                 </div>
               </div>
-              {/* DEV ONLY: tier switching for local testing (hidden in production builds) */}
-              {import.meta.env.DEV && (
-                <div className="dev-testing">
-                  <div className="dev-testing-label">
-                    <CodeIcon size={11} /> {t('settings.license.devTesting')}
-                  </div>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <button className="dev-tier-btn" onClick={() => switchTier("free")}>
-                      {t('settings.license.switchFree')}
-                    </button>
-                    <button className="dev-tier-btn" onClick={() => switchTier("pro")}>
-                      {t('settings.license.switchPro')}
-                    </button>
-                  </div>
-                </div>
-              )}
             </>
           )}
           </div>

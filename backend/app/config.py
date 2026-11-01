@@ -68,15 +68,6 @@ STRIPE_CHECKOUT_URL = os.environ.get(
 )
 FREE_TIER_LIMIT = 5
 
-# DEV ONLY: gates developer-testing endpoints (e.g. /api/dev/set-tier). Requires
-# an EXPLICIT opt-in — a packaged binary launched from a shell that happens to
-# export NODE_ENV=development must not grow a Pro-bypass endpoint, so ambient
-# environment variables are deliberately not consulted.
-DEV_MODE = (
-    os.environ.get("DEV_MODE", "").lower() == "true"
-    or os.environ.get("JOTVA_DEV") == "1"
-)
-
 # OAuth client config is user-supplied (never bundled). See credentials.example.json.
 CREDENTIALS_PATH = DATA_DIR / "credentials.json"
 
