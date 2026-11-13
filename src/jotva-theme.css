@@ -7,7 +7,15 @@
     /* slightly deeper stops so white button text keeps contrast */
     --brand-solid: linear-gradient(135deg, #5a82f0 0%, #6b58e6 55%, #9660ee 100%);
     --brand-glow: 0 6px 22px rgba(123, 108, 246, .42);
-    --font-wordmark: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+    --font-wordmark: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  /* Match the screen system's theme selectors so the single sans wins in light and dark. */
+  :root,
+  :root[data-theme="default"],
+  :root[data-theme="dark"] {
+    --font-body: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-display: var(--font-body);
+    --font-mono: var(--font-body);
   }
 
   :root[data-theme="dark"] {
@@ -55,7 +63,7 @@
 
   /* ---- shell ---- */
   .green-glass.app { background: var(--ambient), var(--bg); }
-  .brand-wordmark { font-family: var(--font-wordmark); font-weight: 650; letter-spacing: -.02em; }
+  .brand-wordmark { font-family: "Hanken Grotesk", var(--font-body); font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
   .app-brand img { width: 26px; height: 26px; }
 
   .green-glass .list-panel,
@@ -126,22 +134,17 @@
   .meeting-options-menu, .card-menu-dropdown, .ws-more-menu, .select-menu { background: var(--menu-glass); border-color: var(--border-strong); }
 }
 
-/* ---- typography: SF Pro, refined (few sizes, three weights, calm spacing) ----
-   Sizes are rem-relative so Appearance → Font size still scales everything.
-   1rem = --font-size-base (13 / 14 / 16px for small / medium / large). */
+/* ---- typography: one sans, three weights, calm spacing ----
+   Sizes stay rem-relative so Appearance → Font size still scales everything.
+   1rem = --font-size-base from the screen system (13 / 15 / 17). */
 @media screen {
-  :root, :root[data-theme] { --font-size-base: 14px; }
-  :root[data-fontsize="small"] { --font-size-base: 13px; }
-  :root[data-fontsize="large"] { --font-size-base: 16px; }
-
-  body { line-height: 1.5; letter-spacing: 0; }
+  body { line-height: 1.5; letter-spacing: 0; font-family: var(--font-body); }
   b, strong { font-weight: 600; }
 
   /* titles: let SF Pro's built-in optical tracking do the work */
   .ws-title, .view-title { font-size: calc(24rem / 14); font-weight: 600; letter-spacing: -.01em; line-height: 1.25; }
   .meeting-day-header h2 { font-size: calc(20rem / 14); font-weight: 600; letter-spacing: -.01em; }
-  .brand-wordmark { font-size: calc(17rem / 14); font-weight: 600; letter-spacing: -.01em; }
-  .brand-wordmark-large { font-size: calc(22rem / 14); }
+  .brand-wordmark-large { font-weight: 600; letter-spacing: -.02em; }
   .capture-title, .onboarding-title { font-weight: 600; letter-spacing: -.01em; }
   .empty-title, .view-section-title, .modal-title, .ask-empty-title { font-size: calc(17rem / 14); font-weight: 600; letter-spacing: 0; }
 
@@ -351,8 +354,11 @@
     border: 0; border-radius: 10px; font-size: calc(13rem / 14); line-height: 1.5; color: var(--text);
   }
   .callout.ov-banner > svg { flex: none; margin-top: 2px; }
-  .heads-up-callout.ov-banner { background: color-mix(in srgb, var(--warning) 10%, transparent); }
-  .heads-up-callout.ov-banner > svg { color: var(--warning); }
+  /* Independent blue-gray heads-up (contrast-checked). Risk banners stay separate. */
+  :root[data-theme="dark"] .heads-up-callout.ov-banner { background: #202d36; color: #edf5ef; }
+  :root[data-theme="dark"] .heads-up-callout.ov-banner > svg { color: #9fbdd2; }
+  :root:not([data-theme="dark"]) .heads-up-callout.ov-banner { background: #edf3f7; color: #18241f; }
+  :root:not([data-theme="dark"]) .heads-up-callout.ov-banner > svg { color: #4f6b80; }
   .callout.risk.ov-banner:not(.heads-up-callout) { background: color-mix(in srgb, var(--danger) 10%, transparent); }
   .callout.risk.ov-banner:not(.heads-up-callout) > svg { color: var(--danger); }
   .ov-banner-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
@@ -707,3 +713,118 @@
   @media (prefers-reduced-motion: reduce) { .capture-wisely.is-writing img { animation: none; } }
 }
 @media screen { .capture-wisely.agent-wisely { margin: 10px 0 2px; } }
+
+/* ---- bento surfaces, one sans, quiet motion ----
+   Loaded last so it wins over earlier glass experiments. Heads-up colors and
+   the wordmark face/size stay on the checked screen tokens. */
+@media screen {
+  .ws-title, .view-title, .capture-title, .onboarding-title, .empty-title, .modal-title {
+    font-family: var(--font-display);
+  }
+  .summary-hero {
+    border-radius: 20px;
+    padding: 22px 26px 24px;
+    box-shadow: 0 18px 40px -28px rgba(123, 108, 246, .55);
+  }
+  .ov-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(240px, .86fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .ov-col-left, .ov-col-right { min-width: 0; }
+  .ov-col-right {
+    flex: none;
+    width: auto;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 18px 18px 10px;
+    background: var(--panel-glass);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+  }
+  .ov-action-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin: 0 0 8px;
+    padding: 12px 14px;
+    transition: border-color .18s ease, background-color .18s ease, transform .18s ease;
+  }
+  .ov-action-row:hover { border-color: var(--accent-border); background: var(--accent-softer); }
+  .ov-decision-row {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin: 0 0 8px;
+    background: var(--surface);
+  }
+  .ov-topic-chip, .ask-suggestion, .topic {
+    transition: border-color .18s ease, background-color .18s ease;
+  }
+  .ov-topic-chip:hover, .ask-suggestion:hover { border-color: var(--accent-border); color: var(--text); }
+
+  .set-card, .agent-item, .event-row, .onboarding-callout, .digest-meeting-row, .intel-row {
+    border-radius: 16px;
+    transition: border-color .18s ease, background-color .18s ease, transform .18s ease;
+  }
+  .set-card { border: 1px solid var(--border); background: var(--surface); }
+  .set-card:hover { border-color: var(--accent-border); }
+  .settings-panel { border-radius: 20px; }
+  .settings-layout .set-section-label {
+    font-family: var(--font-body);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--faint);
+  }
+
+  .onboarding-callouts { gap: 12px; }
+  .onboarding-callout {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    box-shadow: var(--shadow-sm);
+  }
+  .onboarding-callout:hover { border-color: var(--accent-border); transform: translateY(-1px); }
+  .onboarding { max-width: 760px; }
+
+  .agent-item {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .agent-item:hover { border-color: var(--accent-border); }
+  .agent-list { list-style: none; padding: 0; margin: 12px 0 0; }
+
+  .event-row, .digest-meeting-row {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 12px 14px;
+  }
+  .event-row:hover, .digest-meeting-row:hover, .intel-row:hover { border-color: var(--accent-border); background: var(--accent-softer); }
+  .search-hero .list-search {
+    border-radius: 14px;
+    border: 1px solid var(--border-strong);
+    background: var(--panel);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .capture-card { border-radius: 24px; }
+  .capture-card.is-recording {
+    box-shadow: var(--brand-glow), var(--shadow-lg);
+  }
+  .capture-start-btn, .capture-view-btn, #dock-record {
+    transition: filter .18s ease, transform .18s ease;
+  }
+  .capture-start-btn:hover, .capture-view-btn:hover, #dock-record:hover { transform: translateY(-1px); }
+
+  .meeting-card { transition: background-color .18s ease, border-color .18s ease; }
+  .ws-tab, .dock-button, .btn { transition: color .18s ease, background-color .18s ease, filter .18s ease; }
+  .toast { border-radius: 14px; }
+
+  @container (max-width: 740px) {
+    .ov-columns { display: flex; flex-direction: column; }
+    .ov-col-right { width: 100%; }
+  }
+}

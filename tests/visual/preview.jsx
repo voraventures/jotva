@@ -107,7 +107,7 @@ api.post = api.patch = api.delete = async () => { throw new Error("Writes disabl
 function Preview() {
   const [theme, setTheme] = useState(params.get("theme") || "default");
   const [settings, setSettings] = useState({ font_size: params.get("size") || "medium", reduce_motion: params.get("motion") !== "on", ai_provider: "anthropic", claude_model: "claude-haiku-4-5", whisper_model: "base", auto_record_mode: "ask", retention_days: 0 });
-  const [nav, setNav] = useState(state === "agent" ? "agent" : "meetings");
+  const [nav, setNav] = useState(["agent", "search", "digest", "today", "library", "zero"].includes(state) ? state : "meetings");
   const [selectedId, selectMeeting] = useState(visibleMeetings[0]?.id || null);
   const [deletedIds, setDeletedIds] = useState([]);
   const [settingsOpen, setOpen] = useState(!!params.get("section"));

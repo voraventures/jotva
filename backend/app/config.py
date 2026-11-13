@@ -2,15 +2,53 @@
 import json
 import os
 import stat
+import sys
 from pathlib import Path
 
 APP_NAME = "Jotva"
 
-DATA_DIR = Path(
-    os.environ.get(
-        "JOTVA_DATA_DIR",
-        Path.home() / "Library" / "Application Support" / APP_NAME,
-    )
+
+def resolve_data_dir(
+    env: str | None = None,
+    platform: str | None = None,
+    home: Path | None = None,
+    appdata: str | None = None,
+    xdg_config_home: str | None = None,
+    legacy_has_db: bool | None = None,
+    standard_has_db: bool | None = None,
+) -> Path:
+    """One data directory for the backend and the desktop shell.
+
+    macOS stays at ~/Library/Application Support/Jotva. Windows and Linux use
+    the platform config dir, unless an older install already has its database
+    in the legacy Library path and the new directory does not — then that
+    database is kept. JOTVA_DATA_DIR always wins.
+    """
+    if env:
+        return Path(env)
+    platform = platform if platform is not None else sys.platform
+    home = Path(home) if home is not None else Path.home()
+    legacy = home / "Library" / "Application Support" / APP_NAME
+    if platform == "darwin":
+        return legacy
+    if platform == "win32":
+        base = Path(appdata) if appdata else home / "AppData" / "Roaming"
+    else:
+        base = Path(xdg_config_home) if xdg_config_home else home / ".config"
+    standard = base / APP_NAME
+    if legacy_has_db is None:
+        legacy_has_db = (legacy / "jotva.db").is_file()
+    if standard_has_db is None:
+        standard_has_db = (standard / "jotva.db").is_file()
+    if legacy_has_db and not standard_has_db:
+        return legacy
+    return standard
+
+
+DATA_DIR = resolve_data_dir(
+    env=os.environ.get("JOTVA_DATA_DIR"),
+    appdata=os.environ.get("APPDATA"),
+    xdg_config_home=os.environ.get("XDG_CONFIG_HOME"),
 )
 RECORDINGS_DIR = DATA_DIR / "recordings"
 TRANSCRIPTS_DIR = DATA_DIR / "transcripts"

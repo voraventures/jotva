@@ -13,6 +13,7 @@ from ..config import (
     DEFAULT_GEMINI_MODEL,
     DEFAULT_OPENAI_MODEL,
     LICENSE_SERVER_URL,
+    WHISPER_MODEL,
     is_safe_managed_path,
 )
 from ..db import get_db, get_setting, set_setting
@@ -213,7 +214,7 @@ def get_settings():
         "recording_mode": get_setting("recording_mode", "confirm_30s"),
         "mic_device": get_setting("mic_device"),
         "system_device": get_setting("system_device"),
-        "whisper_model": get_setting("whisper_model", "base"),
+        "whisper_model": get_setting("whisper_model", WHISPER_MODEL),
         "claude_model": get_setting("claude_model", CLAUDE_MODEL),
         "ai_provider": get_setting("ai_provider", DEFAULT_AI_PROVIDER),
         "ai_quality": "pro" if notes_svc.bundled_tier() == notes_svc.TIER_PRO else "standard",

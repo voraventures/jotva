@@ -95,7 +95,10 @@ def set_mode(body: ModeBody):
 def google_connect(request: Request):
     port = request.url.port
     redirect_uri = f"http://127.0.0.1:{port}/oauth/google/callback"
-    url = google_cal.build_auth_url(redirect_uri)
+    try:
+        url = google_cal.build_auth_url(redirect_uri)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)[:300])
     return {"auth_url": url}
 
 
@@ -107,7 +110,10 @@ def google_disconnect():
 
 @router.post("/microsoft/connect")
 def ms_connect():
-    return ms_cal.start_device_flow()
+    try:
+        return ms_cal.start_device_flow()
+    except RuntimeError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)[:300])
 
 
 @router.post("/microsoft/disconnect")
@@ -126,10 +132,10 @@ def apple_toggle(body: AppleToggle):
 
 _CALLBACK_HTML = """<!doctype html><html><head><meta charset="utf-8">
 <title>Jotva</title>
-<style>body{font-family:-apple-system,sans-serif;display:flex;align-items:center;
-justify-content:center;height:100vh;background:#fbfaf6;color:#1e281d}
+<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:flex;align-items:center;
+justify-content:center;height:100vh;background:#f5f5fb;color:#16152a}
 .card{text-align:center;padding:40px;border-radius:16px;background:#fff;
-box-shadow:0 4px 24px rgba(30,40,29,.08)}h1{color:#3f8b45;font-size:22px}</style>
+box-shadow:0 8px 28px rgba(30,25,90,.08)}h1{color:#5b4fe0;font-size:22px}</style>
 </head><body><div class="card"><h1>{title}</h1><p>{message}</p>
 <p>You can close this tab and return to Jotva.</p></div></body></html>"""
 

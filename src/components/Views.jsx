@@ -478,9 +478,11 @@ export function DigestView() {
                     <span className="digest-meeting-dot" />
                     <span className="digest-meeting-title">{m.title}</span>
                     <span className="digest-meeting-dur">
-                      {m.duration_min >= 60
-                        ? `${Math.floor(m.duration_min / 60)}h ${m.duration_min % 60 ? `${m.duration_min % 60}m` : ""}`.trim()
-                        : `${m.duration_min}m`}
+                      {Number.isFinite(m.duration_min)
+                        ? (m.duration_min >= 60
+                          ? `${Math.floor(m.duration_min / 60)}h ${m.duration_min % 60 ? `${m.duration_min % 60}m` : ""}`.trim()
+                          : `${m.duration_min}m`)
+                        : ""}
                     </span>
                     <span className="digest-meeting-day">{m.day}</span>
                   </button>

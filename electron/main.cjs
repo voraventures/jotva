@@ -21,12 +21,18 @@ const { spawn } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 const { pathToFileURL } = require("url");
+const { resolveDataDir } = require("./dataDir.cjs");
 
 const IS_DEV = !app.isPackaged;
 protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } }]);
 const IS_WIN = process.platform === "win32";
 const PROJECT_ROOT = path.join(__dirname, "..");
-const DATA_DIR = path.join(app.getPath("appData"), "Jotva");
+const DATA_DIR = resolveDataDir({
+  platform: process.platform,
+  home: app.getPath("home"),
+  appData: app.getPath("appData"),
+  env: process.env.JOTVA_DATA_DIR || "",
+});
 
 // ---------- native-UI localization ----------
 // English is loaded as the base/fallback at startup; applyLocale() overlays the
@@ -60,8 +66,8 @@ let backendProc = null;
 let backendInfo = null; // { port, token }
 let isQuitting = false;
 const pendingBackendWaiters = [];
-// Preserve the backend's existing data location, including its legacy Windows path.
-const speakerDataDir = process.env.JOTVA_DATA_DIR || path.join(app.getPath('home'), 'Library', 'Application Support', 'Jotva');
+// Speakers, exports, and the backend share DATA_DIR (including a legacy Windows db).
+const speakerDataDir = DATA_DIR;
 const speakerIntegration = require('./speakers.cjs')({app, systemPreferences, shell, getInfo: () => backendInfo, resolveBackend, dataDir: speakerDataDir});
 app.on('before-quit', () => speakerIntegration.stop());
 
@@ -98,9 +104,8 @@ function startBackend() {
     // Bundled exe is self-contained; its own dir always exists on disk. In dev
     // the interpreter needs the backend/ source dir so run.py resolves imports.
     cwd: useExe ? path.dirname(exe) : path.join(PROJECT_ROOT, "backend"),
-    // DEV ONLY: signal dev mode to the backend so it can register
-    // developer-testing endpoints (never set true in packaged builds).
-    env: { ...process.env, PYTHONUNBUFFERED: "1" },
+    // Same directory the shell uses for PDF export and Show in Folder.
+    env: { ...process.env, PYTHONUNBUFFERED: "1", JOTVA_DATA_DIR: DATA_DIR },
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true,
   });

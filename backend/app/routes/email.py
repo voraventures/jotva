@@ -93,6 +93,18 @@ def _thread(thread_id: str):
     return row
 
 
+def _gmail_action(fn):
+    """Map Gmail failures to a status the UI can explain. Never forward provider text."""
+    import httpx
+
+    try:
+        return fn()
+    except RuntimeError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)[:300])
+    except httpx.HTTPError:
+        raise HTTPException(status_code=502, detail="Gmail didn't accept that request. Try again in a moment.")
+
+
 @router.post("/google/connect")
 def google_connect(request: Request):
     """Sign in with Google for Gmail — no app password."""
@@ -126,7 +138,7 @@ def save_draft(thread_id: str, body: ReplyBody):
         raise HTTPException(status_code=400, detail="Drafts go straight into Gmail only for Gmail sign-in accounts.")
     from ..services.mail import gmail
 
-    gmail.create_draft({"id": t["account_id"], "address": t["address"]}, t, body.text)
+    _gmail_action(lambda: gmail.create_draft({"id": t["account_id"], "address": t["address"]}, t, body.text))
     return {"ok": True}
 
 
@@ -139,7 +151,7 @@ def send_reply(thread_id: str, body: ReplyBody):
         raise HTTPException(status_code=400, detail="Sending from Jotva works with Gmail sign-in accounts.")
     from ..services.mail import gmail
 
-    gmail.send_reply({"id": t["account_id"], "address": t["address"]}, t, body.text)
+    _gmail_action(lambda: gmail.send_reply({"id": t["account_id"], "address": t["address"]}, t, body.text))
     db = get_db()
     db.execute("UPDATE email_threads SET status='done' WHERE id=?", (thread_id,))
     db.commit()

@@ -109,6 +109,35 @@ def test_triage_uses_rules_first_then_the_ai(monkeypatch):
     assert [u["id"] for u in urgent] == ["acc:a1@x"] and triage.run() == []  # notified once
 
 
+def test_triage_uses_the_saved_name_and_does_not_crash(monkeypatch):
+    acc = account()
+    msg = parse.parse(raw("Sarah <sarah@acme.com>", ME, "Q4", "Please approve the budget.", "n1@x"), {ME})
+    for key in sync._save_messages(acc, [msg]):
+        sync.rebuild_thread(acc, key)
+    set_setting("user_name", "Luis")
+    seen = []
+    monkeypatch.setattr(notes, "_complete", lambda system, user, max_tokens, on_text=None, purpose="":
+                        seen.append(user) or "[]")
+    assert triage.run() == []
+    assert seen and seen[0].startswith("The user is Luis.")
+
+
+def test_gmail_draft_and_send_without_sign_in_explain_why(monkeypatch):
+    from app.services.mail import gmail
+
+    monkeypatch.setattr(gmail, "get_secret", lambda name: None)
+    db = get_db()
+    db.execute("INSERT INTO email_accounts(id,provider,address,created_at) VALUES('g','google',?,'2026-09-27')", (ME,))
+    db.execute(
+        "INSERT INTO email_threads(id,account_id,subject,counterpart_name,counterpart_email,last_at,last_message_id,provider_thread) "
+        "VALUES('g:t','g','Q4','Sarah','sarah@acme.com','2026-09-27T10:00:00+00:00','q1@acme','thr')")
+    db.commit()
+    draft = client.post("/api/email/threads/g:t/save-draft", json={"text": "Approved."})
+    sent = client.post("/api/email/threads/g:t/send", json={"text": "Approved."})
+    assert draft.status_code == 400 and "reconnect" in draft.json()["detail"].lower()
+    assert sent.status_code == 400 and "reconnect" in sent.json()["detail"].lower()
+
+
 def test_connecting_checks_the_login_and_keeps_the_password_in_the_keychain(monkeypatch, clean):
     logins = []
     monkeypatch.setattr(imap, "connect", lambda h, p, u, pw: logins.append((h, p, u, pw)) or NS(logout=lambda: None))

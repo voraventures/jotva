@@ -34,12 +34,28 @@ def _digest(path):
     return h.hexdigest()
 
 
+def _fingerprint(path):
+    """Cheap content sample so a same-size rewrite is noticed even when mtime does not move."""
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        h.update(f.read(8192))
+        f.seek(0, os.SEEK_END)
+        size = f.tell()
+        if size > 8192:
+            f.seek(size - 8192)
+            h.update(f.read(8192))
+    return h.hexdigest()
+
+
 def ready():
     global _verified_signature
     try:
         if (MODEL_DIR / 'verified').read_text() != VERSION:
             return False
-        signature = tuple((str(MODEL_DIR / p), (MODEL_DIR / p).stat().st_size, (MODEL_DIR / p).stat().st_mtime_ns, (MODEL_DIR / p).stat().st_ctime_ns) for p in MODEL_HASHES)
+        signature = tuple(
+            (str(MODEL_DIR / p), (MODEL_DIR / p).stat().st_size, _fingerprint(MODEL_DIR / p))
+            for p in MODEL_HASHES
+        )
         if signature != _verified_signature:
             if not all(_digest(MODEL_DIR / p) == digest for p, digest in MODEL_HASHES.items()):
                 return False

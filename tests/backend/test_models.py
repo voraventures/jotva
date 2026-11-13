@@ -210,6 +210,13 @@ def test_offline_fallback_never_discards_saved_model(isolated):
     assert get_setting("model_notice") is None
 
 
+def test_unset_whisper_model_matches_the_transcriber_default():
+    from app.config import WHISPER_MODEL
+
+    assert WHISPER_MODEL == "small"
+    assert client.get("/api/settings").json()["whisper_model"] == "small"
+
+
 def test_old_proxy_rejecting_tier_retries_with_concrete_model():
     import anthropic
     import httpx

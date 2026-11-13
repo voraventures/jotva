@@ -164,7 +164,12 @@ def sync_all() -> None:
                 db.execute("UPDATE email_accounts SET last_error=? WHERE id=?", (str(exc)[:200], account["id"]))
                 db.commit()
         _prune()
-        new_urgent = triage.run()
+        try:
+            new_urgent = triage.run()
+        except Exception as exc:
+            # A triage failure must not hide mail that already synced.
+            log.warning("Email triage failed: %s", exc)
+            new_urgent = []
         from . import replies
 
         auto_sent = replies.autosend_pass()  # opt-in only; a no-op by default

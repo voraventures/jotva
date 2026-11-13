@@ -8,6 +8,9 @@ from ..config import EXPORTS_DIR, secure_file, touch_secure, write_secure_text
 
 _MD_BOLD = re.compile(r"\*\*(.+?)\*\*")
 _MD_HEADER = re.compile(r"^(#{1,3})\s+(.*)$")
+# Violet brand, matching the desktop accent. Latin-1 PDF text stays Helvetica.
+_BRAND = (107, 88, 230)
+_INK = (22, 21, 42)
 
 
 def _safe_name(title: str) -> str:
@@ -49,13 +52,13 @@ def _logo_header(pdf, subtitle: str | None = None) -> None:
             text_x = x
     pdf.set_xy(text_x, top + 3)
     pdf.set_font("Helvetica", "B", 18)
-    pdf.set_text_color(63, 139, 69)
+    pdf.set_text_color(*_BRAND)
     pdf.cell(0, 9, "Jotva", new_x="LMARGIN", new_y="NEXT")
     pdf.set_y(max(pdf.get_y(), top + 16) + 2)
     if subtitle:
         pdf.set_x(pdf.l_margin)
         pdf.set_font("Helvetica", "B", 14)
-        pdf.set_text_color(30, 40, 29)
+        pdf.set_text_color(*_INK)
         safe = subtitle.encode("latin-1", "replace").decode("latin-1")
         pdf.multi_cell(0, 7, safe, new_x="LMARGIN", new_y="NEXT")
     pdf.ln(2)
@@ -91,7 +94,7 @@ def export_pdf(title: str, markdown: str) -> Path:
     pdf.add_page()
     pdf.set_margins(18, 18, 18)
 
-    def w(text, size=11, style="", color=(30, 40, 29), spacing=6):
+    def w(text, size=11, style="", color=_INK, spacing=6):
         pdf.set_font("Helvetica", style, size)
         pdf.set_text_color(*color)
         safe = text.encode("latin-1", "replace").decode("latin-1")
@@ -99,7 +102,7 @@ def export_pdf(title: str, markdown: str) -> Path:
         pdf.multi_cell(0, spacing, safe, new_x="LMARGIN", new_y="NEXT")
 
     _logo_header(pdf)
-    w(title, size=20, style="B", color=(63, 139, 69), spacing=9)
+    w(title, size=20, style="B", color=_BRAND, spacing=9)
     pdf.ln(3)
 
     in_table = False
@@ -108,7 +111,7 @@ def export_pdf(title: str, markdown: str) -> Path:
         header = _MD_HEADER.match(stripped)
         if header:
             pdf.ln(3)
-            w(header.group(2), size=14, style="B", color=(63, 139, 69), spacing=8)
+            w(header.group(2), size=14, style="B", color=_BRAND, spacing=8)
             in_table = False
         elif stripped.startswith("|"):
             cells = [c.strip() for c in stripped.strip("|").split("|")]
@@ -172,7 +175,7 @@ def export_timeline_pdf() -> Path:
     pdf.add_page()
     pdf.set_margins(18, 18, 18)
 
-    def w(text, size=11, style="", color=(30, 40, 29), spacing=6):
+    def w(text, size=11, style="", color=_INK, spacing=6):
         pdf.set_font("Helvetica", style, size)
         pdf.set_text_color(*color)
         pdf.set_x(pdf.l_margin)
@@ -182,7 +185,7 @@ def export_timeline_pdf() -> Path:
         )
 
     _logo_header(pdf)
-    w("Jotva — Decision Timeline", size=20, style="B", color=(63, 139, 69), spacing=9)
+    w("Jotva — Decision Timeline", size=20, style="B", color=_BRAND, spacing=9)
     pdf.ln(4)
     current_date = None
     for r in get_db().execute(
@@ -193,7 +196,7 @@ def export_timeline_pdf() -> Path:
         date = r["decided_at"][:10]
         if date != current_date:
             pdf.ln(2)
-            w(date, size=12, style="B", color=(63, 139, 69), spacing=7)
+            w(date, size=12, style="B", color=_BRAND, spacing=7)
             current_date = date
         suffix = "  [superseded]" if r["status"] == "superseded" else ""
         w(f"  -  {r['text']}{suffix}", size=10.5, spacing=5.5)
@@ -233,7 +236,7 @@ def export_my_actions_pdf(meeting_id: str, user_name: str) -> Path:
 
     pdf.set_x(pdf.l_margin)
     pdf.set_font("Helvetica", "B", 14)
-    pdf.set_text_color(63, 139, 69)
+    pdf.set_text_color(*_BRAND)
     pdf.multi_cell(0, 8, _l1(f"Your action items - {user_name}"), new_x="LMARGIN", new_y="NEXT")
     pdf.ln(2)
 
@@ -249,13 +252,13 @@ def export_my_actions_pdf(meeting_id: str, user_name: str) -> Path:
         for r in rows:
             done = r["status"] == "done"
             y = pdf.get_y()
-            pdf.set_draw_color(63, 139, 69)
-            pdf.set_fill_color(63, 139, 69)
+            pdf.set_draw_color(*_BRAND)
+            pdf.set_fill_color(*_BRAND)
             pdf.set_line_width(0.4)
             pdf.rect(pdf.l_margin, y + 0.6, box, box, style="DF" if done else "D")
             pdf.set_xy(pdf.l_margin + box + 3, y)
             pdf.set_font("Helvetica", "", 11)
-            pdf.set_text_color(30, 40, 29)
+            pdf.set_text_color(*_INK)
             due = f"  (due {r['due']})" if r["due"] else ""
             badge = "DONE" if done else "OPEN"
             pdf.multi_cell(

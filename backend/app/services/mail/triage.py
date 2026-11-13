@@ -6,7 +6,7 @@ Emails are untrusted: they're fenced as data and the AI only returns a verdict."
 import json
 import logging
 
-from ...db import get_db, now_iso
+from ...db import get_db, get_setting, now_iso
 
 log = logging.getLogger("jotva.mail.triage")
 
@@ -59,7 +59,7 @@ def run() -> list[dict]:
                "AND (is_bulk=1 OR me_direct=0 OR last_from_me=1)", (now_iso(),))
     db.commit()
     pending = candidates()
-    user_name = notes.get_setting("user_name", "")
+    user_name = get_setting("user_name", "")
     for i in range(0, len(pending), BATCH):
         batch = pending[i:i + BATCH]
         body = "\n\n".join(
